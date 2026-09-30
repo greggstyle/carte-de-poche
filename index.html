@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css?v=2">
 <script src="vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -128,7 +128,7 @@
     </section>
 
     <footer class="foot">
-      <span data-i18n="foot.privacy">Tout reste dans ton navigateur : aucune donnée n'est envoyée à un serveur.</span>
+      <span data-i18n="foot.privacy">Le contenu de ta carte reste dans ton navigateur : rien n'est envoyé à un serveur. Mesure d'audience anonyme, sans cookie.</span>
       <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">GitHub</a>
     </footer>
   </main>
@@ -149,6 +149,8 @@
   </aside>
 </div>
 
-<script src="app.js?v=1"></script>
+<script>window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

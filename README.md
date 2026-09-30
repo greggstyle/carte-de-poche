@@ -61,7 +61,9 @@ Sources : fiches techniques Apple (support.apple.com/fr-fr/specs), Google (store
 
 ## Vie privée
 
-Aucune donnée n'est envoyée à un serveur. Les textes, réglages et images sont mémorisés dans le `localStorage` de ton navigateur, sur ton appareil uniquement. « Tout effacer » vide cette mémoire.
+Les textes, réglages et images sont mémorisés dans le `localStorage` de ton navigateur, sur ton appareil uniquement. « Tout effacer » vide cette mémoire. Le contenu de ta carte (nom, téléphone, email, logo) n'est jamais envoyé à un serveur.
+
+Mesure d'audience : la démo utilise [Vercel Web Analytics](https://vercel.com/docs/analytics) (pas de cookie, pas de suivi entre sites, pas de bannière nécessaire). Seuls des événements anonymes sont comptés : page vue, téléchargement, partage, lien copié, mode QR, format, langue. Sur un fork, il suffit d'enlever les deux lignes `_vercel/insights` dans `index.html` pour ne rien mesurer.
 
 ## Lancer en local
 
@@ -125,7 +127,9 @@ The logo never travels through the URL: each person loads it by hand and it stay
 
 ## Privacy
 
-No data is sent to any server. Texts, settings and images are kept in your browser's `localStorage`, on your device only. "Clear everything" empties it.
+Texts, settings and images are kept in your browser's `localStorage`, on your device only. "Clear everything" empties it. Your card's content (name, phone, email, logo) is never sent to a server.
+
+Audience measurement: the demo uses [Vercel Web Analytics](https://vercel.com/docs/analytics) (no cookies, no cross-site tracking, no banner needed). Only anonymous events are counted: page view, download, share, link copied, QR mode, format, language. On a fork, remove the two `_vercel/insights` lines in `index.html` to measure nothing.
 
 ## Run locally
 

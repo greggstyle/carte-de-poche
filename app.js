@@ -6,6 +6,12 @@ var $ = function(s){ return document.querySelector(s); };
 var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
 var cv = $('#cv'), ctx = cv.getContext('2d');
 
+/* ---------- analytics (Vercel Web Analytics, sans cookie) ----------
+   Seuls des événements anonymes sont envoyés : jamais les textes de la carte. */
+function track(name, data){
+  try{ if(typeof window.va==='function') window.va('event', {name:name, data:data||{}}); }catch(e){}
+}
+
 /* ---------- i18n ---------- */
 var I18N = {
   fr: {
@@ -42,7 +48,7 @@ var I18N = {
     'share.label':'Lien de pré-remplissage','share.copy':'Copier le lien',
     'share.copied':'Lien copié.','share.copyfail':'Copie impossible ici : sélectionne le lien et copie-le à la main.',
     'reset':'Tout effacer','reset.confirm':'Effacer les textes, les images et les réglages mémorisés sur cet appareil ?',
-    'foot.privacy':'Tout reste dans ton navigateur : aucune donnée n\u2019est envoyée à un serveur.',
+    'foot.privacy':'Le contenu de ta carte reste dans ton navigateur : rien n\u2019est envoyé à un serveur. Mesure d\u2019audience anonyme, sans cookie.',
     'peek.empty':'(rien à encoder)',
     'row.tel':'TÉL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADR'
   },
@@ -80,7 +86,7 @@ var I18N = {
     'share.label':'Pre-fill link','share.copy':'Copy link',
     'share.copied':'Link copied.','share.copyfail':'Cannot copy here: select the link and copy it by hand.',
     'reset':'Clear everything','reset.confirm':'Clear the texts, images and settings stored on this device?',
-    'foot.privacy':'Everything stays in your browser: no data is sent to any server.',
+    'foot.privacy':'Your card\u2019s content stays in your browser: nothing is sent to a server. Anonymous, cookie-free audience measurement.',
     'peek.empty':'(nothing to encode)',
     'row.tel':'TEL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADDR'
   }
@@ -619,6 +625,7 @@ function pickScreen(){
   var s=screenSize(); if(!s) return false;
   state.phone={preset:'screen',w:s.w,h:s.h}; state.format='phone';
   syncSeg($('#formats'),'phone'); save(); updateDim(); schedule();
+  track('my_screen', {w:s.w, h:s.h});
   return true;
 }
 $('#f-preset').addEventListener('change', function(){
@@ -626,6 +633,7 @@ $('#f-preset').addEventListener('change', function(){
   if(id==='screen'){ if(!pickScreen()) syncPresetSelect(); return; }
   for(var i=0;i<PRESETS.length;i++) if(PRESETS[i].id===id){ state.phone={preset:id,w:PRESETS[i].w,h:PRESETS[i].h}; }
   state.format='phone'; syncSeg($('#formats'),'phone'); save(); updateDim(); schedule();
+  track('preset', {preset:id});
 });
 $('#myscreen').addEventListener('click', pickScreen);
 
@@ -698,7 +706,7 @@ $$('.zone').forEach(function(z){
       raw.onload=function(){
         var small = shrink(raw, file.type) || fr.result;
         state.imageData[key]=small;
-        setImage(key, small, z, function(){ save(); syncSwatches(); schedule(); });
+        setImage(key, small, z, function(){ save(); syncSwatches(); schedule(); track('image', {zone:key}); });
       };
       raw.onerror=function(){};
       raw.src=fr.result;
@@ -762,6 +770,7 @@ $('#dl').addEventListener('click', function(){
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
       var D=dims(); st.textContent=t('st.saved')+name+' ('+D.w+' × '+D.h+').';
+      track('download', {format:state.format, preset:state.format==='phone'?state.phone.preset:state.format, qr:state.qrMode, lang:lang});
     }catch(e){ st.textContent=t('st.fallback'); }
   });
 });
@@ -780,6 +789,7 @@ $('#share').addEventListener('click', function(){
     var file=new File([blob], name, {type:'image/png'});
     navigator.share({files:[file], title:state.fields.name||t('title')}).then(function(){
       st.textContent=t('st.shared');
+      track('share', {format:state.format, preset:state.format==='phone'?state.phone.preset:state.format, qr:state.qrMode, lang:lang});
     }).catch(function(err){
       st.textContent = (err && err.name==='AbortError') ? t('st.share.cancel') : t('st.fallback');
     }).then(function(){ btn.disabled=false; });
@@ -790,7 +800,7 @@ $('#share').addEventListener('click', function(){
 $('#copy').addEventListener('click', function(){
   var url=buildShareUrl(), st=$('#share-status'), inp=$('#share-url');
   inp.value=url;
-  var done=function(){ st.textContent=t('share.copied'); };
+  var done=function(){ st.textContent=t('share.copied'); track('copy_link', {qr:state.qrMode, lang:lang}); };
   var fail=function(){ st.textContent=t('share.copyfail'); inp.focus(); inp.select(); };
   if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, fail);
   else fail();
@@ -811,14 +821,14 @@ function applyI18n(){
   $$('[data-i18n]').forEach(function(el){ el.textContent = t(el.dataset.i18n); });
   $$('[data-i18n-aria]').forEach(function(el){ el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
   $$('#lang button').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.lang===lang)); });
-  buildSeg($('#formats'), Object.keys(FORMATS), function(k){ return t('fmt.'+k); }, function(){return state.format;}, function(k){ state.format=k; save(); updateDim(); schedule(); });
-  buildSeg($('#qrmode'), QRMODES, function(k){ return t('qr.'+k); }, function(){return state.qrMode;}, function(k){ state.qrMode=k; save(); updateQrNote(); schedule(); });
+  buildSeg($('#formats'), Object.keys(FORMATS), function(k){ return t('fmt.'+k); }, function(){return state.format;}, function(k){ state.format=k; save(); updateDim(); schedule(); track('format', {format:k}); });
+  buildSeg($('#qrmode'), QRMODES, function(k){ return t('qr.'+k); }, function(){return state.qrMode;}, function(k){ state.qrMode=k; save(); updateQrNote(); schedule(); track('qr_mode', {mode:k}); });
   var pk=$('#peek'); pk.textContent = $('#peek-body').hidden ? t('peek.show') : t('peek.hide');
   updateDim(); updateQrNote(); syncSwatches(); syncQuotaNote();
   $('#status').textContent=''; $('#share-status').textContent='';
 }
 $$('#lang button').forEach(function(b){
-  b.addEventListener('click', function(){ lang=b.dataset.lang; save(); applyI18n(); schedule(); });
+  b.addEventListener('click', function(){ lang=b.dataset.lang; save(); applyI18n(); schedule(); track('lang', {lang:lang}); });
 });
 
 /* ---------- démarrage ---------- */
@@ -826,6 +836,7 @@ load();
 var fromUrl = applyParams();
 if(fromUrl){
   save();
+  track('prefill_open', {lang:lang});
   try{ history.replaceState(null, '', location.pathname); }catch(e){}
 } else if(!readJSON(KEY)){
   var nl=String(navigator.language||'').toLowerCase();
