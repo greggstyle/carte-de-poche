@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carte de poche</title>
+<meta name="description" content="Crée ta carte de contact avec QR code vCard, adaptée à ton téléphone. Gratuit, open source, tout reste dans ton navigateur.">
+<meta name="theme-color" content="#1a5c7a">
+<meta property="og:title" content="Carte de poche">
+<meta property="og:description" content="Une carte de contact à montrer sur écran ou à imprimer, avec un QR qui ajoute vraiment la fiche au répertoire.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a5c7a'/%3E%3Crect x='16' y='8' width='32' height='48' rx='5' fill='%23fff'/%3E%3Crect x='22' y='16' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='34' y='16' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='22' y='28' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='34' y='28' width='4' height='4' fill='%231a5c7a'/%3E%3Crect x='38' y='32' width='4' height='4' fill='%231a5c7a'/%3E%3Crect x='22' y='42' width='20' height='3' rx='1.5' fill='%231a5c7a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css?v=1">
+<script src="vendor/qrcode.js?v=1.4.4"></script>
+</head>
+<body>
+
+<div class="wrap">
+  <main class="col-form">
+    <div class="masthead">
+      <h1 data-i18n="title">Carte de poche</h1>
+      <p data-i18n="tagline">Une carte de contact à montrer sur écran ou à imprimer, avec un QR qui ajoute vraiment la fiche au répertoire.</p>
+      <div class="lang" id="lang" role="group" aria-label="Langue / Language">
+        <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+
+    <section class="sec">
+      <h2 class="sec-h" data-i18n="sec.identity">Identité</h2>
+      <div class="sec-b">
+        <div class="grid2">
+          <div class="f"><label for="f-name" data-i18n="f.name">Nom</label><input id="f-name" data-field="name" type="text" autocomplete="off"></div>
+          <div class="f"><label for="f-role" data-i18n="f.role">Rôle</label><input id="f-role" data-field="role" type="text" autocomplete="off"></div>
+          <div class="f"><label for="f-company" data-i18n="f.company">Société</label><input id="f-company" data-field="company" type="text" autocomplete="off"></div>
+          <div class="f"><label for="f-phrase" data-i18n="f.phrase">Phrase</label><input id="f-phrase" data-field="phrase" type="text" autocomplete="off"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2 class="sec-h" data-i18n="sec.contact">Contact</h2>
+      <div class="sec-b">
+        <div class="grid2">
+          <div class="f"><label for="f-phone" data-i18n="f.phone">Téléphone</label><input id="f-phone" data-field="phone" type="tel" autocomplete="off"></div>
+          <div class="f"><label for="f-email" data-i18n="f.email">Email</label><input id="f-email" data-field="email" type="email" autocomplete="off"></div>
+          <div class="f"><label for="f-web" data-i18n="f.web">Site web</label><input id="f-web" data-field="web" type="text" autocomplete="off"></div>
+          <div class="f"><label for="f-address" data-i18n="f.address">Adresse</label><input id="f-address" data-field="address" type="text" autocomplete="off"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2 class="sec-h" data-i18n="sec.images">Images</h2>
+      <div class="sec-b">
+        <div class="zones">
+          <div class="zone" data-zone="photo" tabindex="0" role="button" data-i18n-aria="z.photo.aria" aria-label="Charger une photo">
+            <input type="file" accept="image/*" hidden>
+            <img class="z-thumb" alt="">
+            <button class="z-clear" type="button" data-i18n-aria="z.photo.clear" aria-label="Retirer la photo">&times;</button>
+            <span class="z-label" data-i18n="z.photo">Photo</span><span class="z-hint" data-i18n="z.photo.hint">clic ou glisser</span>
+          </div>
+          <div class="zone" data-zone="logo" tabindex="0" role="button" data-i18n-aria="z.logo.aria" aria-label="Charger le logo principal">
+            <input type="file" accept="image/*" hidden>
+            <img class="z-thumb" alt="">
+            <button class="z-clear" type="button" data-i18n-aria="z.logo.clear" aria-label="Retirer le logo">&times;</button>
+            <span class="z-label" data-i18n="z.logo">Logo</span><span class="z-hint" data-i18n="z.logo.hint">haut, centré</span>
+          </div>
+          <div class="zone" data-zone="partner" tabindex="0" role="button" data-i18n-aria="z.partner.aria" aria-label="Charger le logo partenaire">
+            <input type="file" accept="image/*" hidden>
+            <img class="z-thumb" alt="">
+            <button class="z-clear" type="button" data-i18n-aria="z.partner.clear" aria-label="Retirer le logo partenaire">&times;</button>
+            <span class="z-label" data-i18n="z.partner">Partenaire</span><span class="z-hint" data-i18n="z.partner.hint">coin haut droit</span>
+          </div>
+          <div class="zone" data-zone="bg" tabindex="0" role="button" data-i18n-aria="z.bg.aria" aria-label="Charger une image de fond">
+            <input type="file" accept="image/*" hidden>
+            <img class="z-thumb" alt="">
+            <button class="z-clear" type="button" data-i18n-aria="z.bg.clear" aria-label="Retirer l'image de fond">&times;</button>
+            <span class="z-label" data-i18n="z.bg">Fond</span><span class="z-hint" data-i18n="z.bg.hint">voile + texte blanc</span>
+          </div>
+        </div>
+        <p class="note" id="bg-note"></p>
+        <p class="note warn" id="quota-note" hidden></p>
+        <div class="swatches" id="swatches"></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2 class="sec-h" data-i18n="sec.qr">Le QR</h2>
+      <div class="sec-b">
+        <div class="seg" id="qrmode" role="group" data-i18n-aria="qr.group" aria-label="Contenu du QR code"></div>
+        <p class="note" id="qr-note"></p>
+        <div class="f" id="freetext-wrap" hidden><label for="f-freetext" data-i18n="f.freetext">Texte à encoder</label><textarea id="f-freetext" data-field="freetext"></textarea></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2 class="sec-h" data-i18n="sec.format">Format</h2>
+      <div class="sec-b">
+        <div class="seg" id="formats" role="group" data-i18n-aria="fmt.group" aria-label="Format de sortie"></div>
+        <div class="row" id="phone-row">
+          <div class="f">
+            <label for="f-preset" data-i18n="fmt.preset">Modèle de téléphone</label>
+            <select id="f-preset"></select>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="myscreen" type="button" data-i18n="fmt.screen">Mon écran</button>
+        </div>
+        <p class="note" id="fmt-note"></p>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2 class="sec-h" data-i18n="sec.share">Partager</h2>
+      <div class="sec-b">
+        <p class="note" data-i18n="share.note">Envoie ce lien à ton équipe : chacun arrive avec les champs pré-remplis (société, site, couleur…), puis ajoute son nom et le logo.</p>
+        <div class="row">
+          <div class="f"><label for="share-url" data-i18n="share.label">Lien de pré-remplissage</label><input id="share-url" type="text" readonly></div>
+          <button class="btn btn-sm" id="copy" type="button" data-i18n="share.copy">Copier le lien</button>
+        </div>
+        <p class="status" id="share-status"></p>
+        <div class="row">
+          <button class="btn btn-ghost btn-sm" id="reset" type="button" data-i18n="reset">Tout effacer</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span data-i18n="foot.privacy">Tout reste dans ton navigateur : aucune donnée n'est envoyée à un serveur.</span>
+      <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">GitHub</a>
+    </footer>
+  </main>
+
+  <aside class="col-view">
+    <div class="viewbar">
+      <span class="dim" id="dim"></span>
+      <span class="dim" id="mode-dim"></span>
+    </div>
+    <div class="stage"><canvas id="cv" width="1206" height="2622" data-i18n-aria="preview" aria-label="Aperçu de la carte"></canvas></div>
+    <div class="actions">
+      <button class="btn" id="dl" type="button" data-i18n="dl">Télécharger le PNG</button>
+      <button class="btn btn-ghost" id="share" type="button" hidden data-i18n="share.btn">Partager</button>
+      <button class="btn btn-ghost" id="peek" type="button" aria-expanded="false" data-i18n="peek.show">Voir la vCard</button>
+    </div>
+    <p class="status" id="status"></p>
+    <pre class="vcard-peek" id="peek-body" hidden></pre>
+  </aside>
+</div>
+
+<script src="app.js?v=1"></script>
+</body>
+</html>
