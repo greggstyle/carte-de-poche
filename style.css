@@ -140,3 +140,7 @@ img{max-width:100%}
   .grid2{grid-template-columns:minmax(0,1fr)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (pointer:coarse){
+  .z-clear{width:30px;height:30px;font-size:18px}
+  .seg button{padding:.6rem .95rem}
+}
