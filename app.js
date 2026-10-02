@@ -10,6 +10,7 @@ var cv = $('#cv'), ctx = cv.getContext('2d');
    Seuls des événements anonymes sont envoyés : jamais les textes de la carte. */
 function track(name, data){
   try{ if(typeof window.va==='function') window.va('event', {name:name, data:data||{}}); }catch(e){}
+  try{ if(typeof window.gtag==='function') window.gtag('event', name, data||{}); }catch(e){}
 }
 
 /* ---------- i18n ---------- */
@@ -48,7 +49,7 @@ var I18N = {
     'share.label':'Lien de pré-remplissage','share.copy':'Copier le lien',
     'share.copied':'Lien copié.','share.copyfail':'Copie impossible ici : sélectionne le lien et copie-le à la main.',
     'reset':'Tout effacer','reset.confirm':'Effacer les textes, les images et les réglages mémorisés sur cet appareil ?',
-    'foot.privacy':'Le contenu de ta carte reste dans ton navigateur : rien n\u2019est envoyé à un serveur. Mesure d\u2019audience anonyme, sans cookie.',
+    'foot.privacy':'Le contenu de ta carte reste dans ton navigateur : rien n\u2019est envoyé à un serveur. Mesure d\u2019audience (Vercel Analytics, Google Analytics).',
     'peek.empty':'(rien à encoder)',
     'row.tel':'TÉL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADR'
   },
@@ -86,7 +87,7 @@ var I18N = {
     'share.label':'Pre-fill link','share.copy':'Copy link',
     'share.copied':'Link copied.','share.copyfail':'Cannot copy here: select the link and copy it by hand.',
     'reset':'Clear everything','reset.confirm':'Clear the texts, images and settings stored on this device?',
-    'foot.privacy':'Your card\u2019s content stays in your browser: nothing is sent to a server. Anonymous, cookie-free audience measurement.',
+    'foot.privacy':'Your card\u2019s content stays in your browser: nothing is sent to a server. Audience measurement (Vercel Analytics, Google Analytics).',
     'peek.empty':'(nothing to encode)',
     'row.tel':'TEL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADDR'
   }

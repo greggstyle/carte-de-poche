@@ -4,7 +4,7 @@ Une carte de contact à montrer sur écran ou à imprimer, avec un QR code qui a
 
 [English below](#pocket-card-english)
 
-**Démo : https://carte-de-poche.vercel.app**
+**Démo : https://cartedepoche.fr** (aussi https://carte-de-poche.vercel.app)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/greggstyle/carte-de-poche)
 
@@ -40,7 +40,7 @@ Paramètres d'URL acceptés : `name`, `role`, `company`, `phrase`, `phone`, `ema
 Exemple :
 
 ```
-https://carte-de-poche.vercel.app/?company=Acme&web=acme.re&address=12+rue+Exemple&color=1b3a5c&lang=fr
+https://cartedepoche.fr/?company=Acme&web=acme.re&address=12+rue+Exemple&color=1b3a5c&lang=fr
 ```
 
 Le logo ne passe jamais par l'URL : il est chargé à la main par chaque personne et reste dans son navigateur.
@@ -63,7 +63,7 @@ Sources : fiches techniques Apple (support.apple.com/fr-fr/specs), Google (store
 
 Les textes, réglages et images sont mémorisés dans le `localStorage` de ton navigateur, sur ton appareil uniquement. « Tout effacer » vide cette mémoire. Le contenu de ta carte (nom, téléphone, email, logo) n'est jamais envoyé à un serveur.
 
-Mesure d'audience : la démo utilise [Vercel Web Analytics](https://vercel.com/docs/analytics) (pas de cookie, pas de suivi entre sites, pas de bannière nécessaire). Seuls des événements anonymes sont comptés : page vue, téléchargement, partage, lien copié, mode QR, format, langue. Sur un fork, il suffit d'enlever les deux lignes `_vercel/insights` dans `index.html` pour ne rien mesurer.
+Mesure d'audience : la démo utilise [Vercel Web Analytics](https://vercel.com/docs/analytics) (sans cookie) et Google Analytics 4 (tag `G-0QM258T49E`, avec cookies). Seuls des événements anonymes sont envoyés : page vue, téléchargement, partage, lien copié, mode QR, format, langue. Jamais le contenu de la carte. Sur un fork, enlève le bloc « Google tag » et les deux lignes `_vercel/insights` dans `index.html` pour ne rien mesurer.
 
 ## Lancer en local
 
@@ -102,7 +102,7 @@ vercel.json       en-têtes de sécurité et de cache
 
 A contact card to show on screen or print, with a QR code that really adds you to the phone's address book. Free, open source, no account: everything runs in your browser.
 
-**Demo: https://carte-de-poche.vercel.app**
+**Demo: https://cartedepoche.fr** (also https://carte-de-poche.vercel.app)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/greggstyle/carte-de-poche)
 
@@ -129,7 +129,7 @@ The logo never travels through the URL: each person loads it by hand and it stay
 
 Texts, settings and images are kept in your browser's `localStorage`, on your device only. "Clear everything" empties it. Your card's content (name, phone, email, logo) is never sent to a server.
 
-Audience measurement: the demo uses [Vercel Web Analytics](https://vercel.com/docs/analytics) (no cookies, no cross-site tracking, no banner needed). Only anonymous events are counted: page view, download, share, link copied, QR mode, format, language. On a fork, remove the two `_vercel/insights` lines in `index.html` to measure nothing.
+Audience measurement: the demo uses [Vercel Web Analytics](https://vercel.com/docs/analytics) (cookie-free) and Google Analytics 4 (tag `G-0QM258T49E`, uses cookies). Only anonymous events are sent: page view, download, share, link copied, QR mode, format, language. Never the card's content. On a fork, remove the "Google tag" block and the two `_vercel/insights` lines in `index.html` to measure nothing.
 
 ## Run locally
 

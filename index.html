@@ -6,6 +6,15 @@
 <title>Carte de poche</title>
 <meta name="description" content="Crée ta carte de contact avec QR code vCard, adaptée à ton téléphone. Gratuit, open source, tout reste dans ton navigateur.">
 <meta name="theme-color" content="#1a5c7a">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0QM258T49E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0QM258T49E');
+</script>
 <meta property="og:title" content="Carte de poche">
 <meta property="og:description" content="Une carte de contact à montrer sur écran ou à imprimer, avec un QR qui ajoute vraiment la fiche au répertoire.">
 <meta property="og:type" content="website">
@@ -128,7 +137,7 @@
     </section>
 
     <footer class="foot">
-      <span data-i18n="foot.privacy">Le contenu de ta carte reste dans ton navigateur : rien n'est envoyé à un serveur. Mesure d'audience anonyme, sans cookie.</span>
+      <span data-i18n="foot.privacy">Le contenu de ta carte reste dans ton navigateur : rien n'est envoyé à un serveur. Mesure d'audience (Vercel Analytics, Google Analytics).</span>
       <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">GitHub</a>
     </footer>
   </main>
@@ -151,6 +160,6 @@
 
 <script>window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
