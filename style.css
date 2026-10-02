@@ -126,6 +126,12 @@ img{max-width:100%}
 .foot{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--rule);font-size:.78rem;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:.4rem 1.2rem}
 .foot a{color:var(--ink-2)}
 
+/* typographie */
+.f-row{display:flex;flex-direction:column;gap:.35rem}
+.f-lab{font-family:var(--mono);font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.seg-fonts button{font-size:.95rem;padding:.4rem .9rem}
+.seg-sizes button{line-height:1;padding:.4rem .8rem;display:inline-flex;align-items:flex-end;min-height:2.3rem;font-family:var(--serif);font-weight:600}
+
 /* bannière de consentement */
 .consent{position:fixed;left:1rem;right:1rem;bottom:1rem;z-index:50;max-width:24rem;margin:0;background:var(--panel);color:var(--ink);border:1px solid var(--rule);box-shadow:0 10px 30px rgba(0,0,0,.18);padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.55rem}
 .consent-t{margin:0;font-family:var(--serif);font-weight:600;font-size:1.05rem}

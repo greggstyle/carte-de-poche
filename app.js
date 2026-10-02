@@ -82,7 +82,10 @@ var I18N = {
     'row.tel':'TÉL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADR',
     'consent.title':'Un cookie pour mesurer l\u2019audience ?',
     'consent.body':'Google Analytics nous aide à savoir combien de personnes utilisent la carte. Rien n\u2019est déposé si tu refuses, et l\u2019app marche pareil.',
-    'consent.yes':'Accepter','consent.no':'Refuser','consent.manage':'Cookies'
+    'consent.yes':'Accepter','consent.no':'Refuser','consent.manage':'Cookies',
+    'sec.typo':'Typographie','typo.font':'Police','typo.size':'Taille du texte',
+    'typo.note':'La disposition ne change pas : seules la police et sa taille.',
+    'size.0':'Plus petit','size.1':'Petit','size.2':'Normal','size.3':'Grand','size.4':'Plus grand'
   },
   en: {
     'title':'Pocket card',
@@ -123,7 +126,10 @@ var I18N = {
     'row.tel':'TEL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADDR',
     'consent.title':'A cookie to measure audience?',
     'consent.body':'Google Analytics helps us know how many people use the card. Nothing is stored if you decline, and the app works the same.',
-    'consent.yes':'Accept','consent.no':'Decline','consent.manage':'Cookies'
+    'consent.yes':'Accept','consent.no':'Decline','consent.manage':'Cookies',
+    'sec.typo':'Typography','typo.font':'Font','typo.size':'Text size',
+    'typo.note':'The layout does not change: only the font and its size.',
+    'size.0':'Smallest','size.1':'Small','size.2':'Normal','size.3':'Large','size.4':'Largest'
   }
 };
 var lang = 'fr';
@@ -151,6 +157,23 @@ var SWATCHES = [
   ['#9c5a2d','Cuivre'],['#c9a227','Laiton'],['#d9d4c7','Lin'],['#f2f2ef','Papier']
 ];
 
+/* Paires de polices (Google Fonts, OFL). title = nom et phrase, body = rôle et contacts. */
+var FONTS = {
+  editorial: {label:'Éditorial', title:'Fraunces',           body:'Archivo',        gt:'serif',      gb:'sans-serif',
+              g:'family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600'},
+  classic:   {label:'Classique', title:'Playfair Display',   body:'Source Sans 3',  gt:'serif',      gb:'sans-serif',
+              g:'family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@400;600'},
+  modern:    {label:'Moderne',   title:'Inter',              body:'Inter',          gt:'sans-serif', gb:'sans-serif',
+              g:'family=Inter:ital,wght@0,400;0,600;1,400'},
+  elegant:   {label:'Élégant',   title:'Cormorant Garamond', body:'Montserrat',     gt:'serif',      gb:'sans-serif',
+              g:'family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500'},
+  bold:      {label:'Brut',      title:'Space Grotesk',      body:'Space Grotesk',  gt:'sans-serif', gb:'sans-serif',
+              g:'family=Space+Grotesk:wght@400;600'},
+  friendly:  {label:'Rond',      title:'Nunito',             body:'Nunito',         gt:'sans-serif', gb:'sans-serif',
+              g:'family=Nunito:ital,wght@0,400;0,700;1,400'}
+};
+var SIZES = [0.85, 0.92, 1, 1.1, 1.22];
+
 var DEFAULTS = {
   name:'Camille Ravine',
   role:'Directrice de création',
@@ -169,6 +192,8 @@ var state = {
   phone: {preset:'iphone-16-pro', w:1206, h:2622},   /* dimensions du format "Téléphone" */
   qrMode: 'vcard',
   bgColor: '#101215',
+  font: 'editorial',
+  textScale: 1,
   images: {photo:null, logo:null, partner:null, bg:null},     /* objets Image */
   imageData: {photo:null, logo:null, partner:null, bg:null}   /* dataURL persistés */
 };
@@ -192,6 +217,27 @@ function screenSize(){
   return {w:w, h:h};
 }
 
+/* ---------- typographie ---------- */
+function TF(){ var f=FONTS[state.font]||FONTS.editorial; return '"'+f.title+'",'+(f.gt==='serif'?'Georgia,serif':'Arial,sans-serif'); }
+function BF(){ var f=FONTS[state.font]||FONTS.editorial; return '"'+f.body+'",'+(f.gb==='serif'?'Georgia,serif':'Arial,sans-serif'); }
+function fs(W,r){ return Math.round(W*r*state.textScale); }
+var fontLinks={};
+function ensureFont(id, cb){
+  var f=FONTS[id]; if(!f) return;
+  if(!fontLinks[id]){
+    var l=document.createElement('link'); l.rel='stylesheet';
+    l.href='https://fonts.googleapis.com/css2?'+f.g+'&display=swap';
+    document.head.appendChild(l); fontLinks[id]=l;
+  }
+  if(document.fonts && document.fonts.load){
+    Promise.all([
+      document.fonts.load('600 100px "'+f.title+'"'),
+      document.fonts.load('italic 400 100px "'+f.title+'"'),
+      document.fonts.load('400 100px "'+f.body+'"')
+    ]).then(function(){ if(cb) cb(); }).catch(function(){});
+  }
+}
+
 /* ---------- persistence ---------- */
 var KEY = 'carte-de-poche/v2', KEY_V1 = 'carte-de-poche/v1';
 var IMG_KEYS = ['photo','logo','partner','bg'];
@@ -204,6 +250,8 @@ function applySaved(d){
   if(QRMODES.indexOf(d.qrMode)>=0) state.qrMode=d.qrMode;
   if(typeof d.bgColor==='string' && /^#[0-9a-f]{6}$/i.test(d.bgColor)) state.bgColor=d.bgColor;
   if(d.lang==='fr'||d.lang==='en') lang=d.lang;
+  if(FONTS[d.font]) state.font=d.font;
+  if(SIZES.indexOf(+d.textScale)>=0) state.textScale=+d.textScale;
   if(d.images) IMG_KEYS.forEach(function(k){ if(typeof d.images[k]==='string' && d.images[k].indexOf('data:image/')===0) state.imageData[k]=d.images[k]; });
 }
 function load(){
@@ -212,7 +260,7 @@ function load(){
   applySaved(d);
 }
 function save(){
-  var base={v:2, fields:state.fields, format:state.format, phone:state.phone, qrMode:state.qrMode, bgColor:state.bgColor, lang:lang};
+  var base={v:2, fields:state.fields, format:state.format, phone:state.phone, qrMode:state.qrMode, bgColor:state.bgColor, lang:lang, font:state.font, textScale:state.textScale};
   var full=Object.assign({images:state.imageData}, base);
   try{ localStorage.setItem(KEY, JSON.stringify(full)); quotaHit=false; }
   catch(e){
@@ -245,6 +293,8 @@ function applyParams(){
   }
   var w=parseInt(sp.get('w'),10), h=parseInt(sp.get('h'),10);
   if(w>=200 && h>=200 && w<=6000 && h<=6000){ state.phone={preset:'custom',w:w,h:h}; state.format='phone'; touched=true; }
+  var fo=sp.get('font'); if(fo && FONTS[fo]){ state.font=fo; touched=true; }
+  var sz=parseFloat(sp.get('size')); if(SIZES.indexOf(sz)>=0){ state.textScale=sz; touched=true; }
   var l=sp.get('lang'); if(l==='fr'||l==='en'){ lang=l; touched=true; }
   return touched;
 }
@@ -256,6 +306,8 @@ function buildShareUrl(){
   if(state.format!=='phone') sp.set('format', state.format);
   else if(state.phone.preset==='custom' || state.phone.preset==='screen'){ sp.set('w', state.phone.w); sp.set('h', state.phone.h); }
   else if(state.phone.preset!=='iphone-16-pro') sp.set('preset', state.phone.preset);
+  if(state.font!=='editorial') sp.set('font', state.font);
+  if(state.textScale!==1) sp.set('size', String(state.textScale));
   sp.set('lang', lang);
   return location.origin + location.pathname + '?' + sp.toString();
 }
@@ -431,23 +483,23 @@ function renderTall(W,H,p,f,im,qr){
     }});
   }
   if(f.name){
-    var ns = fitFont(ctx, f.name, maxW, Math.round(W*0.088), Math.round(W*0.040), '"Fraunces",Georgia,serif', 600, false);
+    var ns = fitFont(ctx, f.name, maxW, fs(W,0.088), fs(W,0.040), TF(), 600, false);
     blocks.push({h:ns*1.02, gap:0.30, draw:function(y){
-      ctx.font='600 '+ns+'px "Fraunces",Georgia,serif';
+      ctx.font='600 '+ns+'px '+TF();
       ctx.fillStyle=p.fg; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
       ctx.fillText(f.name, cx, y+ns*0.80);
     }});
   }
   if(f.role){
-    var rs=Math.round(W*0.036);
+    var rs=fs(W,0.036);
     blocks.push({h:rs*1.25, gap:0.16, draw:function(y){
-      ctx.font='400 '+rs+'px "Archivo",Arial,sans-serif';
+      ctx.font='400 '+rs+'px '+BF();
       ctx.fillStyle=p.mid; ctx.textAlign='center';
       ctx.fillText(f.role, cx, y+rs*0.95);
     }});
   }
   if(f.company){
-    var cs=Math.round(W*0.026);
+    var cs=fs(W,0.026);
     blocks.push({h:cs*1.4, gap:0.85, draw:function(y){
       ctx.font='500 '+cs+'px "IBM Plex Mono",monospace';
       ctx.fillStyle=p.dim; ctx.textAlign='center';
@@ -457,11 +509,11 @@ function renderTall(W,H,p,f,im,qr){
     }});
   }
   if(f.phrase){
-    var ps=Math.round(W*0.031);
-    ctx.font='italic 400 '+ps+'px "Fraunces",Georgia,serif';
+    var ps=fs(W,0.031);
+    ctx.font='italic 400 '+ps+'px '+TF();
     var plines=wrap(ctx,f.phrase,W*0.68);
     blocks.push({h:plines.length*ps*1.34, gap:1.15, draw:function(y){
-      ctx.font='italic 400 '+ps+'px "Fraunces",Georgia,serif';
+      ctx.font='italic 400 '+ps+'px '+TF();
       ctx.fillStyle=p.mid; ctx.textAlign='center';
       for(var i=0;i<plines.length;i++) ctx.fillText(plines[i], cx, y+ps*1.0+i*ps*1.34);
     }});
@@ -472,7 +524,7 @@ function renderTall(W,H,p,f,im,qr){
 
   var rows=contactRows();
   if(rows.length){
-    var vs=Math.round(W*0.028), ls=Math.round(W*0.020), lineH=vs*1.85;
+    var vs=fs(W,0.028), ls=fs(W,0.020), lineH=vs*1.85;
     blocks.push({h:rows.length*lineH, gap:0, draw:function(y){
       for(var i=0;i<rows.length;i++){
         var lab=rows[i][0], val=rows[i][1];
@@ -480,7 +532,7 @@ function renderTall(W,H,p,f,im,qr){
         ctx.letterSpacing=(ls*0.12)+'px';
         var lw2=Math.max(ctx.measureText(lab).width, ls*0.62*lab.length);
         ctx.letterSpacing='0px';
-        ctx.font='400 '+vs+'px "Archivo",Arial,sans-serif';
+        ctx.font='400 '+vs+'px '+BF();
         var vw=ctx.measureText(val).width;
         var gap=W*0.024, tot=lw2+gap+vw, sx=cx-tot/2, by=y+vs*0.95+i*lineH;
         ctx.textAlign='left';
@@ -488,7 +540,7 @@ function renderTall(W,H,p,f,im,qr){
         ctx.letterSpacing=(ls*0.12)+'px';
         ctx.fillStyle=p.dim; ctx.fillText(lab, sx, by);
         ctx.letterSpacing='0px';
-        ctx.font='400 '+vs+'px "Archivo",Arial,sans-serif';
+        ctx.font='400 '+vs+'px '+BF();
         ctx.fillStyle=p.fg; ctx.fillText(val, sx+lw2+gap, by);
       }
       ctx.textAlign='center';
@@ -545,21 +597,21 @@ function renderSquare(W,H,p,f,im,qr){
   }
   if(f.name){
     ctx.textAlign='left';
-    var ns=fitFont(ctx,f.name,lw,Math.round(W*0.062),Math.round(W*0.030),'"Fraunces",Georgia,serif',600,false);
+    var ns=fitFont(ctx,f.name,lw,fs(W,0.062),fs(W,0.030),TF(),600,false);
     left.push({h:ns*1.02, gap:0.30, draw:function(y){
-      ctx.font='600 '+ns+'px "Fraunces",Georgia,serif'; ctx.textAlign='left';
+      ctx.font='600 '+ns+'px '+TF(); ctx.textAlign='left';
       ctx.fillStyle=p.fg; ctx.fillText(f.name, lx, y+ns*0.80);
     }});
   }
   if(f.role){
-    var rs=Math.round(W*0.028);
+    var rs=fs(W,0.028);
     left.push({h:rs*1.25, gap:0.16, draw:function(y){
-      ctx.font='400 '+rs+'px "Archivo",Arial,sans-serif'; ctx.textAlign='left';
+      ctx.font='400 '+rs+'px '+BF(); ctx.textAlign='left';
       ctx.fillStyle=p.mid; ctx.fillText(f.role, lx, y+rs*0.95);
     }});
   }
   if(f.company){
-    var cs=Math.round(W*0.020);
+    var cs=fs(W,0.020);
     left.push({h:cs*1.4, gap:0.75, draw:function(y){
       ctx.font='500 '+cs+'px "IBM Plex Mono",monospace'; ctx.textAlign='left';
       ctx.letterSpacing=(cs*0.14)+'px'; ctx.fillStyle=p.dim;
@@ -568,11 +620,11 @@ function renderSquare(W,H,p,f,im,qr){
     }});
   }
   if(f.phrase){
-    var ps=Math.round(W*0.024);
-    ctx.font='italic 400 '+ps+'px "Fraunces",Georgia,serif';
+    var ps=fs(W,0.024);
+    ctx.font='italic 400 '+ps+'px '+TF();
     var pl=wrap(ctx,f.phrase,lw);
     left.push({h:pl.length*ps*1.35, gap:0, draw:function(y){
-      ctx.font='italic 400 '+ps+'px "Fraunces",Georgia,serif'; ctx.textAlign='left';
+      ctx.font='italic 400 '+ps+'px '+TF(); ctx.textAlign='left';
       ctx.fillStyle=p.mid;
       for(var i=0;i<pl.length;i++) ctx.fillText(pl[i], lx, y+ps+i*ps*1.35);
     }});
@@ -582,9 +634,9 @@ function renderSquare(W,H,p,f,im,qr){
   right.push({h:qs, gap:1.0, draw:function(y){ drawQR(ctx,qr,rx,y,qs); }});
   var rows=contactRows();
   if(rows.length){
-    var vs=Math.round(W*0.022), ls=Math.round(W*0.016);
+    var vs=fs(W,0.022), ls=fs(W,0.016);
     var pre=[];
-    ctx.font='400 '+vs+'px "Archivo",Arial,sans-serif';
+    ctx.font='400 '+vs+'px '+BF();
     for(var i=0;i<rows.length;i++) pre.push(wrap(ctx,rows[i][1],rw));
     var totalH=0;
     for(i=0;i<rows.length;i++) totalH += ls*1.5 + pre[i].length*vs*1.30 + vs*0.55;
@@ -596,7 +648,7 @@ function renderSquare(W,H,p,f,im,qr){
         ctx.fillText(rows[i][0], rx, yy+ls);
         ctx.letterSpacing='0px';
         yy += ls*1.5;
-        ctx.font='400 '+vs+'px "Archivo",Arial,sans-serif'; ctx.fillStyle=p.fg;
+        ctx.font='400 '+vs+'px '+BF(); ctx.fillStyle=p.fg;
         for(var j=0;j<pre[i].length;j++) ctx.fillText(pre[i][j], rx, yy+vs*0.9+j*vs*1.30);
         yy += pre[i].length*vs*1.30 + vs*0.55;
       }
@@ -858,6 +910,14 @@ function applyI18n(){
   $$('#lang button').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.lang===lang)); });
   buildSeg($('#formats'), Object.keys(FORMATS), function(k){ return t('fmt.'+k); }, function(){return state.format;}, function(k){ state.format=k; save(); updateDim(); schedule(); track('format', {format:k}); });
   buildSeg($('#qrmode'), QRMODES, function(k){ return t('qr.'+k); }, function(){return state.qrMode;}, function(k){ state.qrMode=k; save(); updateQrNote(); schedule(); track('qr_mode', {mode:k}); });
+  buildSeg($('#fonts'), Object.keys(FONTS), function(k){ return FONTS[k].label; }, function(){return state.font;}, function(k){
+    state.font=k; save(); schedule(); ensureFont(k, schedule); track('font', {font:k});
+  });
+  Array.prototype.forEach.call($('#fonts').children, function(b){ var f=FONTS[b.dataset.k]; b.style.fontFamily='"'+f.title+'",'+(f.gt==='serif'?'serif':'sans-serif'); });
+  buildSeg($('#sizes'), SIZES.map(String), function(k){ return 'A'; }, function(){return String(state.textScale);}, function(k){
+    state.textScale=parseFloat(k); save(); schedule(); track('text_size', {size:k});
+  });
+  Array.prototype.forEach.call($('#sizes').children, function(b,i){ b.style.fontSize=(0.7+i*0.12)+'rem'; b.setAttribute('aria-label', t('size.'+i)); b.title=t('size.'+i); });
   var pk=$('#peek'); pk.textContent = $('#peek-body').hidden ? t('peek.show') : t('peek.hide');
   updateDim(); updateQrNote(); syncSwatches(); syncQuotaNote();
   $('#status').textContent=''; $('#share-status').textContent='';
@@ -881,6 +941,16 @@ syncFields();
 applyI18n();
 restoreImages();
 render(); syncShareUrl();
+if(state.font!=='editorial') ensureFont(state.font, schedule);
+(function(){
+  var sec=$('#sec-typo'); if(!sec) return;
+  var loaded=false;
+  function loadAll(){ if(loaded) return; loaded=true; Object.keys(FONTS).forEach(function(k){ if(k!==state.font) ensureFont(k); }); }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ if(es.some(function(e){ return e.isIntersecting; })){ loadAll(); io.disconnect(); } }, {rootMargin:'200px'});
+    io.observe(sec);
+  } else loadAll();
+})();
 
 if(document.fonts && document.fonts.load){
   Promise.all([

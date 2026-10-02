@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 <script src="vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -102,6 +102,21 @@
         <p class="note" id="bg-note"></p>
         <p class="note warn" id="quota-note" hidden></p>
         <div class="swatches" id="swatches"></div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-typo">
+      <h2 class="sec-h" data-i18n="sec.typo">Typographie</h2>
+      <div class="sec-b">
+        <div class="f-row">
+          <span class="f-lab" data-i18n="typo.font">Police</span>
+          <div class="seg seg-fonts" id="fonts" role="group" data-i18n-aria="typo.font" aria-label="Police"></div>
+        </div>
+        <div class="f-row">
+          <span class="f-lab" data-i18n="typo.size">Taille du texte</span>
+          <div class="seg seg-sizes" id="sizes" role="group" data-i18n-aria="typo.size" aria-label="Taille du texte"></div>
+        </div>
+        <p class="note" data-i18n="typo.note">La disposition ne change pas : seules la police et sa taille.</p>
       </div>
     </section>
 
@@ -177,6 +192,6 @@
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>
