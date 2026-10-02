@@ -91,7 +91,14 @@ var I18N = {
     'print.btn':'Télécharger le PDF','print.share':'Partager le PDF',
     'print.note':'PDF imprimeur : 300 dpi, 3 mm de fond perdu, traits de coupe. Couleurs RVB, ton imprimeur convertit en CMJN.',
     'paper.card55':'Carte de visite 55 × 85 mm','paper.a6':'A6 105 × 148 mm','paper.screen':'Format écran à 300 dpi',
-    'st.pdfprep':'Préparation du PDF…','st.pdfsaved':'PDF enregistré : ','st.pdferr':'Impossible de générer le PDF.'
+    'st.pdfprep':'Préparation du PDF…','st.pdfsaved':'PDF enregistré : ','st.pdferr':'Impossible de générer le PDF.',
+    'sec.theme':'Thème','theme.note':'Un raccourci couleur + police par métier. Tu peux tout ajuster ensuite.',
+    'theme.craft':'Artisanat','theme.health':'Santé','theme.law':'Droit & finance','theme.tech':'Tech','theme.food':'Restauration',
+    'theme.estate':'Immobilier','theme.creative':'Création','theme.tourism':'Tourisme','theme.nature':'Nature','theme.beauty':'Beauté',
+    'sec.verso':'Verso','verso.none':'Aucun','verso.logo':'Logo seul','verso.slogan':'Slogan','verso.text':'Texte du verso',
+    'verso.note':'Deuxième face pour l\u2019impression recto-verso : même fond, logo seul ou une phrase. Le PDF passe à 2 pages.',
+    'verso.nologo':'Pas de logo chargé : le verso affiche la société.',
+    'face.recto':'Recto','face.verso':'Verso'
   },
   en: {
     'title':'Pocket card',
@@ -140,7 +147,14 @@ var I18N = {
     'print.btn':'Download PDF','print.share':'Share PDF',
     'print.note':'Print-ready PDF: 300 dpi, 3 mm bleed, crop marks. RGB colours, your printer converts to CMYK.',
     'paper.card55':'Business card 55 × 85 mm','paper.a6':'A6 105 × 148 mm','paper.screen':'Screen format at 300 dpi',
-    'st.pdfprep':'Preparing the PDF…','st.pdfsaved':'PDF saved: ','st.pdferr':'Could not generate the PDF.'
+    'st.pdfprep':'Preparing the PDF…','st.pdfsaved':'PDF saved: ','st.pdferr':'Could not generate the PDF.',
+    'sec.theme':'Theme','theme.note':'A colour + font shortcut per trade. You can adjust everything afterwards.',
+    'theme.craft':'Crafts','theme.health':'Health','theme.law':'Law & finance','theme.tech':'Tech','theme.food':'Food & hospitality',
+    'theme.estate':'Real estate','theme.creative':'Creative','theme.tourism':'Tourism','theme.nature':'Nature','theme.beauty':'Beauty',
+    'sec.verso':'Back side','verso.none':'None','verso.logo':'Logo only','verso.slogan':'Tagline','verso.text':'Back side text',
+    'verso.note':'Second side for double-sided printing: same background, logo only or a line of text. The PDF becomes 2 pages.',
+    'verso.nologo':'No logo loaded: the back shows the company name.',
+    'face.recto':'Front','face.verso':'Back'
   }
 };
 var lang = 'fr';
@@ -191,6 +205,21 @@ var SIZES = [0.85, 0.92, 1, 1.1, 1.22];
 var DPI=300, PX_PER_MM=DPI/25.4, PT_PER_MM=72/25.4, BLEED_MM=3, MARGIN_MM=8, MARK_GAP_MM=4, MARK_LEN_MM=4;
 var PAPERS = { card55:{w:55,h:85}, a6:{w:105,h:148}, screen:null };
 
+/* Thèmes par métier : un raccourci couleur + police, tout reste modifiable après. */
+var THEMES = [
+  {id:'craft',    bg:'#3b2f2a', font:'bold'},
+  {id:'health',   bg:'#2f6f6a', font:'friendly'},
+  {id:'law',      bg:'#1b3a5c', font:'classic'},
+  {id:'tech',     bg:'#0f172a', font:'modern'},
+  {id:'food',     bg:'#6e2233', font:'elegant'},
+  {id:'estate',   bg:'#24443a', font:'editorial'},
+  {id:'creative', bg:'#f2f2ef', font:'editorial'},
+  {id:'tourism',  bg:'#0b6e8f', font:'friendly'},
+  {id:'nature',   bg:'#4a6b2a', font:'friendly'},
+  {id:'beauty',   bg:'#d9c7c0', font:'elegant'}
+];
+var VERSO_MODES=['none','logo','slogan'];
+
 var DEFAULTS = {
   name:'Camille Ravine',
   role:'Directrice de création',
@@ -213,6 +242,8 @@ var state = {
   textScale: 1,
   paper: 'card55',
   a4: false,
+  verso: {mode:'none', text:''},
+  face: 'recto',
   images: {photo:null, logo:null, partner:null, bg:null},     /* objets Image */
   imageData: {photo:null, logo:null, partner:null, bg:null}   /* dataURL persistés */
 };
@@ -273,6 +304,7 @@ function applySaved(d){
   if(SIZES.indexOf(+d.textScale)>=0) state.textScale=+d.textScale;
   if(d.paper in PAPERS) state.paper=d.paper;
   if(typeof d.a4==='boolean') state.a4=d.a4;
+  if(d.verso && VERSO_MODES.indexOf(d.verso.mode)>=0) state.verso={mode:d.verso.mode, text:String(d.verso.text||'')};
   if(d.images) IMG_KEYS.forEach(function(k){ if(typeof d.images[k]==='string' && d.images[k].indexOf('data:image/')===0) state.imageData[k]=d.images[k]; });
 }
 function load(){
@@ -281,7 +313,7 @@ function load(){
   applySaved(d);
 }
 function save(){
-  var base={v:2, fields:state.fields, format:state.format, phone:state.phone, qrMode:state.qrMode, bgColor:state.bgColor, lang:lang, font:state.font, textScale:state.textScale, paper:state.paper, a4:state.a4};
+  var base={v:2, fields:state.fields, format:state.format, phone:state.phone, qrMode:state.qrMode, bgColor:state.bgColor, lang:lang, font:state.font, textScale:state.textScale, paper:state.paper, a4:state.a4, verso:state.verso};
   var full=Object.assign({images:state.imageData}, base);
   try{ localStorage.setItem(KEY, JSON.stringify(full)); quotaHit=false; }
   catch(e){
@@ -316,6 +348,11 @@ function applyParams(){
   if(w>=200 && h>=200 && w<=6000 && h<=6000){ state.phone={preset:'custom',w:w,h:h}; state.format='phone'; touched=true; }
   var fo=sp.get('font'); if(fo && FONTS[fo]){ state.font=fo; touched=true; }
   var sz=parseFloat(sp.get('size')); if(SIZES.indexOf(sz)>=0){ state.textScale=sz; touched=true; }
+  var th=sp.get('theme'); if(th){ for(var ti=0;ti<THEMES.length;ti++) if(THEMES[ti].id===th){ state.bgColor=THEMES[ti].bg; state.font=THEMES[ti].font; touched=true; } }
+  if(c && /^#?[0-9a-f]{6}$/i.test(c)) state.bgColor='#'+c.replace('#','').toLowerCase();
+  if(fo && FONTS[fo]) state.font=fo;
+  var vm=sp.get('verso'); if(vm && VERSO_MODES.indexOf(vm)>=0){ state.verso.mode=vm; touched=true; }
+  if(sp.has('versotext')){ state.verso.text=String(sp.get('versotext')).slice(0,300); touched=true; }
   var pa=sp.get('paper'); if(pa && (pa in PAPERS)){ state.paper=pa; touched=true; }
   if(sp.has('a4')){ state.a4 = sp.get('a4')==='1'; touched=true; }
   var l=sp.get('lang'); if(l==='fr'||l==='en'){ lang=l; touched=true; }
@@ -333,6 +370,7 @@ function buildShareUrl(){
   if(state.textScale!==1) sp.set('size', String(state.textScale));
   if(state.paper!=='card55') sp.set('paper', state.paper);
   if(state.a4) sp.set('a4','1');
+  if(state.verso.mode!=='none'){ sp.set('verso', state.verso.mode); if(state.verso.text) sp.set('versotext', state.verso.text); }
   sp.set('lang', lang);
   return location.origin + location.pathname + '?' + sp.toString();
 }
@@ -469,7 +507,7 @@ function contactRows(){
   return rows;
 }
 
-function renderInto(canvas, W, H, bleed, square){
+function renderInto(canvas, W, H, bleed, square, face){
   var prev=ctx, c=canvas.getContext('2d');
   var TW=W+2*bleed, TH=H+2*bleed;
   if(canvas.width!==TW||canvas.height!==TH){ canvas.width=TW; canvas.height=TH; }
@@ -480,6 +518,7 @@ function renderInto(canvas, W, H, bleed, square){
   if(im.bg){ drawCover(c,im.bg,0,0,TW,TH); c.fillStyle='rgba(8,10,12,0.48)'; c.fillRect(0,0,TW,TH); }
   else { c.fillStyle=state.bgColor; c.fillRect(0,0,TW,TH); }
   c.save(); c.translate(bleed,bleed);
+  if(face==='verso'){ renderVerso(W,H,p,f,im); c.restore(); ctx=prev; return; }
   if(im.partner){
     var pad=W*0.055;
     drawContain(c,im.partner,W-pad,pad,W*0.20,W*0.075,'right');
@@ -490,9 +529,48 @@ function renderInto(canvas, W, H, bleed, square){
   c.restore();
   ctx=prev;
 }
+function renderVerso(W,H,p,f,im){
+  var cx=W/2, mode=state.verso.mode, blocks=[];
+  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  if(mode==='logo' && im.logo){
+    var r=im.logo.naturalWidth/im.logo.naturalHeight, lw=W*0.55, lh=lw/r;
+    if(lh>H*0.32){ lh=H*0.32; lw=lh*r; }
+    blocks.push({h:lh, gap:1.0, draw:function(y){ ctx.drawImage(im.logo, cx-lw/2, y, lw, lh); }});
+  } else if(mode==='slogan'){
+    var txt=String(state.verso.text||f.phrase||'').trim();
+    if(txt){
+      var ps=fs(W,0.048);
+      ctx.font='italic 400 '+ps+'px '+TF();
+      var lines=wrap(ctx,txt,W*0.74);
+      blocks.push({h:lines.length*ps*1.3, gap:1.0, draw:function(y){
+        ctx.font='italic 400 '+ps+'px '+TF(); ctx.fillStyle=p.fg; ctx.textAlign='center';
+        for(var i=0;i<lines.length;i++) ctx.fillText(lines[i], cx, y+ps+i*ps*1.3);
+      }});
+    }
+    if(im.logo){
+      var r2=im.logo.naturalWidth/im.logo.naturalHeight, lw2=Math.min(W*0.30, r2*W*0.09), lh2=lw2/r2;
+      if(lh2>W*0.09){ lh2=W*0.09; lw2=lh2*r2; }
+      blocks.unshift({h:lh2, gap:1.2, draw:function(y){ ctx.drawImage(im.logo, cx-lw2/2, y, lw2, lh2); }});
+    }
+  }
+  if(f.company && !(mode==='logo' && im.logo)){
+    var cs=fs(W,0.028);
+    blocks.push({h:cs*1.4, gap:0, draw:function(y){
+      ctx.font='500 '+cs+'px "IBM Plex Mono",monospace'; ctx.fillStyle=p.dim; ctx.textAlign='center';
+      ctx.letterSpacing=(cs*0.16)+'px'; ctx.fillText(String(f.company).toUpperCase(), cx, y+cs); ctx.letterSpacing='0px';
+    }});
+  }
+  if(f.web && mode!=='none'){
+    var ws=fs(W,0.024);
+    blocks.push({h:ws*1.3, gap:0.6, draw:function(y){
+      ctx.font='400 '+ws+'px '+BF(); ctx.fillStyle=p.dim; ctx.textAlign='center'; ctx.fillText(f.web, cx, y+ws);
+    }});
+  }
+  stack(blocks, H, W*0.06);
+}
 function render(){
   var D=dims();
-  renderInto(cv, D.w, D.h, 0, state.format==='square');
+  renderInto(cv, D.w, D.h, 0, state.format==='square', state.face);
 }
 
 function renderTall(W,H,p,f,im,qr){
@@ -715,7 +793,7 @@ function syncSeg(host, current){
 
 function updateDim(){
   var D=dims(), label = state.format==='phone' ? t('fmt.phone')+' · '+phoneLabel() : t('fmt.'+state.format);
-  $('#dim').textContent = label+' · '+D.w+' × '+D.h;
+  $('#dim').textContent = label+' · '+D.w+' × '+D.h+(state.face==='verso'?' · '+t('face.verso'):'');
   $('#phone-row').hidden = state.format!=='phone';
   $('#fmt-note').textContent = (state.format==='phone' && state.phone.preset==='screen') ? t('fmt.note.screen') : t('fmt.note');
   syncPresetSelect(); syncPaperSelect();
@@ -725,6 +803,19 @@ function updateQrNote(){
   $('#freetext-wrap').hidden = state.qrMode!=='text';
   $('#mode-dim').textContent = t('qr.dim')+t('qr.'+state.qrMode);
 }
+
+/* thème actif : couleur + police correspondent à un thème */
+function activeTheme(){
+  for(var i=0;i<THEMES.length;i++) if(THEMES[i].bg.toLowerCase()===state.bgColor.toLowerCase() && THEMES[i].font===state.font) return THEMES[i].id;
+  return null;
+}
+function syncVerso(){
+  var m=state.verso.mode;
+  $('#verso-text-wrap').hidden = m!=='slogan';
+  $('#face').hidden = m==='none';
+  var n=$('#verso-note'); n.textContent = (m==='logo' && !state.images.logo) ? t('verso.nologo') : t('verso.note');
+}
+$('#f-verso-text').addEventListener('input', function(){ state.verso.text=this.value; save(); schedule(); });
 
 /* presets */
 function syncPresetSelect(){
@@ -761,7 +852,7 @@ $$('[data-field]').forEach(function(el){
   var k=el.dataset.field;
   el.addEventListener('input', function(){ state.fields[k]=el.value; save(); schedule(); });
 });
-function syncFields(){ $$('[data-field]').forEach(function(el){ el.value = state.fields[el.dataset.field]||''; }); }
+function syncFields(){ $$('[data-field]').forEach(function(el){ el.value = state.fields[el.dataset.field]||''; }); var vt=$('#f-verso-text'); if(vt) vt.value=state.verso.text||''; }
 
 /* pastilles de fond */
 (function(){
@@ -783,6 +874,7 @@ function syncFields(){ $$('[data-field]').forEach(function(el){ el.value = state
   wrapEl.appendChild(inp); wrapEl.appendChild(lab); host.appendChild(wrapEl);
 })();
 function syncSwatches(){
+  var th=$('#themes'); if(th && th.children.length) syncSeg(th, activeTheme());
   $$('.sw').forEach(function(b,i){
     b.setAttribute('aria-pressed', String(SWATCHES[i][0].toLowerCase()===state.bgColor.toLowerCase()));
   });
@@ -825,7 +917,7 @@ $$('.zone').forEach(function(z){
       raw.onload=function(){
         var small = shrink(raw, file.type) || fr.result;
         state.imageData[key]=small;
-        setImage(key, small, z, function(){ save(); syncSwatches(); schedule(); track('image', {zone:key}); });
+        setImage(key, small, z, function(){ save(); syncSwatches(); syncVerso(); schedule(); track('image', {zone:key}); });
       };
       raw.onerror=function(){};
       raw.src=fr.result;
@@ -844,7 +936,7 @@ $$('.zone').forEach(function(z){
   clear.addEventListener('click', function(e){
     e.stopPropagation();
     state.images[key]=null; state.imageData[key]=null; thumb.removeAttribute('src'); z.classList.remove('filled');
-    save(); syncSwatches(); schedule();
+    save(); syncSwatches(); syncVerso(); schedule();
   });
 });
 function restoreImages(){
@@ -882,42 +974,39 @@ function canvasImageData(canvas){
 }
 function n2(x){ return (Math.round(x*100)/100).toString(); }
 function pdfStr(s){ return '('+String(s||'').replace(/[^\x20-\x7e]/g,'').replace(/[\\()]/g,function(m){ return '\\'+m; })+')'; }
-function buildPdf(o){
-  /* o: imgW, imgH, img{bytes,filter}, pageW, pageH (pt), imgX, imgY, imgWpt, imgHpt, trim[x,y,w,h], bleed[x,y,w,h], marks[[x1,y1,x2,y2]], title */
-  var enc=new TextEncoder(), parts=[], offsets=[], len=0;
+function buildPdf(pages, title){
+  /* pages: [{imgW, imgH, img{bytes,filter}, pageW, pageH, imgX, imgY, imgWpt, imgHpt, trim, bleed, marks}] */
+  var enc=new TextEncoder(), parts=[], offsets=[], len=0, n=0;
   function push(s){ var b=(typeof s==='string')?enc.encode(s):s; parts.push(b); len+=b.length; }
-  var content='q '+n2(o.imgWpt)+' 0 0 '+n2(o.imgHpt)+' '+n2(o.imgX)+' '+n2(o.imgY)+' cm /Im1 Do Q\n0 G 0.25 w\n';
-  o.marks.forEach(function(m){ content+=n2(m[0])+' '+n2(m[1])+' m '+n2(m[2])+' '+n2(m[3])+' l S\n'; });
-  var contentBytes=enc.encode(content);
+  function obj(body, stream){ n++; offsets.push(len); push(n+' 0 obj\n'); push(body); if(stream){ push('\nstream\n'); push(stream); push('\nendstream'); } push('\nendobj\n'); return n; }
   var box=function(b){ return '['+n2(b[0])+' '+n2(b[1])+' '+n2(b[0]+b[2])+' '+n2(b[1]+b[3])+']'; };
   push('%PDF-1.4\n%\xe2\xe3\xcf\xd3\n');
-  var objs=[
-    '<< /Type /Catalog /Pages 2 0 R >>',
-    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+n2(o.pageW)+' '+n2(o.pageH)+'] /TrimBox '+box(o.trim)+' /BleedBox '+box(o.bleed)+' /Resources << /XObject << /Im1 5 0 R >> >> /Contents 4 0 R >>',
-    null, null,
-    '<< /Title '+pdfStr(o.title)+' /Producer (Carte de poche) /Creator (cartedepoche.fr) >>'
-  ];
-  for(var i=0;i<objs.length;i++){
-    offsets.push(len);
-    push((i+1)+' 0 obj\n');
-    if(i===3){ push('<< /Length '+contentBytes.length+' >>\nstream\n'); push(contentBytes); push('\nendstream'); }
-    else if(i===4){ push('<< /Type /XObject /Subtype /Image /Width '+o.imgW+' /Height '+o.imgH+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /'+o.img.filter+' /Length '+o.img.bytes.length+' >>\nstream\n'); push(o.img.bytes); push('\nendstream'); }
-    else push(objs[i]);
-    push('\nendobj\n');
-  }
-  var xref=len, pad=function(n){ return ('0000000000'+n).slice(-10); };
-  var x='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n';
+  /* numérotation : 1 catalogue, 2 pages, puis 3 objets par page, puis info */
+  var kids=[]; for(var i=0;i<pages.length;i++) kids.push((3+i*3)+' 0 R');
+  obj('<< /Type /Catalog /Pages 2 0 R >>');
+  obj('<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+pages.length+' >>');
+  pages.forEach(function(o,i){
+    var pageNo=3+i*3, contentNo=pageNo+1, imgNo=pageNo+2;
+    var content='q '+n2(o.imgWpt)+' 0 0 '+n2(o.imgHpt)+' '+n2(o.imgX)+' '+n2(o.imgY)+' cm /Im1 Do Q\n0 G 0.25 w\n';
+    o.marks.forEach(function(m){ content+=n2(m[0])+' '+n2(m[1])+' m '+n2(m[2])+' '+n2(m[3])+' l S\n'; });
+    var cb=enc.encode(content);
+    obj('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+n2(o.pageW)+' '+n2(o.pageH)+'] /TrimBox '+box(o.trim)+' /BleedBox '+box(o.bleed)+' /Resources << /XObject << /Im1 '+imgNo+' 0 R >> >> /Contents '+contentNo+' 0 R >>');
+    obj('<< /Length '+cb.length+' >>', cb);
+    obj('<< /Type /XObject /Subtype /Image /Width '+o.imgW+' /Height '+o.imgH+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /'+o.img.filter+' /Length '+o.img.bytes.length+' >>', o.img.bytes);
+  });
+  var infoNo=obj('<< /Title '+pdfStr(title)+' /Producer (Carte de poche) /Creator (cartedepoche.fr) >>');
+  var xref=len, pad=function(x){ return ('0000000000'+x).slice(-10); };
+  var x='xref\n0 '+(n+1)+'\n0000000000 65535 f \n';
   for(i=0;i<offsets.length;i++) x+=pad(offsets[i])+' 00000 n \n';
-  x+='trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R /Info 6 0 R >>\nstartxref\n'+xref+'\n%%EOF\n';
+  x+='trailer\n<< /Size '+(n+1)+' /Root 1 0 R /Info '+infoNo+' 0 R >>\nstartxref\n'+xref+'\n%%EOF\n';
   push(x);
   return new Blob(parts, {type:'application/pdf'});
 }
 function makePdf(){
   var S=paperSpec(), bleedPx=Math.round(BLEED_MM*PX_PER_MM);
-  var off=document.createElement('canvas');
-  renderInto(off, S.px, S.py, bleedPx, S.square);
-  var imgW=off.width, imgH=off.height;
+  var faces=['recto']; if(state.verso.mode!=='none') faces.push('verso');
+  var canvases=faces.map(function(face){ var off=document.createElement('canvas'); renderInto(off, S.px, S.py, bleedPx, S.square, face); return off; });
+  var off=canvases[0], imgW=off.width, imgH=off.height;
   var imgWmm=imgW/PX_PER_MM, imgHmm=imgH/PX_PER_MM, bmm=bleedPx/PX_PER_MM;
   var tw=S.wmm, th=S.hmm, M=MARGIN_MM, scale=1, pageW, pageH, ox, oy, reduced=false;
   if(state.a4){
@@ -933,17 +1022,18 @@ function makePdf(){
     marks.push([c[0], c[1]+c[3]*g, c[0], c[1]+c[3]*(g+L)]);
   });
   var pt=function(mm){ return mm*PT_PER_MM; };
-  return canvasImageData(off).then(function(img){
-    var blob=buildPdf({
+  return Promise.all(canvases.map(canvasImageData)).then(function(imgs){
+    var pages=imgs.map(function(img){ return {
       imgW:imgW, imgH:imgH, img:img,
       pageW:pt(pageW), pageH:pt(pageH),
       imgX:pt(ox-bS), imgY:pt(oy-bS), imgWpt:pt(imgWmm*scale), imgHpt:pt(imgHmm*scale),
       trim:[pt(ox),pt(oy),pt(twS),pt(thS)], bleed:[pt(ox-bS),pt(oy-bS),pt(twS+2*bS),pt(thS+2*bS)],
-      marks:marks.map(function(m){ return m.map(pt); }),
-      title:state.fields.name||t('title')
-    });
+      marks:marks.map(function(m){ return m.map(pt); })
+    }; });
+    var blob=buildPdf(pages, state.fields.name||t('title'));
+    var img=imgs[0];
     var base=(state.fields.name||'carte').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')||'carte';
-    var name=base+'-impression-'+S.tag+(state.a4?'-a4':'')+(reduced?'-reduit':'')+'.pdf';
+    var name=base+'-impression-'+S.tag+(state.a4?'-a4':'')+(reduced?'-reduit':'')+(faces.length>1?'-recto-verso':'')+'.pdf';
     return {blob:blob, name:name, lossless:img.filter==='FlateDecode'};
   });
 }
@@ -969,7 +1059,7 @@ function syncPaperSelect(){
       var url=URL.createObjectURL(r.blob), el=document.createElement('a'); el.href=url; el.download=r.name; el.rel='noopener';
       document.body.appendChild(el); el.click(); el.remove(); setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
       st.textContent=t('st.pdfsaved')+r.name+' ('+Math.round(r.blob.size/1024)+' Ko).';
-      track('pdf', {paper:state.paper, a4:state.a4?1:0, lossless:r.lossless?1:0});
+      track('pdf', {paper:state.paper, a4:state.a4?1:0, lossless:r.lossless?1:0, verso:state.verso.mode});
     }).catch(function(){ st.textContent=t('st.pdferr'); }).then(function(){ btn.disabled=false; });
   });
   var canSharePdf=false;
@@ -1003,7 +1093,7 @@ $('#peek').addEventListener('click', function(){
 function filename(){
   var base=(state.fields.name||'carte').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')||'carte';
   var D=dims();
-  return base+'-'+state.format+'-'+D.w+'x'+D.h+'.png';
+  return base+'-'+state.format+'-'+D.w+'x'+D.h+(state.face==='verso'?'-verso':'')+'.png';
 }
 function toBlob(cb){
   try{ cv.toBlob(function(b){ cb(b||null); }, 'image/png'); }catch(e){ cb(null); }
@@ -1074,13 +1164,23 @@ function applyI18n(){
   buildSeg($('#formats'), Object.keys(FORMATS), function(k){ return t('fmt.'+k); }, function(){return state.format;}, function(k){ state.format=k; save(); updateDim(); schedule(); track('format', {format:k}); });
   buildSeg($('#qrmode'), QRMODES, function(k){ return t('qr.'+k); }, function(){return state.qrMode;}, function(k){ state.qrMode=k; save(); updateQrNote(); schedule(); track('qr_mode', {mode:k}); });
   buildSeg($('#fonts'), Object.keys(FONTS), function(k){ return FONTS[k].label; }, function(){return state.font;}, function(k){
-    state.font=k; save(); schedule(); ensureFont(k, schedule); track('font', {font:k});
+    state.font=k; save(); schedule(); ensureFont(k, schedule); syncSwatches(); track('font', {font:k});
   });
   Array.prototype.forEach.call($('#fonts').children, function(b){ var f=FONTS[b.dataset.k]; b.style.fontFamily='"'+f.title+'",'+(f.gt==='serif'?'serif':'sans-serif'); });
   buildSeg($('#sizes'), SIZES.map(String), function(k){ return 'A'; }, function(){return String(state.textScale);}, function(k){
     state.textScale=parseFloat(k); save(); schedule(); track('text_size', {size:k});
   });
   Array.prototype.forEach.call($('#sizes').children, function(b,i){ b.style.fontSize=(0.7+i*0.12)+'rem'; b.setAttribute('aria-label', t('size.'+i)); b.title=t('size.'+i); });
+  buildSeg($('#themes'), THEMES.map(function(x){ return x.id; }), function(k){ return t('theme.'+k); }, function(){ return activeTheme(); }, function(k){
+    var th=THEMES.filter(function(x){ return x.id===k; })[0]; if(!th) return;
+    state.bgColor=th.bg; state.font=th.font; save(); syncSwatches(); syncSeg($('#fonts'), state.font); schedule(); ensureFont(th.font, schedule); track('theme', {theme:k});
+  });
+  Array.prototype.forEach.call($('#themes').children, function(b){ var th=THEMES.filter(function(x){ return x.id===b.dataset.k; })[0]; var dot=document.createElement('i'); dot.className='dot'; dot.style.background=th.bg; b.insertBefore(dot, b.firstChild); });
+  buildSeg($('#verso-mode'), VERSO_MODES, function(k){ return t('verso.'+k); }, function(){ return state.verso.mode; }, function(k){
+    state.verso.mode=k; save(); syncVerso(); if(k==='none' && state.face==='verso'){ state.face='recto'; syncSeg($('#face'),'recto'); } schedule(); track('verso', {mode:k});
+  });
+  buildSeg($('#face'), ['recto','verso'], function(k){ return t('face.'+k); }, function(){ return state.face; }, function(k){ state.face=k; updateDim(); schedule(); });
+  syncVerso();
   var pk=$('#peek'); pk.textContent = $('#peek-body').hidden ? t('peek.show') : t('peek.hide');
   updateDim(); updateQrNote(); syncSwatches(); syncQuotaNote(); syncPaperSelect();
   $('#status').textContent=''; $('#share-status').textContent='';

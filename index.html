@@ -36,7 +36,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 <script src="vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -77,6 +77,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="f"><label for="f-web" data-i18n="f.web">Site web</label><input id="f-web" data-field="web" type="text" autocomplete="off"></div>
           <div class="f"><label for="f-address" data-i18n="f.address">Adresse</label><input id="f-address" data-field="address" type="text" autocomplete="off"></div>
         </div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2 class="sec-h" data-i18n="sec.theme">Thème</h2>
+      <div class="sec-b">
+        <div class="seg seg-themes" id="themes" role="group" data-i18n-aria="sec.theme" aria-label="Thème"></div>
+        <p class="note" data-i18n="theme.note">Un raccourci couleur + police par métier. Tu peux tout ajuster ensuite.</p>
       </div>
     </section>
 
@@ -131,6 +139,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </section>
 
     <section class="sec">
+      <h2 class="sec-h" data-i18n="sec.verso">Verso</h2>
+      <div class="sec-b">
+        <div class="seg" id="verso-mode" role="group" data-i18n-aria="sec.verso" aria-label="Verso"></div>
+        <div class="f" id="verso-text-wrap" hidden><label for="f-verso-text" data-i18n="verso.text">Texte du verso</label><textarea id="f-verso-text" placeholder="Par défaut : la phrase de la carte"></textarea></div>
+        <p class="note" id="verso-note"></p>
+      </div>
+    </section>
+
+    <section class="sec">
       <h2 class="sec-h" data-i18n="sec.qr">Le QR</h2>
       <div class="sec-b">
         <div class="seg" id="qrmode" role="group" data-i18n-aria="qr.group" aria-label="Contenu du QR code"></div>
@@ -179,6 +196,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <aside class="col-view">
     <div class="viewbar">
       <span class="dim" id="dim"></span>
+      <div class="seg seg-face" id="face" role="group" aria-label="Recto / Verso" hidden></div>
       <span class="dim" id="mode-dim"></span>
     </div>
     <div class="stage"><canvas id="cv" width="1206" height="2622" data-i18n-aria="preview" aria-label="Aperçu de la carte"></canvas></div>
@@ -214,6 +232,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

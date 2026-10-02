@@ -28,6 +28,8 @@ Une carte de contact à montrer sur écran ou à imprimer, avec un QR code qui a
 - **Télécharger ou Partager** : PNG à la taille exacte, ou feuille de partage native sur mobile (enregistrer dans Photos, envoyer par message).
 - **PDF imprimeur** : carte de visite 55 × 85 mm, A6, ou le format écran à 300 dpi, avec 3 mm de fond perdu et traits de coupe, option « centrer sur une page A4 » pour imprimer chez soi. Généré dans le navigateur, sans bibliothèque. PDF image (pas de texte vectoriel), couleurs RVB.
 - **Lien de pré-remplissage** pour les équipes : une entreprise crée un lien avec sa société, son site, sa couleur, et chaque personne ajoute son nom et le logo.
+- **Thèmes par métier** : 10 raccourcis couleur + police (artisanat, santé, droit, tech, restauration, immobilier, création, tourisme, nature, beauté), tout reste réglable après.
+- **Verso** : deuxième face pour l'impression recto-verso, logo seul ou slogan, aperçu Recto / Verso, PNG du verso et PDF imprimeur à 2 pages.
 - **Police et taille du texte** : 6 paires de polices (éditorial, classique, moderne, élégant, brut, rond) et 5 tailles, sans toucher à la disposition.
 - **FR / EN**, clair / sombre, mémorisation locale (textes, réglages, images).
 
@@ -37,7 +39,7 @@ Une carte de contact à montrer sur écran ou à imprimer, avec un QR code qui a
 2. Section « Partager » : copie le lien de pré-remplissage.
 3. Envoie-le à l'équipe. Chacun ouvre le lien, tape son nom, charge le logo (fichier PNG ou SVG), clique « Mon écran », télécharge.
 
-Paramètres d'URL acceptés : `name`, `role`, `company`, `phrase`, `phone`, `email`, `web`, `address`, `freetext`, `color` (hex sans `#`), `qr` (`vcard` `tel` `email` `web` `text`), `format` (`phone` `story` `square`), `preset` (voir ci-dessous), `w` et `h` (taille libre en pixels), `font` (`editorial` `classic` `modern` `elegant` `bold` `friendly`), `size` (`0.85` `0.92` `1` `1.1` `1.22`), `paper` (`card55` `a6` `screen`), `a4` (`1`), `lang` (`fr` `en`).
+Paramètres d'URL acceptés : `name`, `role`, `company`, `phrase`, `phone`, `email`, `web`, `address`, `freetext`, `color` (hex sans `#`), `qr` (`vcard` `tel` `email` `web` `text`), `format` (`phone` `story` `square`), `preset` (voir ci-dessous), `w` et `h` (taille libre en pixels), `font` (`editorial` `classic` `modern` `elegant` `bold` `friendly`), `size` (`0.85` `0.92` `1` `1.1` `1.22`), `paper` (`card55` `a6` `screen`), `a4` (`1`), `theme` (`craft` `health` `law` `tech` `food` `estate` `creative` `tourism` `nature` `beauty`), `verso` (`none` `logo` `slogan`), `versotext`, `lang` (`fr` `en`).
 
 Exemple :
 
@@ -118,6 +120,8 @@ A contact card to show on screen or print, with a QR code that really adds you t
 - **Download or Share**: exact-size PNG, or the native share sheet on mobile (save to Photos, send by message).
 - **Print-ready PDF**: business card 55 × 85 mm, A6, or the screen format at 300 dpi, with 3 mm bleed and crop marks, plus a "centre on an A4 page" option for home printing. Generated in the browser, no library. Raster PDF (no vector text), RGB colours.
 - **Pre-fill link** for teams: a company builds a link with its name, website and colour, and each person adds their own name and the logo.
+- **Trade themes**: 10 colour + font shortcuts (crafts, health, law, tech, food, real estate, creative, tourism, nature, beauty), everything stays adjustable.
+- **Back side**: second face for double-sided printing, logo only or tagline, Front / Back preview, back PNG and 2-page print PDF.
 - **Font and text size**: 6 font pairs (editorial, classic, modern, elegant, bold, friendly) and 5 sizes, without touching the layout.
 - **FR / EN**, light / dark, local memory (texts, settings, images).
 
@@ -127,7 +131,7 @@ A contact card to show on screen or print, with a QR code that really adds you t
 2. "Share" section: copy the pre-fill link.
 3. Send it to the team. Everyone opens the link, types their name, loads the logo (PNG or SVG), taps "My screen", downloads.
 
-Accepted URL parameters: `name`, `role`, `company`, `phrase`, `phone`, `email`, `web`, `address`, `freetext`, `color` (hex without `#`), `qr` (`vcard` `tel` `email` `web` `text`), `format` (`phone` `story` `square`), `preset` (see the table above), `w` and `h` (free size in pixels), `font` (`editorial` `classic` `modern` `elegant` `bold` `friendly`), `size` (`0.85` `0.92` `1` `1.1` `1.22`), `paper` (`card55` `a6` `screen`), `a4` (`1`), `lang` (`fr` `en`).
+Accepted URL parameters: `name`, `role`, `company`, `phrase`, `phone`, `email`, `web`, `address`, `freetext`, `color` (hex without `#`), `qr` (`vcard` `tel` `email` `web` `text`), `format` (`phone` `story` `square`), `preset` (see the table above), `w` and `h` (free size in pixels), `font` (`editorial` `classic` `modern` `elegant` `bold` `friendly`), `size` (`0.85` `0.92` `1` `1.1` `1.22`), `paper` (`card55` `a6` `screen`), `a4` (`1`), `theme` (`craft` `health` `law` `tech` `food` `estate` `creative` `tourism` `nature` `beauty`), `verso` (`none` `logo` `slogan`), `versotext`, `lang` (`fr` `en`).
 
 The logo never travels through the URL: each person loads it by hand and it stays in their browser.
 
