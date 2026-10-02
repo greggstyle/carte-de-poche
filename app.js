@@ -10,34 +10,35 @@ var cv = $('#cv'), ctx = cv.getContext('2d');
    Seuls des événements anonymes sont envoyés : jamais les textes de la carte. */
 function track(name, data){
   try{ if(typeof window.va==='function') window.va('event', {name:name, data:data||{}}); }catch(e){}
-  try{ if(gaLoaded && typeof window.gtag==='function') window.gtag('event', name, data||{}); }catch(e){}
+  try{ var ev=Object.assign({event:name}, data||{}); (window.dataLayer=window.dataLayer||[]).push(ev); }catch(e){}
 }
 
-/* ---------- consentement (Google Consent Mode v2, mode basique) ----------
-   gtag.js n'est chargé qu'après un « Accepter » explicite. Le choix est mémorisé 6 mois. */
-var CONSENT_KEY='carte-de-poche/consent', gaLoaded=false;
+/* ---------- consentement (Google Consent Mode v2) ----------
+   GTM se charge toujours, mais le consentement est refusé par défaut (voir index.html) :
+   aucune balise Google ne dépose de cookie avant « Accepter ». Choix mémorisé 6 mois. */
+var CONSENT_KEY='carte-de-poche/consent';
 function readConsent(){
   try{ var c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null'); if(c && c.until>Date.now()) return c.value; }catch(e){}
   return null;
 }
 function writeConsent(v){ try{ localStorage.setItem(CONSENT_KEY, JSON.stringify({value:v, until:Date.now()+1000*60*60*24*182})); }catch(e){} }
-function loadGA(){
-  if(gaLoaded || !window.GA_ID || typeof window.gtag!=='function') return;
-  gaLoaded=true;
-  window.gtag('consent','update',{analytics_storage:'granted'});
-  var s=document.createElement('script'); s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(window.GA_ID);
-  document.head.appendChild(s);
-  window.gtag('js', new Date());
-  window.gtag('config', window.GA_ID);
+function grantConsent(){
+  try{
+    if(typeof window.gtag==='function') window.gtag('consent','update',{analytics_storage:'granted', ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied'});
+    (window.dataLayer=window.dataLayer||[]).push({event:'consent_granted'});
+  }catch(e){}
+}
+function denyConsent(){
+  try{ (window.dataLayer=window.dataLayer||[]).push({event:'consent_denied'}); }catch(e){}
 }
 function showConsent(show){ var el=$('#consent'); if(el) el.hidden=!show; }
 (function(){
   var c=readConsent();
-  if(c==='granted') loadGA();
+  if(c==='granted') grantConsent();
   else if(c===null) showConsent(true);
   var yes=$('#consent-yes'), no=$('#consent-no'), open=$('#consent-open');
-  if(yes) yes.addEventListener('click', function(){ writeConsent('granted'); showConsent(false); loadGA(); });
-  if(no)  no.addEventListener('click', function(){ writeConsent('denied'); showConsent(false); });
+  if(yes) yes.addEventListener('click', function(){ writeConsent('granted'); showConsent(false); grantConsent(); });
+  if(no)  no.addEventListener('click', function(){ writeConsent('denied'); showConsent(false); denyConsent(); });
   if(open) open.addEventListener('click', function(){ showConsent(true); });
 })();
 
@@ -77,7 +78,7 @@ var I18N = {
     'share.label':'Lien de pré-remplissage','share.copy':'Copier le lien',
     'share.copied':'Lien copié.','share.copyfail':'Copie impossible ici : sélectionne le lien et copie-le à la main.',
     'reset':'Tout effacer','reset.confirm':'Effacer les textes, les images et les réglages mémorisés sur cet appareil ?',
-    'foot.privacy':'Le contenu de ta carte reste dans ton navigateur : rien n\u2019est envoyé à un serveur. Mesure d\u2019audience (Vercel Analytics, Google Analytics).',
+    'foot.privacy':'Le contenu de ta carte reste dans ton navigateur : rien n\u2019est envoyé à un serveur. Mesure d\u2019audience (Vercel Analytics, Google Tag Manager / Analytics).',
     'peek.empty':'(rien à encoder)',
     'row.tel':'TÉL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADR',
     'consent.title':'Un cookie pour mesurer l\u2019audience ?',
@@ -121,7 +122,7 @@ var I18N = {
     'share.label':'Pre-fill link','share.copy':'Copy link',
     'share.copied':'Link copied.','share.copyfail':'Cannot copy here: select the link and copy it by hand.',
     'reset':'Clear everything','reset.confirm':'Clear the texts, images and settings stored on this device?',
-    'foot.privacy':'Your card\u2019s content stays in your browser: nothing is sent to a server. Audience measurement (Vercel Analytics, Google Analytics).',
+    'foot.privacy':'Your card\u2019s content stays in your browser: nothing is sent to a server. Audience measurement (Vercel Analytics, Google Tag Manager / Analytics).',
     'peek.empty':'(nothing to encode)',
     'row.tel':'TEL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADDR',
     'consent.title':'A cookie to measure audience?',

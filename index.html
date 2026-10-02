@@ -6,7 +6,7 @@
 <title>Carte de poche</title>
 <meta name="description" content="Crée ta carte de contact avec QR code vCard, adaptée à ton téléphone. Gratuit, open source, tout reste dans ton navigateur.">
 <meta name="theme-color" content="#1a5c7a">
-<!-- Google tag (gtag.js), Consent Mode v2 : rien n'est chargé ni déposé avant un consentement explicite -->
+<!-- Consent Mode v2 : consentement refusé par défaut, mis à jour par la bannière. Doit précéder GTM. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -14,8 +14,14 @@
     ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
     analytics_storage: 'denied', wait_for_update: 500
   });
-  window.GA_ID = 'G-0QM258T49E';
 </script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T5V4L7X7');</script>
+<!-- End Google Tag Manager -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -34,6 +40,10 @@
 <script src="vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T5V4L7X7"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <div class="wrap">
   <main class="col-form">
@@ -160,7 +170,7 @@
     </section>
 
     <footer class="foot">
-      <span data-i18n="foot.privacy">Le contenu de ta carte reste dans ton navigateur : rien n'est envoyé à un serveur. Mesure d'audience (Vercel Analytics, Google Analytics).</span>
+      <span data-i18n="foot.privacy">Le contenu de ta carte reste dans ton navigateur : rien n'est envoyé à un serveur. Mesure d'audience (Vercel Analytics, Google Tag Manager / Analytics).</span>
       <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">GitHub</a>
       <button type="button" class="linklike" id="consent-open" data-i18n="consent.manage">Cookies</button>
     </footer>
@@ -192,6 +202,6 @@
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
