@@ -144,6 +144,8 @@ var FORMATS = {
 };
 /* Résolutions natives (pixels), fiches constructeurs : voir README. */
 var PRESETS = [
+  {id:'iphone-duo',        label:'iPhone Duo (fermé)',   w:1398, h:2034},
+  {id:'iphone-duo-open',   label:'iPhone Duo (déplié)',  w:1878, h:2670},
   {id:'iphone-16-pro-max', label:'iPhone 16 Pro Max', w:1320, h:2868},
   {id:'iphone-16-pro',     label:'iPhone 16 Pro',     w:1206, h:2622},
   {id:'iphone-16',         label:'iPhone 16 / 15',    w:1179, h:2556},

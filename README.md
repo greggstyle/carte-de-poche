@@ -50,6 +50,8 @@ Le logo ne passe jamais par l'URL : il est chargé à la main par chaque personn
 
 | preset | appareil | pixels |
 |---|---|---|
+| `iphone-duo` | iPhone Duo, écran extérieur (fermé) | 1398 × 2034 |
+| `iphone-duo-open` | iPhone Duo, écran intérieur (déplié) | 1878 × 2670 |
 | `iphone-16-pro-max` | iPhone 16 Pro Max | 1320 × 2868 |
 | `iphone-16-pro` | iPhone 16 Pro (défaut) | 1206 × 2622 |
 | `iphone-16` | iPhone 16 / 15 | 1179 × 2556 |
@@ -58,7 +60,7 @@ Le logo ne passe jamais par l'URL : il est chargé à la main par chaque personn
 | `galaxy-s24` | Galaxy S24 | 1080 × 2340 |
 | `android` | Android générique | 1080 × 2400 |
 
-Sources : fiches techniques Apple (support.apple.com/fr-fr/specs), Google (store.google.com, Pixel 9 tech specs), Samsung (samsung.com, Galaxy S24 specs). Consultées le 30 septembre 2026. Si ton modèle n'y est pas, « Mon écran » fait le travail.
+Sources : fiches techniques Apple (support.apple.com/fr-fr/specs, apple.com/iphone-duo/specs), Google (store.google.com, Pixel 9 tech specs), Samsung (samsung.com, Galaxy S24 specs). Consultées le 2 octobre 2026. Si ton modèle n'y est pas, « Mon écran » fait le travail.
 
 ## Vie privée
 
