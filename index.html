@@ -36,7 +36,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 <script src="vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -188,6 +188,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button class="btn btn-ghost" id="peek" type="button" aria-expanded="false" data-i18n="peek.show">Voir la vCard</button>
     </div>
     <p class="status" id="status"></p>
+    <div class="print">
+      <span class="f-lab" data-i18n="print.title">Impression</span>
+      <div class="row">
+        <div class="f"><label for="f-paper" data-i18n="print.paper">Papier</label><select id="f-paper"></select></div>
+        <label class="chk"><input type="checkbox" id="f-a4"> <span data-i18n="print.a4">Centrer sur une page A4</span></label>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" id="pdf" type="button" data-i18n="print.btn">Télécharger le PDF</button>
+        <button class="btn btn-ghost" id="pdfshare" type="button" hidden data-i18n="print.share">Partager le PDF</button>
+      </div>
+      <p class="note" data-i18n="print.note">PDF imprimeur : 300 dpi, 3 mm de fond perdu, traits de coupe. Couleurs RVB, ton imprimeur convertit en CMJN.</p>
+    </div>
     <pre class="vcard-peek" id="peek-body" hidden></pre>
   </aside>
 </div>
@@ -202,6 +214,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="app.js?v=7"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
