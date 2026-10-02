@@ -6,8 +6,16 @@
 <title>Carte de poche</title>
 <meta name="description" content="Crée ta carte de contact avec QR code vCard, adaptée à ton téléphone. Gratuit, open source, tout reste dans ton navigateur.">
 <meta name="theme-color" content="#1a5c7a">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0QM258T49E"></script>
+<!-- Google tag (gtag.js), Consent Mode v2 : rien n'est chargé ni déposé avant un consentement explicite -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+    analytics_storage: 'denied', wait_for_update: 500
+  });
+  window.GA_ID = 'G-0QM258T49E';
+</script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -22,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 <script src="vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -139,6 +147,7 @@
     <footer class="foot">
       <span data-i18n="foot.privacy">Le contenu de ta carte reste dans ton navigateur : rien n'est envoyé à un serveur. Mesure d'audience (Vercel Analytics, Google Analytics).</span>
       <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">GitHub</a>
+      <button type="button" class="linklike" id="consent-open" data-i18n="consent.manage">Cookies</button>
     </footer>
   </main>
 
@@ -160,6 +169,14 @@
 
 <script>window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
-<script src="app.js?v=3"></script>
+<div class="consent" id="consent" role="dialog" aria-live="polite" aria-labelledby="consent-title" hidden>
+  <p class="consent-t" id="consent-title" data-i18n="consent.title">Un cookie pour mesurer l'audience ?</p>
+  <p class="consent-b" data-i18n="consent.body">Google Analytics nous aide à savoir combien de personnes utilisent la carte. Rien n'est déposé si tu refuses, et l'app marche pareil.</p>
+  <div class="consent-a">
+    <button type="button" class="btn btn-sm" id="consent-yes" data-i18n="consent.yes">Accepter</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
+  </div>
+</div>
+<script src="app.js?v=4"></script>
 </body>
 </html>

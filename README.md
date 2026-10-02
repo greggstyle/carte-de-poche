@@ -63,7 +63,7 @@ Sources : fiches techniques Apple (support.apple.com/fr-fr/specs), Google (store
 
 Les textes, réglages et images sont mémorisés dans le `localStorage` de ton navigateur, sur ton appareil uniquement. « Tout effacer » vide cette mémoire. Le contenu de ta carte (nom, téléphone, email, logo) n'est jamais envoyé à un serveur.
 
-Mesure d'audience : la démo utilise [Vercel Web Analytics](https://vercel.com/docs/analytics) (sans cookie) et Google Analytics 4 (tag `G-0QM258T49E`, avec cookies). Seuls des événements anonymes sont envoyés : page vue, téléchargement, partage, lien copié, mode QR, format, langue. Jamais le contenu de la carte. Sur un fork, enlève le bloc « Google tag » et les deux lignes `_vercel/insights` dans `index.html` pour ne rien mesurer.
+Mesure d'audience : la démo utilise [Vercel Web Analytics](https://vercel.com/docs/analytics) (sans cookie) et Google Analytics 4 (tag `G-0QM258T49E`), ce dernier uniquement après un consentement explicite dans la bannière (Google Consent Mode v2, mode basique : rien n'est chargé ni déposé avant « Accepter », choix mémorisé 6 mois, modifiable via le lien « Cookies » en bas de page). Seuls des événements anonymes sont envoyés : page vue, téléchargement, partage, lien copié, mode QR, format, langue. Jamais le contenu de la carte. Sur un fork, enlève le bloc « Google tag » et la bannière `#consent` et les deux lignes `_vercel/insights` dans `index.html` pour ne rien mesurer.
 
 ## Lancer en local
 
@@ -129,7 +129,7 @@ The logo never travels through the URL: each person loads it by hand and it stay
 
 Texts, settings and images are kept in your browser's `localStorage`, on your device only. "Clear everything" empties it. Your card's content (name, phone, email, logo) is never sent to a server.
 
-Audience measurement: the demo uses [Vercel Web Analytics](https://vercel.com/docs/analytics) (cookie-free) and Google Analytics 4 (tag `G-0QM258T49E`, uses cookies). Only anonymous events are sent: page view, download, share, link copied, QR mode, format, language. Never the card's content. On a fork, remove the "Google tag" block and the two `_vercel/insights` lines in `index.html` to measure nothing.
+Audience measurement: the demo uses [Vercel Web Analytics](https://vercel.com/docs/analytics) (cookie-free) and Google Analytics 4 (tag `G-0QM258T49E`), the latter only after explicit consent in the banner (Google Consent Mode v2, basic mode: nothing is loaded or stored before "Accept", choice remembered 6 months, changeable via the "Cookies" link in the footer). Only anonymous events are sent: page view, download, share, link copied, QR mode, format, language. Never the card's content. On a fork, remove the "Google tag" block and the `#consent` banner and the two `_vercel/insights` lines in `index.html` to measure nothing.
 
 ## Run locally
 

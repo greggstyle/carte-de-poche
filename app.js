@@ -10,8 +10,36 @@ var cv = $('#cv'), ctx = cv.getContext('2d');
    Seuls des événements anonymes sont envoyés : jamais les textes de la carte. */
 function track(name, data){
   try{ if(typeof window.va==='function') window.va('event', {name:name, data:data||{}}); }catch(e){}
-  try{ if(typeof window.gtag==='function') window.gtag('event', name, data||{}); }catch(e){}
+  try{ if(gaLoaded && typeof window.gtag==='function') window.gtag('event', name, data||{}); }catch(e){}
 }
+
+/* ---------- consentement (Google Consent Mode v2, mode basique) ----------
+   gtag.js n'est chargé qu'après un « Accepter » explicite. Le choix est mémorisé 6 mois. */
+var CONSENT_KEY='carte-de-poche/consent', gaLoaded=false;
+function readConsent(){
+  try{ var c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null'); if(c && c.until>Date.now()) return c.value; }catch(e){}
+  return null;
+}
+function writeConsent(v){ try{ localStorage.setItem(CONSENT_KEY, JSON.stringify({value:v, until:Date.now()+1000*60*60*24*182})); }catch(e){} }
+function loadGA(){
+  if(gaLoaded || !window.GA_ID || typeof window.gtag!=='function') return;
+  gaLoaded=true;
+  window.gtag('consent','update',{analytics_storage:'granted'});
+  var s=document.createElement('script'); s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(window.GA_ID);
+  document.head.appendChild(s);
+  window.gtag('js', new Date());
+  window.gtag('config', window.GA_ID);
+}
+function showConsent(show){ var el=$('#consent'); if(el) el.hidden=!show; }
+(function(){
+  var c=readConsent();
+  if(c==='granted') loadGA();
+  else if(c===null) showConsent(true);
+  var yes=$('#consent-yes'), no=$('#consent-no'), open=$('#consent-open');
+  if(yes) yes.addEventListener('click', function(){ writeConsent('granted'); showConsent(false); loadGA(); });
+  if(no)  no.addEventListener('click', function(){ writeConsent('denied'); showConsent(false); });
+  if(open) open.addEventListener('click', function(){ showConsent(true); });
+})();
 
 /* ---------- i18n ---------- */
 var I18N = {
@@ -51,7 +79,10 @@ var I18N = {
     'reset':'Tout effacer','reset.confirm':'Effacer les textes, les images et les réglages mémorisés sur cet appareil ?',
     'foot.privacy':'Le contenu de ta carte reste dans ton navigateur : rien n\u2019est envoyé à un serveur. Mesure d\u2019audience (Vercel Analytics, Google Analytics).',
     'peek.empty':'(rien à encoder)',
-    'row.tel':'TÉL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADR'
+    'row.tel':'TÉL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADR',
+    'consent.title':'Un cookie pour mesurer l\u2019audience ?',
+    'consent.body':'Google Analytics nous aide à savoir combien de personnes utilisent la carte. Rien n\u2019est déposé si tu refuses, et l\u2019app marche pareil.',
+    'consent.yes':'Accepter','consent.no':'Refuser','consent.manage':'Cookies'
   },
   en: {
     'title':'Pocket card',
@@ -89,7 +120,10 @@ var I18N = {
     'reset':'Clear everything','reset.confirm':'Clear the texts, images and settings stored on this device?',
     'foot.privacy':'Your card\u2019s content stays in your browser: nothing is sent to a server. Audience measurement (Vercel Analytics, Google Analytics).',
     'peek.empty':'(nothing to encode)',
-    'row.tel':'TEL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADDR'
+    'row.tel':'TEL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADDR',
+    'consent.title':'A cookie to measure audience?',
+    'consent.body':'Google Analytics helps us know how many people use the card. Nothing is stored if you decline, and the app works the same.',
+    'consent.yes':'Accept','consent.no':'Decline','consent.manage':'Cookies'
   }
 };
 var lang = 'fr';
