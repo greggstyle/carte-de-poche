@@ -10,7 +10,7 @@
       ]
     },
     {
-      "source": "/(app.js|style.css|vendor/.*)",
+      "source": "/(app.js|style.css|landing.css|vendor/.*|media/.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
       ]

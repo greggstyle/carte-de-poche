@@ -4,7 +4,7 @@ Une carte de contact à montrer sur écran ou à imprimer, avec un QR code qui a
 
 [English below](#pocket-card-english)
 
-**Démo : https://cartedepoche.fr** (aussi https://carte-de-poche.vercel.app)
+**Site : https://cartedepoche.fr** · **l'app : https://cartedepoche.fr/app** (aussi https://carte-de-poche.vercel.app)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/greggstyle/carte-de-poche)
 
@@ -35,7 +35,7 @@ Une carte de contact à montrer sur écran ou à imprimer, avec un QR code qui a
 
 ## Pour une entreprise
 
-1. Ouvre l'app, remplis société, site web, adresse, choisis la couleur.
+1. Ouvre https://cartedepoche.fr/app, remplis société, site web, adresse, choisis la couleur.
 2. Section « Partager » : copie le lien de pré-remplissage.
 3. Envoie-le à l'équipe. Chacun ouvre le lien, tape son nom, charge le logo (fichier PNG ou SVG), clique « Mon écran », télécharge.
 
@@ -44,7 +44,7 @@ Paramètres d'URL acceptés : `name`, `role`, `company`, `phrase`, `phone`, `ema
 Exemple :
 
 ```
-https://cartedepoche.fr/?company=Acme&web=acme.re&address=12+rue+Exemple&color=1b3a5c&lang=fr
+https://cartedepoche.fr/app?company=Acme&web=acme.re&address=12+rue+Exemple&color=1b3a5c&lang=fr
 ```
 
 Le logo ne passe jamais par l'URL : il est chargé à la main par chaque personne et reste dans son navigateur.
@@ -73,7 +73,7 @@ Mesure d'audience : la démo utilise [Vercel Web Analytics](https://vercel.com/d
 
 ## Lancer en local
 
-Aucun build. Ouvre `index.html`, ou sers le dossier :
+Aucun build. Sers le dossier (l'app est sur `/app/`) :
 
 ```
 npx serve .
@@ -89,9 +89,12 @@ python3 -m http.server 8000
 ## Fichiers
 
 ```
-index.html        page
-app.js            logique : rendu canvas, QR, presets, persistance, lien, i18n
-style.css         styles clair / sombre, responsive
+index.html        page d'accueil (présentation, vidéo, bouton vers l'app)
+landing.css       styles de la page d'accueil
+app/index.html    l'application (servie sur /app)
+app.js            logique : rendu canvas, QR, presets, persistance, lien, i18n, PDF
+style.css         styles de l'app clair / sombre, responsive
+media/            vidéo de démo et image d'attente
 vendor/qrcode.js  qrcode-generator 1.4.4 (MIT, Kazuhiko Arase)
 vercel.json       en-têtes de sécurité et de cache
 ```
@@ -108,7 +111,7 @@ vercel.json       en-têtes de sécurité et de cache
 
 A contact card to show on screen or print, with a QR code that really adds you to the phone's address book. Free, open source, no account: everything runs in your browser.
 
-**Demo: https://cartedepoche.fr** (also https://carte-de-poche.vercel.app)
+**Site: https://cartedepoche.fr** · **the app: https://cartedepoche.fr/app** (also https://carte-de-poche.vercel.app)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/greggstyle/carte-de-poche)
 
@@ -127,7 +130,7 @@ A contact card to show on screen or print, with a QR code that really adds you t
 
 ## For a company
 
-1. Open the app, fill in company, website, address, pick the colour.
+1. Open https://cartedepoche.fr/app, fill in company, website, address, pick the colour.
 2. "Share" section: copy the pre-fill link.
 3. Send it to the team. Everyone opens the link, types their name, loads the logo (PNG or SVG), taps "My screen", downloads.
 
@@ -143,7 +146,7 @@ Audience measurement: the demo uses [Vercel Web Analytics](https://vercel.com/do
 
 ## Run locally
 
-No build step. Open `index.html`, or serve the folder with `npx serve .` or `python3 -m http.server 8000`.
+No build step. Serve the folder (the app lives at `/app/`) with `npx serve .` or `python3 -m http.server 8000`.
 
 ## Deploy
 

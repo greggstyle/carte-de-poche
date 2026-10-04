@@ -98,7 +98,7 @@ var I18N = {
     'sec.verso':'Verso','verso.none':'Aucun','verso.logo':'Logo seul','verso.slogan':'Slogan','verso.text':'Texte du verso',
     'verso.note':'Deuxième face pour l\u2019impression recto-verso : même fond, logo seul ou une phrase. Le PDF passe à 2 pages.',
     'verso.nologo':'Pas de logo chargé : le verso affiche la société.',
-    'face.recto':'Recto','face.verso':'Verso'
+    'face.recto':'Recto','face.verso':'Verso','foot.home':'Accueil'
   },
   en: {
     'title':'Pocket card',
@@ -154,7 +154,7 @@ var I18N = {
     'sec.verso':'Back side','verso.none':'None','verso.logo':'Logo only','verso.slogan':'Tagline','verso.text':'Back side text',
     'verso.note':'Second side for double-sided printing: same background, logo only or a line of text. The PDF becomes 2 pages.',
     'verso.nologo':'No logo loaded: the back shows the company name.',
-    'face.recto':'Front','face.verso':'Back'
+    'face.recto':'Front','face.verso':'Back','foot.home':'Home'
   }
 };
 var lang = 'fr';

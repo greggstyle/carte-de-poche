@@ -3,9 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carte de poche</title>
-<meta name="description" content="Crée ta carte de contact avec QR code vCard, adaptée à ton téléphone. Gratuit, open source, tout reste dans ton navigateur.">
+<title>Carte de poche : ta carte de visite qui s'ajoute toute seule aux contacts</title>
+<meta name="description" content="Crée ta carte de visite avec QR code en 2 minutes. Montre ton téléphone, l'autre scanne, tu es dans ses contacts. Gratuit, sans compte, imprimable, tout reste sur ton téléphone.">
 <meta name="theme-color" content="#1a5c7a">
+<meta property="og:title" content="Carte de poche : la carte de visite qui s'ajoute toute seule aux contacts">
+<meta property="og:description" content="Gratuit, 2 minutes, zéro compte. Montre ton tel, l'autre scanne, c'est dans son répertoire. Et ça s'imprime aussi.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.cartedepoche.fr/">
+<meta property="og:image" content="https://www.cartedepoche.fr/media/poster.jpg">
+<link rel="canonical" href="https://www.cartedepoche.fr/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a5c7a'/%3E%3Crect x='16' y='8' width='32' height='48' rx='5' fill='%23fff'/%3E%3Crect x='22' y='16' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='34' y='16' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='22' y='28' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='34' y='28' width='4' height='4' fill='%231a5c7a'/%3E%3Crect x='38' y='32' width='4' height='4' fill='%231a5c7a'/%3E%3Crect x='22' y='42' width='20' height='3' rx='1.5' fill='%231a5c7a'/%3E%3C/svg%3E">
 <!-- Consent Mode v2 : consentement refusé par défaut, mis à jour par la bannière. Doit précéder GTM. -->
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -14,6 +21,11 @@
     ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
     analytics_storage: 'denied', wait_for_update: 500
   });
+  /* les anciens liens pré-remplis pointaient sur la racine : on les envoie vers l'app */
+  (function(){
+    var keys=['name','role','company','phrase','phone','email','web','address','freetext','color','qr','format','preset','w','h','font','size','paper','a4','theme','verso','versotext'];
+    try{ var sp=new URLSearchParams(location.search); for(var i=0;i<keys.length;i++){ if(sp.has(keys[i])){ location.replace('/app'+location.search); return; } } }catch(e){}
+  })();
 </script>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -22,22 +34,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-T5V4L7X7');</script>
 <!-- End Google Tag Manager -->
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0QM258T49E');
-</script>
-<meta property="og:title" content="Carte de poche">
-<meta property="og:description" content="Une carte de contact à montrer sur écran ou à imprimer, avec un QR qui ajoute vraiment la fiche au répertoire.">
-<meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a5c7a'/%3E%3Crect x='16' y='8' width='32' height='48' rx='5' fill='%23fff'/%3E%3Crect x='22' y='16' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='34' y='16' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='22' y='28' width='8' height='8' fill='%231a5c7a'/%3E%3Crect x='34' y='28' width='4' height='4' fill='%231a5c7a'/%3E%3Crect x='38' y='32' width='4' height='4' fill='%231a5c7a'/%3E%3Crect x='22' y='42' width='20' height='3' rx='1.5' fill='%231a5c7a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=7">
-<script src="vendor/qrcode.js?v=1.4.4"></script>
+<link rel="stylesheet" href="/landing.css?v=1">
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -45,193 +45,132 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-<div class="wrap">
-  <main class="col-form">
-    <div class="masthead">
-      <h1 data-i18n="title">Carte de poche</h1>
-      <p data-i18n="tagline">Une carte de contact à montrer sur écran ou à imprimer, avec un QR qui ajoute vraiment la fiche au répertoire.</p>
-      <div class="lang" id="lang" role="group" aria-label="Langue / Language">
-        <button type="button" data-lang="fr" aria-pressed="true">FR</button>
-        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+<header class="top">
+  <a class="brand" href="/"><span class="brand-ico" aria-hidden="true"></span>carte de poche</a>
+  <nav class="topnav">
+    <a href="#comment">comment ça marche</a>
+    <a href="#faq">questions</a>
+    <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">github</a>
+    <a class="btn btn-sm" href="/app" data-cta="top">créer ma carte</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-text">
+      <p class="kicker">gratuit · sans compte · tout reste sur ton téléphone</p>
+      <h1>la carte de visite qui s'ajoute <em>toute seule</em> dans le répertoire.</h1>
+      <p class="lead">tu montres ton téléphone. l'autre scanne. hop, tu es dans ses contacts : nom, boîte, numéro, mail, site. fini le « tu me redonnes ton numéro ? » dans le parking.</p>
+      <a class="btn-xl" href="/app" data-cta="hero">
+        <span class="btn-xl-main">allez hop, je crée ma carte</span>
+        <span class="btn-xl-sub">2 minutes chrono, promis. zéro compte, zéro mail de relance.</span>
+      </a>
+      <ul class="proof">
+        <li>s'adapte à ton téléphone, iPhone Duo compris</li>
+        <li>s'imprime chez l'imprimeur, fond perdu et traits de coupe inclus</li>
+        <li>code libre, licence MIT, forke-le si tu veux</li>
+      </ul>
+    </div>
+    <div class="hero-media">
+      <div class="phone">
+        <video src="/media/motion.mp4" poster="/media/poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Démonstration animée de la carte de poche"></video>
       </div>
     </div>
+  </section>
 
-    <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.identity">Identité</h2>
-      <div class="sec-b">
-        <div class="grid2">
-          <div class="f"><label for="f-name" data-i18n="f.name">Nom</label><input id="f-name" data-field="name" type="text" autocomplete="off"></div>
-          <div class="f"><label for="f-role" data-i18n="f.role">Rôle</label><input id="f-role" data-field="role" type="text" autocomplete="off"></div>
-          <div class="f"><label for="f-company" data-i18n="f.company">Société</label><input id="f-company" data-field="company" type="text" autocomplete="off"></div>
-          <div class="f"><label for="f-phrase" data-i18n="f.phrase">Phrase</label><input id="f-phrase" data-field="phrase" type="text" autocomplete="off"></div>
-        </div>
-      </div>
-    </section>
+  <section class="steps" id="comment">
+    <h2>ça marche comment ?</h2>
+    <ol class="steps-grid">
+      <li><span class="num">1</span><h3>tu remplis</h3><p>nom, rôle, boîte, numéro, mail, site. tu choisis une couleur, une police, ou un thème pour ton métier.</p></li>
+      <li><span class="num">2</span><h3>tu ajoutes ton logo</h3><p>et ta photo si tu veux. il reste dans ton navigateur, on ne le voit jamais. une boîte peut envoyer un lien pré-rempli à toute l'équipe.</p></li>
+      <li><span class="num">3</span><h3>tu montres, ou tu imprimes</h3><p>« mon écran » fait la carte pile à la taille de ton téléphone. ou tu exportes un PDF prêt pour l'imprimeur, recto-verso si tu veux.</p></li>
+    </ol>
+  </section>
 
-    <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.contact">Contact</h2>
-      <div class="sec-b">
-        <div class="grid2">
-          <div class="f"><label for="f-phone" data-i18n="f.phone">Téléphone</label><input id="f-phone" data-field="phone" type="tel" autocomplete="off"></div>
-          <div class="f"><label for="f-email" data-i18n="f.email">Email</label><input id="f-email" data-field="email" type="email" autocomplete="off"></div>
-          <div class="f"><label for="f-web" data-i18n="f.web">Site web</label><input id="f-web" data-field="web" type="text" autocomplete="off"></div>
-          <div class="f"><label for="f-address" data-i18n="f.address">Adresse</label><input id="f-address" data-field="address" type="text" autocomplete="off"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.theme">Thème</h2>
-      <div class="sec-b">
-        <div class="seg seg-themes" id="themes" role="group" data-i18n-aria="sec.theme" aria-label="Thème"></div>
-        <p class="note" data-i18n="theme.note">Un raccourci couleur + police par métier. Tu peux tout ajuster ensuite.</p>
-      </div>
-    </section>
-
-    <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.images">Images</h2>
-      <div class="sec-b">
-        <div class="zones">
-          <div class="zone" data-zone="photo" tabindex="0" role="button" data-i18n-aria="z.photo.aria" aria-label="Charger une photo">
-            <input type="file" accept="image/*" hidden>
-            <img class="z-thumb" alt="">
-            <button class="z-clear" type="button" data-i18n-aria="z.photo.clear" aria-label="Retirer la photo">&times;</button>
-            <span class="z-label" data-i18n="z.photo">Photo</span><span class="z-hint" data-i18n="z.photo.hint">clic ou glisser</span>
-          </div>
-          <div class="zone" data-zone="logo" tabindex="0" role="button" data-i18n-aria="z.logo.aria" aria-label="Charger le logo principal">
-            <input type="file" accept="image/*" hidden>
-            <img class="z-thumb" alt="">
-            <button class="z-clear" type="button" data-i18n-aria="z.logo.clear" aria-label="Retirer le logo">&times;</button>
-            <span class="z-label" data-i18n="z.logo">Logo</span><span class="z-hint" data-i18n="z.logo.hint">haut, centré</span>
-          </div>
-          <div class="zone" data-zone="partner" tabindex="0" role="button" data-i18n-aria="z.partner.aria" aria-label="Charger le logo partenaire">
-            <input type="file" accept="image/*" hidden>
-            <img class="z-thumb" alt="">
-            <button class="z-clear" type="button" data-i18n-aria="z.partner.clear" aria-label="Retirer le logo partenaire">&times;</button>
-            <span class="z-label" data-i18n="z.partner">Partenaire</span><span class="z-hint" data-i18n="z.partner.hint">coin haut droit</span>
-          </div>
-          <div class="zone" data-zone="bg" tabindex="0" role="button" data-i18n-aria="z.bg.aria" aria-label="Charger une image de fond">
-            <input type="file" accept="image/*" hidden>
-            <img class="z-thumb" alt="">
-            <button class="z-clear" type="button" data-i18n-aria="z.bg.clear" aria-label="Retirer l'image de fond">&times;</button>
-            <span class="z-label" data-i18n="z.bg">Fond</span><span class="z-hint" data-i18n="z.bg.hint">voile + texte blanc</span>
-          </div>
-        </div>
-        <p class="note" id="bg-note"></p>
-        <p class="note warn" id="quota-note" hidden></p>
-        <div class="swatches" id="swatches"></div>
-      </div>
-    </section>
-
-    <section class="sec" id="sec-typo">
-      <h2 class="sec-h" data-i18n="sec.typo">Typographie</h2>
-      <div class="sec-b">
-        <div class="f-row">
-          <span class="f-lab" data-i18n="typo.font">Police</span>
-          <div class="seg seg-fonts" id="fonts" role="group" data-i18n-aria="typo.font" aria-label="Police"></div>
-        </div>
-        <div class="f-row">
-          <span class="f-lab" data-i18n="typo.size">Taille du texte</span>
-          <div class="seg seg-sizes" id="sizes" role="group" data-i18n-aria="typo.size" aria-label="Taille du texte"></div>
-        </div>
-        <p class="note" data-i18n="typo.note">La disposition ne change pas : seules la police et sa taille.</p>
-      </div>
-    </section>
-
-    <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.verso">Verso</h2>
-      <div class="sec-b">
-        <div class="seg" id="verso-mode" role="group" data-i18n-aria="sec.verso" aria-label="Verso"></div>
-        <div class="f" id="verso-text-wrap" hidden><label for="f-verso-text" data-i18n="verso.text">Texte du verso</label><textarea id="f-verso-text" placeholder="Par défaut : la phrase de la carte"></textarea></div>
-        <p class="note" id="verso-note"></p>
-      </div>
-    </section>
-
-    <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.qr">Le QR</h2>
-      <div class="sec-b">
-        <div class="seg" id="qrmode" role="group" data-i18n-aria="qr.group" aria-label="Contenu du QR code"></div>
-        <p class="note" id="qr-note"></p>
-        <div class="f" id="freetext-wrap" hidden><label for="f-freetext" data-i18n="f.freetext">Texte à encoder</label><textarea id="f-freetext" data-field="freetext"></textarea></div>
-      </div>
-    </section>
-
-    <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.format">Format</h2>
-      <div class="sec-b">
-        <div class="seg" id="formats" role="group" data-i18n-aria="fmt.group" aria-label="Format de sortie"></div>
-        <div class="row" id="phone-row">
-          <div class="f">
-            <label for="f-preset" data-i18n="fmt.preset">Modèle de téléphone</label>
-            <select id="f-preset"></select>
-          </div>
-          <button class="btn btn-ghost btn-sm" id="myscreen" type="button" data-i18n="fmt.screen">Mon écran</button>
-        </div>
-        <p class="note" id="fmt-note"></p>
-      </div>
-    </section>
-
-    <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.share">Partager</h2>
-      <div class="sec-b">
-        <p class="note" data-i18n="share.note">Envoie ce lien à ton équipe : chacun arrive avec les champs pré-remplis (société, site, couleur…), puis ajoute son nom et le logo.</p>
-        <div class="row">
-          <div class="f"><label for="share-url" data-i18n="share.label">Lien de pré-remplissage</label><input id="share-url" type="text" readonly></div>
-          <button class="btn btn-sm" id="copy" type="button" data-i18n="share.copy">Copier le lien</button>
-        </div>
-        <p class="status" id="share-status"></p>
-        <div class="row">
-          <button class="btn btn-ghost btn-sm" id="reset" type="button" data-i18n="reset">Tout effacer</button>
-        </div>
-      </div>
-    </section>
-
-    <footer class="foot">
-      <span data-i18n="foot.privacy">Le contenu de ta carte reste dans ton navigateur : rien n'est envoyé à un serveur. Mesure d'audience (Vercel Analytics, Google Tag Manager / Analytics).</span>
-      <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">GitHub</a>
-      <button type="button" class="linklike" id="consent-open" data-i18n="consent.manage">Cookies</button>
-    </footer>
-  </main>
-
-  <aside class="col-view">
-    <div class="viewbar">
-      <span class="dim" id="dim"></span>
-      <div class="seg seg-face" id="face" role="group" aria-label="Recto / Verso" hidden></div>
-      <span class="dim" id="mode-dim"></span>
+  <section class="features">
+    <h2>ce qu'il y a dedans</h2>
+    <div class="feat-grid">
+      <article><h3>un vrai QR contact</h3><p>pas un lien vers un site : une fiche vCard complète. le scan ouvre direct « ajouter aux contacts ».</p></article>
+      <article><h3>à la taille de ton tel</h3><p>bouton « mon écran », presets iPhone (dont le Duo plié et déplié), Pixel, Galaxy. plus story et carré pour les réseaux.</p></article>
+      <article><h3>impression pro</h3><p>PDF 300 dpi, carte 55 × 85 mm ou A6, 3 mm de fond perdu, traits de coupe, option A4 pour imprimer chez toi.</p></article>
+      <article><h3>ton style</h3><p>6 paires de polices, 5 tailles de texte, 10 thèmes par métier, photo, image de fond, logo partenaire, verso.</p></article>
+      <article><h3>pour ta boîte</h3><p>tu règles couleur, logo et site une fois, tu copies un lien, chaque collègue ajoute juste son nom.</p></article>
+      <article><h3>vie privée, pour de vrai</h3><p>la carte est fabriquée dans ton navigateur. aucun nom, numéro ou logo ne part sur un serveur. pas de compte, pas de newsletter.</p></article>
     </div>
-    <div class="stage"><canvas id="cv" width="1206" height="2622" data-i18n-aria="preview" aria-label="Aperçu de la carte"></canvas></div>
-    <div class="actions">
-      <button class="btn" id="dl" type="button" data-i18n="dl">Télécharger le PNG</button>
-      <button class="btn btn-ghost" id="share" type="button" hidden data-i18n="share.btn">Partager</button>
-      <button class="btn btn-ghost" id="peek" type="button" aria-expanded="false" data-i18n="peek.show">Voir la vCard</button>
+  </section>
+
+  <section class="who">
+    <h2>c'est pour qui ?</h2>
+    <div class="who-grid">
+      <div><strong>les indépendants</strong><p>artisans, consultants, soignants, créatifs. une carte propre sans payer un graphiste.</p></div>
+      <div><strong>les équipes</strong><p>même charte pour tout le monde, chacun sa carte en 1 minute.</p></div>
+      <div><strong>les salons et les événements</strong><p>tu croises 40 personnes, tu ne distribues plus de papier qui finit dans le bac.</p></div>
+      <div><strong>ceux qui oublient toujours leurs cartes</strong><p>ton téléphone, lui, tu ne l'oublies jamais.</p></div>
     </div>
-    <p class="status" id="status"></p>
-    <div class="print">
-      <span class="f-lab" data-i18n="print.title">Impression</span>
-      <div class="row">
-        <div class="f"><label for="f-paper" data-i18n="print.paper">Papier</label><select id="f-paper"></select></div>
-        <label class="chk"><input type="checkbox" id="f-a4"> <span data-i18n="print.a4">Centrer sur une page A4</span></label>
-      </div>
-      <div class="actions">
-        <button class="btn btn-ghost" id="pdf" type="button" data-i18n="print.btn">Télécharger le PDF</button>
-        <button class="btn btn-ghost" id="pdfshare" type="button" hidden data-i18n="print.share">Partager le PDF</button>
-      </div>
-      <p class="note" data-i18n="print.note">PDF imprimeur : 300 dpi, 3 mm de fond perdu, traits de coupe. Couleurs RVB, ton imprimeur convertit en CMJN.</p>
-    </div>
-    <pre class="vcard-peek" id="peek-body" hidden></pre>
-  </aside>
+  </section>
+
+  <section class="kid">
+    <p class="kid-label">à expliquer à un enfant</p>
+    <p class="kid-text">c'est ta carte de visite en papier, sauf qu'elle vit dans ton téléphone. le petit damier, c'est une porte : l'autre prend une photo, et tu entres dans son répertoire.</p>
+  </section>
+
+  <section class="faq" id="faq">
+    <h2>les questions qu'on me pose</h2>
+    <details><summary>c'est vraiment gratuit ?</summary><p>oui. pas de version pro, pas de filigrane, pas de « 3 cartes offertes puis abonnement ». le code est public sous licence MIT.</p></details>
+    <details><summary>où vont mes données ?</summary><p>nulle part. la carte est dessinée par ton navigateur, et mémorisée dans ton navigateur. on compte juste les visites, anonymement, et Google Analytics seulement si tu acceptes la bannière.</p></details>
+    <details><summary>ça marche sur Android ?</summary><p>oui, sur tout ce qui a un navigateur et un appareil photo. presets Pixel et Galaxy, et « mon écran » pour le reste.</p></details>
+    <details><summary>je peux l'imprimer ?</summary><p>oui, le PDF a été validé par un vrai imprimeur : 300 dpi, fond perdu, traits de coupe, recto-verso possible.</p></details>
+    <details><summary>je peux la modifier, l'héberger moi-même ?</summary><p>oui. c'est un site statique sans dépendance : tu forkes le dépôt GitHub, tu cliques « deploy », c'est en ligne.</p></details>
+  </section>
+
+  <section class="cta2">
+    <h2>bon, on la fait cette carte ?</h2>
+    <a class="btn-xl" href="/app" data-cta="bottom">
+      <span class="btn-xl-main">oui, je veux ma carte</span>
+      <span class="btn-xl-sub">la seule carte de visite que tu ne perdras pas dans une poche de jean.</span>
+    </a>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>fait à la réunion, avec soin, par <a href="https://www.linkedin.com/in/greghanffou" rel="noopener">greg hanffou</a>. code libre sur <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">github</a>. <button type="button" class="linklike" id="consent-open">cookies</button></p>
+  <p class="quote">« la simplicité est la sophistication suprême. » léonard de vinci</p>
+</footer>
+
+<div class="consent" id="consent" role="dialog" aria-live="polite" aria-labelledby="consent-title" hidden>
+  <p class="consent-t" id="consent-title">un cookie pour mesurer l'audience ?</p>
+  <p class="consent-b">google analytics nous aide à savoir combien de personnes utilisent la carte. rien n'est déposé si tu refuses, et le site marche pareil.</p>
+  <div class="consent-a">
+    <button type="button" class="btn btn-sm" id="consent-yes">accepter</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="consent-no">refuser</button>
+  </div>
 </div>
 
 <script>window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
-<div class="consent" id="consent" role="dialog" aria-live="polite" aria-labelledby="consent-title" hidden>
-  <p class="consent-t" id="consent-title" data-i18n="consent.title">Un cookie pour mesurer l'audience ?</p>
-  <p class="consent-b" data-i18n="consent.body">Google Analytics nous aide à savoir combien de personnes utilisent la carte. Rien n'est déposé si tu refuses, et l'app marche pareil.</p>
-  <div class="consent-a">
-    <button type="button" class="btn btn-sm" id="consent-yes" data-i18n="consent.yes">Accepter</button>
-    <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
-  </div>
-</div>
-<script src="app.js?v=9"></script>
+<script>
+(function(){
+  /* consentement partagé avec l'app (même clé), mémorisé 6 mois */
+  var KEY='carte-de-poche/consent';
+  function read(){ try{ var c=JSON.parse(localStorage.getItem(KEY)||'null'); if(c && c.until>Date.now()) return c.value; }catch(e){} return null; }
+  function write(v){ try{ localStorage.setItem(KEY, JSON.stringify({value:v, until:Date.now()+1000*60*60*24*182})); }catch(e){} }
+  function grant(){ try{ gtag('consent','update',{analytics_storage:'granted', ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied'}); dataLayer.push({event:'consent_granted'}); }catch(e){} }
+  var el=document.getElementById('consent'), yes=document.getElementById('consent-yes'), no=document.getElementById('consent-no'), open=document.getElementById('consent-open');
+  var c=read(); if(c==='granted') grant(); else if(c===null) el.hidden=false;
+  yes.addEventListener('click', function(){ write('granted'); el.hidden=true; grant(); });
+  no.addEventListener('click', function(){ write('denied'); el.hidden=true; try{ dataLayer.push({event:'consent_denied'}); }catch(e){} });
+  open.addEventListener('click', function(){ el.hidden=false; });
+  /* clics sur les boutons d'appel à l'action */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-cta]'), function(a){
+    a.addEventListener('click', function(){
+      try{ window.va('event', {name:'cta', data:{where:a.dataset.cta}}); }catch(e){}
+      try{ dataLayer.push({event:'cta', where:a.dataset.cta}); }catch(e){}
+    });
+  });
+  /* vidéo : si l'autoplay est bloqué, on garde le poster et on propose de lancer au clic */
+  var v=document.querySelector('.phone video');
+  if(v){ var pr=v.play(); if(pr && pr.catch){ pr.catch(function(){ v.controls=true; }); } }
+})();
+</script>
 </body>
 </html>
