@@ -66,13 +66,14 @@ test('origine : domaines autorisés seulement', () => {
 
 test('/api/pricing : désactivé sans config, prix lancement + suivant, prix normal', async () => {
   let r = mockRes(); await handlers({ env: {}, now: () => T0 }).pricing({ method: 'GET' }, r);
-  assert.deepEqual(r.body, { enabled: false });
+  assert.deepEqual(r.body, { enabled: false, reason: 'missing:STRIPE_SECRET_KEY,PRICE_STANDARD,UNLOCK_SECRET' });
   r = mockRes(); await handlers({ env: ENV, fetch: stripeMock({}, PRICES), now: () => T0 }).pricing({ method: 'GET' }, r);
   assert.deepEqual(r.body, { enabled: true, tier: 'launch', amount: 1.99, currency: 'eur', hours: 24, launchEnd: ENV.LAUNCH_END, nextAmount: 4.99 });
   r = mockRes(); await handlers({ env: ENV, fetch: stripeMock({}, PRICES), now: () => Date.parse('2027-01-05T00:00:00Z') }).pricing({ method: 'GET' }, r);
   assert.deepEqual(r.body, { enabled: true, tier: 'standard', amount: 4.99, currency: 'eur', hours: 24 });
   r = mockRes(); await handlers({ env: ENV, fetch: stripeMock({}, {}), now: () => T0 }).pricing({ method: 'GET' }, r);
-  assert.deepEqual(r.body, { enabled: false }, 'erreur Stripe : on ne bloque pas le site');
+  assert.equal(r.body.enabled, false, 'erreur Stripe : on ne bloque pas le site');
+  assert.match(r.body.reason, /^stripe_error/);
 });
 
 test('/api/checkout : exige le consentement, bon prix, bonnes URLs, métadonnées, session 30 min', async () => {
@@ -152,4 +153,14 @@ test('/api/checkout : libellé de relevé forcé, taux de TVA Stripe seulement s
   form = new URLSearchParams(f.calls.find((c) => c.init.method === 'POST').init.body);
   assert.equal(form.get('line_items[0][tax_rates][0]'), 'txr_123');
   assert.equal(form.get('payment_intent_data[statement_descriptor]').length, 22, 'tronqué à 22 caractères');
+});
+
+test('/api/pricing : la raison de désactivation ne contient jamais de valeur secrète', async () => {
+  let r = mockRes(); await handlers({ env: Object.assign({}, ENV, { UNLOCK_SECRET: '' }), now: () => T0 }).pricing({ method: 'GET' }, r);
+  assert.equal(r.body.reason, 'missing:UNLOCK_SECRET');
+  r = mockRes(); await handlers({ env: Object.assign({}, ENV, { PAYWALL: '0' }), now: () => T0 }).pricing({ method: 'GET' }, r);
+  assert.equal(r.body.reason, 'paywall_off');
+  assert.equal(r.headers['cache-control'], 'no-store');
+  const json = JSON.stringify(r.body);
+  for (const v of [ENV.STRIPE_SECRET_KEY, ENV.UNLOCK_SECRET, ENV.PRICE_STANDARD]) assert.ok(!json.includes(v));
 });
