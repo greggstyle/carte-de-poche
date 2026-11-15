@@ -76,14 +76,20 @@ api/pricing.js   prix en vigueur (lu depuis Stripe, 1,99 € avant LAUNCH_END, s
 api/checkout.js  crée la session Stripe Checkout (exige l'accord aux CGV)
 api/unlock.js    au retour de Stripe, confirme "paid" et émet le jeton de 24 h
 api/verify.js    revérifie le jeton avant chaque téléchargement
-lib/paywall.js   toute la logique (jeton HMAC, choix du prix), testée avec node --test
+api/webhook.js   à chaque paiement, envoie l'email de confirmation (Resend)
+lib/paywall.js   jeton HMAC, choix du prix ; lib/mail.js email ; lib/webhook.js signature Stripe
+test/devserver.js  site + vrais gestionnaires contre un faux Stripe et un faux Resend
 ```
 
 Variables d'environnement Vercel (voir `.env.example`) : `STRIPE_SECRET_KEY` (clé restreinte), `PRICE_STANDARD`, `UNLOCK_SECRET`, et pour l'offre de lancement `PRICE_LAUNCH` et `LAUNCH_END`. **Tant que les trois premières manquent, le site reste entièrement gratuit** : c'est le cas d'un fork ou d'un essai local. `PAYWALL=0` coupe le paiement sans rien supprimer.
 
 Le blocage est volontairement « mou » : la carte étant dessinée dans le navigateur, on peut la capturer à l'écran ou forker le code (licence MIT). On vend la commodité et un fichier propre, pas un secret.
 
-Tests : `node --test test/paywall.test.js`. Avant de passer en production : `node --test test/golive.test.js` (vérifie qu'il ne reste aucun champ « à compléter » dans les pages légales).
+**Emails transactionnels** : après un paiement, Stripe envoie son reçu (à activer dans Stripe → Settings → Customer emails) et `api/webhook.js` envoie par Resend la **confirmation de contrat** (service, prix, heure de fin de l'accès, accord à l'accès immédiat et perte du droit de rétractation, lien CGV, identité du vendeur), en français ou en anglais selon la langue de l'achat. Le webhook vérifie la signature Stripe, ne conserve rien, et n'envoie qu'une fois par achat (clé d'idempotence). Variables : `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_REPLY_TO`. Endpoint Stripe à créer : `https://www.cartedepoche.fr/api/webhook`, événement `checkout.session.completed`.
+
+**Tester sans Stripe ni Resend** : `node test/devserver.js 8790` sert le site avec les vrais gestionnaires `/api/*` branchés sur un faux Stripe et un faux Resend (emails visibles sur `/__mock/emails`). Tests unitaires : `node --test test/*.test.js`. Avant la production : `node --test test/golive.test.js` (aucun champ « à compléter », clauses clés de la CGV, aucun lien vers la plateforme ODR fermée).
+
+**À régulariser** : le site vend à des particuliers sans médiateur de la consommation désigné. C'est une décision assumée du lancement, mais le Code de la consommation impose d'en proposer un et de l'indiquer dans les CGV. À traiter dès que possible.
 
 ## Vie privée
 
@@ -166,7 +172,7 @@ The logo never travels through the URL: each person loads it by hand and it stay
 
 On https://cartedepoche.fr, the preview, the settings and the QR are free. **One payment unlocks 24 h of downloads** (PNG, print PDF, sharing): **€1.99 incl. tax during the launch price (€4.99 struck through), then €4.99 incl. tax**. No account: after payment a signed 24 h token is kept in the browser. Payment goes through Stripe Checkout; no card content is sent to the server functions (they only receive the language and the agreement to the terms of sale).
 
-How it works, with no build and no dependency: `api/pricing.js`, `api/checkout.js`, `api/unlock.js`, `api/verify.js` and `lib/paywall.js` (HMAC token, price choice, tested with `node --test`).
+How it works, with no build and no dependency: `api/pricing.js`, `api/checkout.js`, `api/unlock.js`, `api/verify.js`, `api/webhook.js` and `lib/` (HMAC token, price choice, confirmation email), tested with `node --test test/*.test.js`. After a payment, Stripe sends its receipt and the webhook sends, via Resend, the contract confirmation email (service, price, access end time, agreement to immediate access and loss of the withdrawal right, terms link, seller identity). Extra variables: `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_REPLY_TO`. Try it without Stripe or Resend: `node test/devserver.js 8790`.
 
 Vercel environment variables (see `.env.example`): `STRIPE_SECRET_KEY` (restricted key), `PRICE_STANDARD`, `UNLOCK_SECRET`, and for the launch offer `PRICE_LAUNCH` and `LAUNCH_END`. **While any of the first three is missing, the site stays entirely free**: that is the case for a fork or a local trial. `PAYWALL=0` switches payment off without deleting anything.
 
