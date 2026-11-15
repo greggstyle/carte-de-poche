@@ -132,6 +132,19 @@ img{max-width:100%}
 .seg-fonts button{font-size:.95rem;padding:.4rem .9rem}
 .seg-sizes button{line-height:1;padding:.4rem .8rem;display:inline-flex;align-items:flex-end;min-height:2.3rem;font-family:var(--serif);font-weight:600}
 
+/* paiement */
+.paybar{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;border:1px solid var(--rule);background:color-mix(in srgb,var(--accent) 8%,transparent);padding:.6rem .8rem;font-size:.82rem;color:var(--ink-2)}
+.paybar.ok{background:color-mix(in srgb,#2f9e5a 12%,transparent);color:var(--ink)}
+.gate{position:fixed;inset:0;z-index:60;background:rgba(10,12,14,.55);display:flex;align-items:center;justify-content:center;padding:1rem}
+.gate-card{background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:10px;max-width:30rem;width:100%;padding:1.4rem 1.4rem 1.2rem;display:flex;flex-direction:column;gap:.8rem;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.gate-card h2{font-family:var(--serif);font-size:1.4rem;margin:0}
+.gate-card p{margin:0;color:var(--ink-2);font-size:.92rem}
+.gate-launch{color:var(--accent)!important;font-weight:600}
+.gate-consent{display:flex;gap:.6rem;align-items:flex-start;font-size:.82rem;color:var(--ink-2);cursor:pointer}
+.gate-consent input{margin-top:.2rem;width:18px;height:18px;flex:none;accent-color:var(--accent)}
+.gate-msg{color:#b3261e!important;font-weight:600}
+.gate-actions{display:flex;gap:.7rem;flex-wrap:wrap}
+
 /* thèmes et verso */
 .seg-themes button{display:inline-flex;align-items:center;gap:.45rem}
 .seg-themes .dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.18);flex:none}

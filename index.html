@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Carte de poche : ta carte de visite qui s'ajoute toute seule aux contacts</title>
-<meta name="description" content="Crée ta carte de visite avec QR code en 2 minutes. Montre ton téléphone, l'autre scanne, tu es dans ses contacts. Gratuit, sans compte, imprimable, tout reste sur ton téléphone.">
+<meta name="description" content="Crée ta carte de visite avec QR code en 2 minutes. Montre ton téléphone, l'autre scanne, tu es dans ses contacts. Aperçu et réglages gratuits, sans compte, imprimable, tout reste sur ton téléphone.">
 <meta name="theme-color" content="#1a5c7a">
 <meta property="og:title" content="Carte de poche : la carte de visite qui s'ajoute toute seule aux contacts">
-<meta property="og:description" content="Gratuit, 2 minutes, zéro compte. Montre ton tel, l'autre scanne, c'est dans son répertoire. Et ça s'imprime aussi.">
+<meta property="og:description" content="2 minutes, zéro compte. Montre ton tel, l'autre scanne, c'est dans son répertoire. Et ça s'imprime aussi.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.cartedepoche.fr/">
 <meta property="og:image" content="https://www.cartedepoche.fr/media/poster.jpg">
@@ -37,7 +37,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/landing.css?v=2">
+<link rel="stylesheet" href="/landing.css?v=3">
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -58,13 +58,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <main>
   <section class="hero">
     <div class="hero-text">
-      <p class="kicker">gratuit · sans compte · tout reste sur ton téléphone</p>
+      <p class="kicker">sans compte · aperçu gratuit · tout reste sur ton téléphone</p>
       <h1>la carte de visite qui s'ajoute <em>toute seule</em> dans le répertoire.</h1>
       <p class="lead">tu montres ton téléphone. l'autre scanne. hop, tu es dans ses contacts : nom, boîte, numéro, mail, site. fini le « tu me redonnes ton numéro ? » dans le parking.</p>
       <a class="btn-xl" href="/app" data-cta="hero">
         <span class="btn-xl-main">allez hop, je crée ma carte</span>
         <span class="btn-xl-sub">2 minutes chrono, promis. zéro compte, zéro mail de relance.</span>
       </a>
+      <p class="launch" id="launch" hidden></p>
       <ul class="proof">
         <li>s'adapte à ton téléphone, iPhone Duo compris</li>
         <li>s'imprime chez l'imprimeur, fond perdu et traits de coupe inclus</li>
@@ -99,6 +100,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
+  <section class="price" id="tarif">
+    <h2>combien ça coûte ?</h2>
+    <div class="price-card">
+      <div>
+        <p class="price-big" id="price-big">un petit prix</p>
+        <p class="price-sub" id="price-sub">affiché avant de payer</p>
+      </div>
+      <ul>
+        <li>l'aperçu, les réglages et le qr code sont gratuits</li>
+        <li>un paiement débloque 24 h de téléchargements : png, pdf imprimeur, partage</li>
+        <li>pas de compte, pas d'abonnement, rien à résilier</li>
+        <li>paiement par carte sur la page sécurisée de stripe</li>
+      </ul>
+    </div>
+  </section>
+
   <section class="who">
     <h2>c'est pour qui ?</h2>
     <div class="who-grid">
@@ -116,8 +133,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <section class="faq" id="faq">
     <h2>les questions qu'on me pose</h2>
-    <details><summary>c'est vraiment gratuit ?</summary><p>oui. pas de version pro, pas de filigrane, pas de « 3 cartes offertes puis abonnement ». le code est public sous licence MIT.</p></details>
-    <details><summary>où vont mes données ?</summary><p>nulle part. la carte est dessinée par ton navigateur, et mémorisée dans ton navigateur. on compte juste les visites, anonymement, et Google Analytics seulement si tu acceptes la bannière.</p></details>
+    <details><summary>c'est quoi le prix ?</summary><p>tu crées, règles et prévisualises ta carte gratuitement. pour la télécharger (png, pdf pour l'imprimeur, partage), tu débloques 24 h d'accès : <span id="faq-price">le prix est affiché avant de payer</span>. pas d'abonnement, pas de compte. le code reste public sous licence MIT : tu peux aussi l'héberger toi-même.</p></details>
+    <details><summary>où vont mes données ?</summary><p>nulle part. la carte est dessinée par ton navigateur, et mémorisée dans ton navigateur. le paiement passe par stripe : on ne voit jamais ton numéro de carte bancaire. on compte juste les visites, anonymement, et Google Analytics seulement si tu acceptes la bannière.</p></details>
     <details><summary>ça marche sur Android ?</summary><p>oui, sur tout ce qui a un navigateur et un appareil photo. presets Pixel et Galaxy, et « mon écran » pour le reste.</p></details>
     <details><summary>je peux l'imprimer ?</summary><p>oui, le PDF a été validé par un vrai imprimeur : 300 dpi, fond perdu, traits de coupe, recto-verso possible.</p></details>
     <details><summary>je peux la modifier, l'héberger moi-même ?</summary><p>oui. c'est un site statique sans dépendance : tu forkes le dépôt GitHub, tu cliques « deploy », c'est en ligne.</p></details>
@@ -133,7 +150,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </main>
 
 <footer class="foot">
-  <p>fait à la réunion, avec soin, par <a href="https://www.linkedin.com/in/greghanffou" rel="noopener">greg hanffou</a> (digidatale). code libre sur <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">github</a>. <a href="/mentions-legales">mentions légales</a> · <a href="/charte-ia">charte ia</a> · <button type="button" class="linklike" id="consent-open">cookies</button></p>
+  <p>fait à la réunion, avec soin, par <a href="https://www.linkedin.com/in/greghanffou" rel="noopener">greg hanffou</a> (digidatale). code libre sur <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">github</a>. <a href="/mentions-legales">mentions légales</a> · <a href="/cgv">cgv</a> · <a href="/charte-ia">charte ia</a> · <button type="button" class="linklike" id="consent-open">cookies</button></p>
   <p class="quote">« la simplicité est la sophistication suprême. » léonard de vinci</p>
 </footer>
 
@@ -167,6 +184,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       try{ dataLayer.push({event:'cta', where:a.dataset.cta}); }catch(e){}
     });
   });
+  /* prix en vigueur, lu côté serveur (une seule source de vérité) */
+  (function(){
+    function money(n){ try{ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2}).format(n); }catch(e){ return n+' €'; } }
+    function day(iso){ try{ return new Date(iso).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return iso; } }
+    fetch('/api/pricing',{headers:{Accept:'application/json'}}).then(function(r){ return r.ok?r.json():null; }).then(function(d){
+      if(!d || !d.enabled) return;
+      var big=document.getElementById('price-big'), sub=document.getElementById('price-sub'), faq=document.getElementById('faq-price'), la=document.getElementById('launch');
+      if(d.tier==='launch' && d.launchEnd){
+        big.textContent=money(d.amount)+' pour 24 h'; sub.textContent='offre de lancement jusqu\'au '+day(d.launchEnd)+', puis '+money(d.nextAmount);
+        faq.textContent=money(d.amount)+' pendant l\'offre de lancement (jusqu\'au '+day(d.launchEnd)+'), puis '+money(d.nextAmount);
+        la.textContent='offre de lancement : '+money(d.amount)+' jusqu\'au '+day(d.launchEnd)+', puis '+money(d.nextAmount); la.hidden=false;
+      } else {
+        big.textContent=money(d.amount)+' pour 24 h'; sub.textContent='tout compris, sans abonnement'; faq.textContent=money(d.amount);
+      }
+    }).catch(function(){});
+  })();
   /* vidéo : si l'autoplay est bloqué, on garde le poster et on propose de lancer au clic */
   var v=document.querySelector('.phone video');
   if(v){ var pr=v.play(); if(pr && pr.catch){ pr.catch(function(){ v.controls=true; }); } }

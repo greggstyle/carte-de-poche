@@ -1,6 +1,6 @@
 # Carte de poche
 
-Une carte de contact à montrer sur écran ou à imprimer, avec un QR code qui ajoute vraiment la fiche au répertoire du téléphone. Gratuit, open source, sans compte : tout se passe dans ton navigateur.
+Une carte de contact à montrer sur écran ou à imprimer, avec un QR code qui ajoute vraiment la fiche au répertoire du téléphone. Aperçu et réglages gratuits, open source, sans compte : tout se passe dans ton navigateur. Le téléchargement du fichier est payant sur le site officiel (voir [Tarif et paiement](#tarif-et-paiement)).
 
 [English below](#pocket-card-english)
 
@@ -65,9 +65,31 @@ Le logo ne passe jamais par l'URL : il est chargé à la main par chaque personn
 
 Sources : fiches techniques Apple (support.apple.com/fr-fr/specs, apple.com/iphone-duo/specs), Google (store.google.com, Pixel 9 tech specs), Samsung (samsung.com, Galaxy S24 specs). Consultées le 2 octobre 2026. Si ton modèle n'y est pas, « Mon écran » fait le travail.
 
+## Tarif et paiement
+
+Sur https://cartedepoche.fr, l'aperçu, les réglages et le QR sont gratuits. **Un paiement débloque 24 h de téléchargements** (PNG, PDF imprimeur, partage) : **1 € TTC pendant l'offre de lancement, puis 5 € TTC**. Pas de compte : après paiement, un jeton signé valable 24 h est gardé dans le navigateur. Le paiement passe par Stripe Checkout ; aucune donnée de la carte n'est envoyée aux fonctions serveur (elles ne reçoivent que la langue et l'accord aux CGV).
+
+Comment c'est fait, sans build ni dépendance :
+
+```
+api/pricing.js   prix en vigueur (lu depuis Stripe, 1 € avant LAUNCH_END, sinon 5 €)
+api/checkout.js  crée la session Stripe Checkout (exige l'accord aux CGV)
+api/unlock.js    au retour de Stripe, confirme "paid" et émet le jeton de 24 h
+api/verify.js    revérifie le jeton avant chaque téléchargement
+lib/paywall.js   toute la logique (jeton HMAC, choix du prix), testée avec node --test
+```
+
+Variables d'environnement Vercel (voir `.env.example`) : `STRIPE_SECRET_KEY` (clé restreinte), `PRICE_STANDARD`, `UNLOCK_SECRET`, et pour l'offre de lancement `PRICE_LAUNCH` et `LAUNCH_END`. **Tant que les trois premières manquent, le site reste entièrement gratuit** : c'est le cas d'un fork ou d'un essai local. `PAYWALL=0` coupe le paiement sans rien supprimer.
+
+Le blocage est volontairement « mou » : la carte étant dessinée dans le navigateur, on peut la capturer à l'écran ou forker le code (licence MIT). On vend la commodité et un fichier propre, pas un secret.
+
+Tests : `node --test test/paywall.test.js`. Avant de passer en production : `node --test test/golive.test.js` (vérifie qu'il ne reste aucun champ « à compléter » dans les pages légales).
+
 ## Vie privée
 
 Les textes, réglages et images sont mémorisés dans le `localStorage` de ton navigateur, sur ton appareil uniquement. « Tout effacer » vide cette mémoire. Le contenu de ta carte (nom, téléphone, email, logo) n'est jamais envoyé à un serveur.
+
+Paiement : Stripe traite les données de paiement, nous ne recevons que la confirmation (voir `cgv.html` et `mentions-legales.html`).
 
 Mesure d'audience : la démo utilise [Vercel Web Analytics](https://vercel.com/docs/analytics) (sans cookie) et Google Tag Manager (`GTM-T5V4L7X7`), qui pilote Google Analytics 4. GTM se charge, mais le consentement est refusé par défaut ([Consent Mode v2](https://support.google.com/tagmanager/answer/10718549)) : aucune balise Google ne dépose de cookie avant « Accepter » dans la bannière. Choix mémorisé 6 mois, modifiable via le lien « Cookies » en bas de page. Seuls des événements anonymes sont envoyés : page vue, téléchargement, partage, lien copié, mode QR, format, langue. Jamais le contenu de la carte. Sur un fork, enlève les deux blocs « Google Tag Manager » (head et body), la bannière `#consent` et les deux lignes `_vercel/insights` dans `index.html` pour ne rien mesurer.
 
@@ -96,6 +118,8 @@ app.js            logique : rendu canvas, QR, presets, persistance, lien, i18n, 
 style.css         styles de l'app clair / sombre, responsive
 media/            vidéo de démo et image d'attente
 vendor/qrcode.js  qrcode-generator 1.4.4 (MIT, Kazuhiko Arase)
+api/ lib/         paiement Stripe et jeton d'accès 24 h (fonctions Vercel)
+cgv.html          conditions générales de vente
 vercel.json       en-têtes de sécurité et de cache
 ```
 
@@ -109,7 +133,7 @@ vercel.json       en-têtes de sécurité et de cache
 
 # Pocket card (English)
 
-A contact card to show on screen or print, with a QR code that really adds you to the phone's address book. Free, open source, no account: everything runs in your browser.
+A contact card to show on screen or print, with a QR code that really adds you to the phone's address book. Free preview and settings, open source, no account: everything runs in your browser. Downloading the file is paid on the official site (see [Pricing and payment](#pricing-and-payment)).
 
 **Site: https://cartedepoche.fr** · **the app: https://cartedepoche.fr/app** (also https://carte-de-poche.vercel.app)
 
@@ -138,9 +162,21 @@ Accepted URL parameters: `name`, `role`, `company`, `phrase`, `phone`, `email`, 
 
 The logo never travels through the URL: each person loads it by hand and it stays in their browser.
 
+## Pricing and payment
+
+On https://cartedepoche.fr, the preview, the settings and the QR are free. **One payment unlocks 24 h of downloads** (PNG, print PDF, sharing): **€1 incl. tax during the launch offer, then €5 incl. tax**. No account: after payment a signed 24 h token is kept in the browser. Payment goes through Stripe Checkout; no card content is sent to the server functions (they only receive the language and the agreement to the terms of sale).
+
+How it works, with no build and no dependency: `api/pricing.js`, `api/checkout.js`, `api/unlock.js`, `api/verify.js` and `lib/paywall.js` (HMAC token, price choice, tested with `node --test`).
+
+Vercel environment variables (see `.env.example`): `STRIPE_SECRET_KEY` (restricted key), `PRICE_STANDARD`, `UNLOCK_SECRET`, and for the launch offer `PRICE_LAUNCH` and `LAUNCH_END`. **While any of the first three is missing, the site stays entirely free**: that is the case for a fork or a local trial. `PAYWALL=0` switches payment off without deleting anything.
+
+The gate is deliberately "soft": the card is drawn in the browser, so it can be screenshotted or the code forked (MIT licence). We sell convenience and a clean file, not a secret.
+
 ## Privacy
 
 Texts, settings and images are kept in your browser's `localStorage`, on your device only. "Clear everything" empties it. Your card's content (name, phone, email, logo) is never sent to a server.
+
+Payment: Stripe processes the payment data, we only receive the confirmation (see `cgv.html` and `mentions-legales.html`).
 
 Audience measurement: the demo uses [Vercel Web Analytics](https://vercel.com/docs/analytics) (cookie-free) and Google Tag Manager (`GTM-T5V4L7X7`), which drives Google Analytics 4. GTM loads, but consent is denied by default ([Consent Mode v2](https://support.google.com/tagmanager/answer/10718549)): no Google tag stores a cookie before "Accept" in the banner. Choice remembered 6 months, changeable via the "Cookies" link in the footer. Only anonymous events are sent: page view, download, share, link copied, QR mode, format, language. Never the card's content. On a fork, remove both "Google Tag Manager" blocks (head and body), the `#consent` banner and the two `_vercel/insights` lines in `index.html` to measure nothing.
 

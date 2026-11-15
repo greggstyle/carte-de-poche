@@ -98,7 +98,21 @@ var I18N = {
     'sec.verso':'Verso','verso.none':'Aucun','verso.logo':'Logo seul','verso.slogan':'Slogan','verso.text':'Texte du verso',
     'verso.note':'Deuxième face pour l\u2019impression recto-verso : même fond, logo seul ou une phrase. Le PDF passe à 2 pages.',
     'verso.nologo':'Pas de logo chargé : le verso affiche la société.',
-    'face.recto':'Recto','face.verso':'Verso','foot.home':'Accueil','foot.legal':'Mentions légales','foot.ai':'Charte IA'
+    'face.recto':'Recto','face.verso':'Verso','foot.home':'Accueil','foot.legal':'Mentions légales','foot.ai':'Charte IA','foot.cgv':'CGV',
+    'pay.bar.locked':'Téléchargements : {price} pour 24 h','pay.bar.launch':'offre de lancement jusqu\u2019au {date}, puis {next}',
+    'pay.bar.unlocked':'Téléchargements débloqués jusqu\u2019à {time}','pay.unlock':'Débloquer',
+    'pay.title':'Débloquer les téléchargements',
+    'pay.body':'{price} TTC pour 24 h : PNG, PDF imprimeur et partage, autant de fois que tu veux. Pas de compte.',
+    'pay.launch':'Offre de lancement jusqu\u2019au {date}, ensuite {next}.',
+    'pay.consent':'Je demande l\u2019accès immédiat au service numérique et je reconnais perdre mon droit de rétractation dès que l\u2019accès est fourni. J\u2019ai lu les <a href="/cgv" target="_blank" rel="noopener">conditions générales de vente</a>.',
+    'pay.go':'Payer {price}','pay.later':'Plus tard',
+    'pay.secure':'Paiement sécurisé par Stripe. Aucune donnée de ta carte de visite n\u2019est envoyée.',
+    'pay.err':'Le paiement n\u2019a pas pu démarrer, réessaie dans un instant.',
+    'pay.changed':'Le prix vient de changer, vérifie le nouveau montant.',
+    'pay.canceled':'Paiement annulé, rien n\u2019a été débité.',
+    'pay.ok':'Paiement reçu, téléchargements débloqués jusqu\u2019à {time}.',
+    'pay.unlockerr':'Impossible de confirmer le paiement. Si tu as été débité, écris-nous avec l\u2019heure du paiement.',
+    'pay.preview':'cartedepoche.fr · aperçu'
   },
   en: {
     'title':'Pocket card',
@@ -154,7 +168,21 @@ var I18N = {
     'sec.verso':'Back side','verso.none':'None','verso.logo':'Logo only','verso.slogan':'Tagline','verso.text':'Back side text',
     'verso.note':'Second side for double-sided printing: same background, logo only or a line of text. The PDF becomes 2 pages.',
     'verso.nologo':'No logo loaded: the back shows the company name.',
-    'face.recto':'Front','face.verso':'Back','foot.home':'Home','foot.legal':'Legal notice','foot.ai':'AI charter'
+    'face.recto':'Front','face.verso':'Back','foot.home':'Home','foot.legal':'Legal notice','foot.ai':'AI charter','foot.cgv':'Terms of sale',
+    'pay.bar.locked':'Downloads: {price} for 24 h','pay.bar.launch':'launch offer until {date}, then {next}',
+    'pay.bar.unlocked':'Downloads unlocked until {time}','pay.unlock':'Unlock',
+    'pay.title':'Unlock downloads',
+    'pay.body':'{price} incl. tax for 24 h: PNG, print PDF and sharing, as often as you like. No account.',
+    'pay.launch':'Launch offer until {date}, then {next}.',
+    'pay.consent':'I ask for immediate access to the digital service and acknowledge that I lose my right of withdrawal once access is provided. I have read the <a href="/cgv" target="_blank" rel="noopener">terms of sale</a>.',
+    'pay.go':'Pay {price}','pay.later':'Later',
+    'pay.secure':'Secure payment by Stripe. None of your card\u2019s content is sent.',
+    'pay.err':'The payment could not start, please try again in a moment.',
+    'pay.changed':'The price just changed, please check the new amount.',
+    'pay.canceled':'Payment cancelled, nothing was charged.',
+    'pay.ok':'Payment received, downloads unlocked until {time}.',
+    'pay.unlockerr':'Could not confirm the payment. If you were charged, write to us with the time of payment.',
+    'pay.preview':'cartedepoche.fr · preview'
   }
 };
 var lang = 'fr';
@@ -518,7 +546,7 @@ function renderInto(canvas, W, H, bleed, square, face){
   if(im.bg){ drawCover(c,im.bg,0,0,TW,TH); c.fillStyle='rgba(8,10,12,0.48)'; c.fillRect(0,0,TW,TH); }
   else { c.fillStyle=state.bgColor; c.fillRect(0,0,TW,TH); }
   c.save(); c.translate(bleed,bleed);
-  if(face==='verso'){ renderVerso(W,H,p,f,im); c.restore(); ctx=prev; return; }
+  if(face==='verso'){ renderVerso(W,H,p,f,im); if(canvas===cv) drawPreviewMark(W,H,p); c.restore(); ctx=prev; return; }
   if(im.partner){
     var pad=W*0.055;
     drawContain(c,im.partner,W-pad,pad,W*0.20,W*0.075,'right');
@@ -526,8 +554,15 @@ function renderInto(canvas, W, H, bleed, square, face){
   var qr = makeQR(payload());
   if(square) renderSquare(W,H,p,f,im,qr);
   else renderTall(W,H,p,f,im,qr);
+  if(canvas===cv) drawPreviewMark(W,H,p);
   c.restore();
   ctx=prev;
+}
+function drawPreviewMark(W,H,p){
+  if(!paywallLocked()) return;
+  var s=Math.max(10,Math.round(W*0.022));
+  ctx.save(); ctx.font='500 '+s+'px "IBM Plex Mono",monospace'; ctx.fillStyle=p.dim; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.fillText(t('pay.preview'), W/2, H-Math.round(W*0.035)); ctx.restore();
 }
 function renderVerso(W,H,p,f,im){
   var cx=W/2, mode=state.verso.mode, blocks=[];
@@ -1182,12 +1217,137 @@ function applyI18n(){
   buildSeg($('#face'), ['recto','verso'], function(k){ return t('face.'+k); }, function(){ return state.face; }, function(k){ state.face=k; updateDim(); schedule(); });
   syncVerso();
   var pk=$('#peek'); pk.textContent = $('#peek-body').hidden ? t('peek.show') : t('peek.hide');
-  updateDim(); updateQrNote(); syncSwatches(); syncQuotaNote(); syncPaperSelect();
+  updateDim(); updateQrNote(); syncSwatches(); syncQuotaNote(); syncPaperSelect(); syncPaybar(); syncGate();
   $('#status').textContent=''; $('#share-status').textContent='';
 }
 $$('#lang button').forEach(function(b){
   b.addEventListener('click', function(){ lang=b.dataset.lang; save(); applyI18n(); schedule(); track('lang', {lang:lang}); });
 });
+
+/* ---------- paiement : téléchargements débloqués 24 h ----------
+   Actif seulement si /api/pricing répond enabled:true (variables Stripe présentes côté serveur).
+   Sans backend (fork, test local) : tout reste gratuit. Aucune donnée de carte n'est envoyée. */
+var paywall={enabled:false, tier:'standard', amount:0, nextAmount:0, launchEnd:null};
+var PASS_KEY='carte-de-poche/pass', passTimer=null;
+function readPass(){ try{ var p=JSON.parse(localStorage.getItem(PASS_KEY)||'null'); if(p && typeof p.token==='string' && p.exp>Date.now()) return p; }catch(e){} return null; }
+function writePass(p){ try{ localStorage.setItem(PASS_KEY, JSON.stringify(p)); }catch(e){} armPassTimer(); }
+function clearPass(){ try{ localStorage.removeItem(PASS_KEY); }catch(e){} }
+function armPassTimer(){
+  if(passTimer) clearTimeout(passTimer);
+  var p=readPass(); if(!p) return;
+  passTimer=setTimeout(function(){ clearPass(); syncPaybar(); schedule(); }, Math.min(p.exp-Date.now()+500, 2147483000));
+}
+function paywallLocked(){ return paywall.enabled && !readPass(); }
+function fmtMoney(n){ try{ return new Intl.NumberFormat(lang==='fr'?'fr-FR':'en-GB',{style:'currency',currency:'EUR',minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2}).format(n); }catch(e){ return n+' €'; } }
+function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return iso; } }
+function fmtTime(ms){ try{ return new Date(ms).toLocaleTimeString(lang==='fr'?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+function fill(s,v){ return String(s).replace(/\{(\w+)\}/g,function(m,k){ return (k in v)?v[k]:m; }); }
+
+function syncPaybar(){
+  var bar=$('#paybar'); if(!bar) return;
+  if(!paywall.enabled){ bar.hidden=true; return; }
+  bar.hidden=false;
+  var p=readPass(), txt=$('#paybar-text'), btn=$('#paybar-btn');
+  if(p){ txt.textContent=fill(t('pay.bar.unlocked'),{time:fmtTime(p.exp)}); btn.hidden=true; bar.classList.add('ok'); }
+  else {
+    var s=fill(t('pay.bar.locked'),{price:fmtMoney(paywall.amount)});
+    if(paywall.tier==='launch' && paywall.launchEnd) s+=' · '+fill(t('pay.bar.launch'),{date:fmtDate(paywall.launchEnd), next:fmtMoney(paywall.nextAmount)});
+    txt.textContent=s; btn.hidden=false; bar.classList.remove('ok');
+  }
+}
+function loadPricing(){
+  return fetch('/api/pricing',{headers:{Accept:'application/json'}}).then(function(r){ return r.ok?r.json():{enabled:false}; })
+    .catch(function(){ return {enabled:false}; })
+    .then(function(d){
+      paywall={enabled:!!d.enabled, tier:d.tier||'standard', amount:+d.amount||0, nextAmount:+d.nextAmount||0, launchEnd:d.launchEnd||null};
+      syncPaybar(); syncGate(); schedule();
+      return paywall;
+    });
+}
+
+/* accès : le jeton est revérifié côté serveur à chaque téléchargement */
+function ensureAccess(){
+  if(!paywall.enabled) return Promise.resolve(true);
+  var p=readPass(); if(!p) return Promise.resolve(false);
+  return fetch('/api/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:p.token})})
+    .then(function(r){ if(r.status===401){ clearPass(); syncPaybar(); schedule(); return false; } return true; })
+    .catch(function(){ return true; }); /* hors ligne : on fait confiance à l'expiration locale */
+}
+function guardButton(btn){
+  if(!btn) return;
+  btn.addEventListener('click', function(e){
+    if(!paywall.enabled) return;
+    if(btn.dataset.pass==='1'){ delete btn.dataset.pass; track('paid_download',{tier:(readPass()&&paywall.tier)||'standard'}); return; }
+    e.stopImmediatePropagation(); e.preventDefault();
+    ensureAccess().then(function(ok){ if(ok){ btn.dataset.pass='1'; btn.click(); } else openGate(); });
+  }, true);
+}
+['#dl','#share','#pdf','#pdfshare'].forEach(function(s){ guardButton($(s)); });
+
+/* fenêtre de paiement */
+var gateFrom=null;
+function syncGate(){
+  var g=$('#gate'); if(!g) return;
+  var price=fmtMoney(paywall.amount);
+  $('#gate-title').textContent=t('pay.title');
+  $('#gate-body').textContent=fill(t('pay.body'),{price:price});
+  var l=$('#gate-launch'); l.hidden = !(paywall.tier==='launch' && paywall.launchEnd);
+  if(!l.hidden) l.textContent=fill(t('pay.launch'),{date:fmtDate(paywall.launchEnd), next:fmtMoney(paywall.nextAmount)});
+  $('#gate-consent-text').innerHTML=t('pay.consent');
+  $('#gate-go').textContent=fill(t('pay.go'),{price:price});
+  $('#gate-later').textContent=t('pay.later');
+  $('#gate-secure').textContent=t('pay.secure');
+}
+function setGateMsg(k){ var m=$('#gate-msg'); m.textContent=k?t(k):''; m.hidden=!k; }
+function openGate(){
+  gateFrom=document.activeElement;
+  loadPricing().then(function(){
+    if(!paywall.enabled) return;
+    $('#gate-consent').checked=false; $('#gate-go').disabled=true; setGateMsg(null);
+    $('#gate').hidden=false; $('#gate-consent').focus();
+    track('paywall_view',{tier:paywall.tier});
+  });
+}
+function closeGate(){ $('#gate').hidden=true; if(gateFrom && gateFrom.focus) try{ gateFrom.focus(); }catch(e){} }
+(function(){
+  var g=$('#gate'); if(!g) return;
+  $('#gate-consent').addEventListener('change', function(){ $('#gate-go').disabled=!this.checked; });
+  $('#gate-later').addEventListener('click', closeGate);
+  g.addEventListener('click', function(e){ if(e.target===g) closeGate(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !g.hidden) closeGate(); });
+  $('#paybar-btn').addEventListener('click', openGate);
+  $('#gate-go').addEventListener('click', function(){
+    var btn=this; btn.disabled=true; setGateMsg(null);
+    fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lang:lang, consent:true, tier:paywall.tier})})
+      .then(function(r){ return r.json().then(function(j){ return {status:r.status, body:j}; }); })
+      .then(function(r){
+        if(r.status===200 && r.body.url){ track('checkout_start',{tier:paywall.tier}); location.href=r.body.url; return; }
+        if(r.status===409){ return loadPricing().then(function(){ setGateMsg('pay.changed'); $('#gate-go').disabled=!$('#gate-consent').checked; }); }
+        setGateMsg('pay.err'); btn.disabled=false;
+      })
+      .catch(function(){ setGateMsg('pay.err'); btn.disabled=false; });
+  });
+})();
+
+/* retour de Stripe : ?paid=cs_... ou ?canceled=1 */
+function handlePaymentReturn(){
+  var sp; try{ sp=new URLSearchParams(location.search); }catch(e){ return; }
+  var paid=sp.get('paid'), canceled=sp.get('canceled');
+  if(!paid && !canceled) return;
+  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+  var st=$('#status');
+  if(canceled){ st.textContent=t('pay.canceled'); return; }
+  fetch('/api/unlock?session_id='+encodeURIComponent(paid),{headers:{Accept:'application/json'}})
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, body:j}; }); })
+    .then(function(r){
+      if(!r.ok || !r.body.token) throw new Error('unlock');
+      writePass({token:r.body.token, exp:r.body.exp});
+      st.textContent=fill(t('pay.ok'),{time:fmtTime(r.body.exp)});
+      track('checkout_success',{tier:r.body.tier||'standard'});
+      syncPaybar(); schedule();
+    })
+    .catch(function(){ st.textContent=t('pay.unlockerr'); });
+}
 
 /* ---------- démarrage ---------- */
 load();
@@ -1204,6 +1364,9 @@ syncFields();
 applyI18n();
 restoreImages();
 render(); syncShareUrl();
+armPassTimer();
+handlePaymentReturn();
+loadPricing();
 if(state.font!=='editorial') ensureFont(state.font, schedule);
 (function(){
   var sec=$('#sec-typo'); if(!sec) return;

@@ -147,3 +147,13 @@ h1 em{font-style:italic;color:var(--accent)}
 .legal strong{color:var(--ink)}
 .legal .big{font-family:var(--serif);font-size:1.3rem;line-height:1.4;color:var(--ink)}
 .legal .lead{margin-bottom:.5rem}
+
+/* tarif */
+.launch{margin:1.2rem 0 0;font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;color:var(--pop);font-weight:500}
+.price{padding-top:3.5rem}
+.price-card{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:2rem;align-items:center;background:var(--panel);border:1px solid var(--rule);border-radius:16px;padding:1.8rem 2rem}
+.price-big{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4.4vw,3rem);line-height:1.05;color:var(--accent)}
+.price-sub{color:var(--ink-2);margin-top:.4rem}
+.price-card ul{margin:0;padding-left:1.1rem;color:var(--ink-2);font-size:.97rem}
+.price-card li{margin-bottom:.35rem}
+@media (max-width:900px){.price-card{grid-template-columns:minmax(0,1fr);padding:1.4rem 1.25rem}}

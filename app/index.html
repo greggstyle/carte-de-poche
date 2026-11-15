@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/style.css?v=7">
+<link rel="stylesheet" href="/style.css?v=8">
 <script src="/vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -193,6 +193,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <a href="/" data-i18n="foot.home">Accueil</a>
       <a href="https://github.com/greggstyle/carte-de-poche" rel="noopener">GitHub</a>
       <a href="/mentions-legales" data-i18n="foot.legal">Mentions légales</a>
+      <a href="/cgv" data-i18n="foot.cgv">CGV</a>
       <a href="/charte-ia" data-i18n="foot.ai">Charte IA</a>
       <button type="button" class="linklike" id="consent-open" data-i18n="consent.manage">Cookies</button>
     </footer>
@@ -205,6 +206,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span class="dim" id="mode-dim"></span>
     </div>
     <div class="stage"><canvas id="cv" width="1206" height="2622" data-i18n-aria="preview" aria-label="Aperçu de la carte"></canvas></div>
+    <div class="paybar" id="paybar" hidden>
+      <span id="paybar-text"></span>
+      <button class="btn btn-sm" id="paybar-btn" type="button" data-i18n="pay.unlock">Débloquer</button>
+    </div>
     <div class="actions">
       <button class="btn" id="dl" type="button" data-i18n="dl">Télécharger le PNG</button>
       <button class="btn btn-ghost" id="share" type="button" hidden data-i18n="share.btn">Partager</button>
@@ -229,6 +234,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script>window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title" hidden>
+  <div class="gate-card">
+    <h2 id="gate-title">Débloquer les téléchargements</h2>
+    <p id="gate-body"></p>
+    <p class="gate-launch" id="gate-launch" hidden></p>
+    <label class="gate-consent"><input type="checkbox" id="gate-consent"> <span id="gate-consent-text"></span></label>
+    <p class="gate-msg" id="gate-msg" role="alert" hidden></p>
+    <div class="gate-actions">
+      <button class="btn" id="gate-go" type="button" disabled></button>
+      <button class="btn btn-ghost" id="gate-later" type="button"></button>
+    </div>
+    <p class="note" id="gate-secure"></p>
+  </div>
+</div>
+
 <div class="consent" id="consent" role="dialog" aria-live="polite" aria-labelledby="consent-title" hidden>
   <p class="consent-t" id="consent-title" data-i18n="consent.title">Un cookie pour mesurer l'audience ?</p>
   <p class="consent-b" data-i18n="consent.body">Google Analytics nous aide à savoir combien de personnes utilisent la carte. Rien n'est déposé si tu refuses, et l'app marche pareil.</p>
@@ -237,6 +257,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="/app.js?v=9"></script>
+<script src="/app.js?v=10"></script>
 </body>
 </html>
