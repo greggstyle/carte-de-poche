@@ -133,6 +133,9 @@ img{max-width:100%}
 .seg-sizes button{line-height:1;padding:.4rem .8rem;display:inline-flex;align-items:flex-end;min-height:2.3rem;font-family:var(--serif);font-weight:600}
 
 /* paiement */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.paybar s,.gate-card s{color:var(--ink-3);text-decoration-thickness:2px}
+.paybar strong{color:var(--ink)}
 .paybar{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;border:1px solid var(--rule);background:color-mix(in srgb,var(--accent) 8%,transparent);padding:.6rem .8rem;font-size:.82rem;color:var(--ink-2)}
 .paybar.ok{background:color-mix(in srgb,#2f9e5a 12%,transparent);color:var(--ink)}
 .gate{position:fixed;inset:0;z-index:60;background:rgba(10,12,14,.55);display:flex;align-items:center;justify-content:center;padding:1rem}

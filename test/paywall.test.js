@@ -25,7 +25,7 @@ function stripeMock(sessions, prices) {
   f.calls = calls;
   return f;
 }
-const PRICES = { price_std: 500, price_launch: 100 };
+const PRICES = { price_std: 499, price_launch: 199 };
 const paidSession = (over) => Object.assign({ id: 'cs_test_PAID123456', status: 'complete', payment_status: 'paid', mode: 'payment', created: Math.floor(T0 / 1000) - 60, metadata: { product: 'carte-de-poche', tier: 'launch' } }, over);
 
 test('jeton : signature valide, falsifié, expiré, autre secret', () => {
@@ -68,9 +68,9 @@ test('/api/pricing : désactivé sans config, prix lancement + suivant, prix nor
   let r = mockRes(); await handlers({ env: {}, now: () => T0 }).pricing({ method: 'GET' }, r);
   assert.deepEqual(r.body, { enabled: false });
   r = mockRes(); await handlers({ env: ENV, fetch: stripeMock({}, PRICES), now: () => T0 }).pricing({ method: 'GET' }, r);
-  assert.deepEqual(r.body, { enabled: true, tier: 'launch', amount: 1, currency: 'eur', hours: 24, launchEnd: ENV.LAUNCH_END, nextAmount: 5 });
+  assert.deepEqual(r.body, { enabled: true, tier: 'launch', amount: 1.99, currency: 'eur', hours: 24, launchEnd: ENV.LAUNCH_END, nextAmount: 4.99 });
   r = mockRes(); await handlers({ env: ENV, fetch: stripeMock({}, PRICES), now: () => Date.parse('2027-01-05T00:00:00Z') }).pricing({ method: 'GET' }, r);
-  assert.deepEqual(r.body, { enabled: true, tier: 'standard', amount: 5, currency: 'eur', hours: 24 });
+  assert.deepEqual(r.body, { enabled: true, tier: 'standard', amount: 4.99, currency: 'eur', hours: 24 });
   r = mockRes(); await handlers({ env: ENV, fetch: stripeMock({}, {}), now: () => T0 }).pricing({ method: 'GET' }, r);
   assert.deepEqual(r.body, { enabled: false }, 'erreur Stripe : on ne bloque pas le site');
 });

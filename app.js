@@ -99,11 +99,11 @@ var I18N = {
     'verso.note':'Deuxième face pour l\u2019impression recto-verso : même fond, logo seul ou une phrase. Le PDF passe à 2 pages.',
     'verso.nologo':'Pas de logo chargé : le verso affiche la société.',
     'face.recto':'Recto','face.verso':'Verso','foot.home':'Accueil','foot.legal':'Mentions légales','foot.ai':'Charte IA','foot.cgv':'CGV',
-    'pay.bar.locked':'Téléchargements : {price} pour 24 h','pay.bar.launch':'offre de lancement jusqu\u2019au {date}, puis {next}',
+    'pay.bar.locked':'Téléchargements : {price} pour 24 h','pay.bar.launch':'prix de lancement jusqu\u2019au {date}, puis {next}',
     'pay.bar.unlocked':'Téléchargements débloqués jusqu\u2019à {time}','pay.unlock':'Débloquer',
     'pay.title':'Débloquer les téléchargements',
     'pay.body':'{price} TTC pour 24 h : PNG, PDF imprimeur et partage, autant de fois que tu veux. Pas de compte.',
-    'pay.launch':'Offre de lancement jusqu\u2019au {date}, ensuite {next}.',
+    'pay.launch':'Prix de lancement jusqu\u2019au {date}, ensuite {next}.','pay.instead':'au lieu de ',
     'pay.consent':'Je demande l\u2019accès immédiat au service numérique et je reconnais perdre mon droit de rétractation dès que l\u2019accès est fourni. J\u2019ai lu les <a href="/cgv" target="_blank" rel="noopener">conditions générales de vente</a>.',
     'pay.go':'Payer {price}','pay.later':'Plus tard',
     'pay.secure':'Paiement sécurisé par Stripe. Aucune donnée de ta carte de visite n\u2019est envoyée.',
@@ -169,11 +169,11 @@ var I18N = {
     'verso.note':'Second side for double-sided printing: same background, logo only or a line of text. The PDF becomes 2 pages.',
     'verso.nologo':'No logo loaded: the back shows the company name.',
     'face.recto':'Front','face.verso':'Back','foot.home':'Home','foot.legal':'Legal notice','foot.ai':'AI charter','foot.cgv':'Terms of sale',
-    'pay.bar.locked':'Downloads: {price} for 24 h','pay.bar.launch':'launch offer until {date}, then {next}',
+    'pay.bar.locked':'Downloads: {price} for 24 h','pay.bar.launch':'launch price until {date}, then {next}',
     'pay.bar.unlocked':'Downloads unlocked until {time}','pay.unlock':'Unlock',
     'pay.title':'Unlock downloads',
     'pay.body':'{price} incl. tax for 24 h: PNG, print PDF and sharing, as often as you like. No account.',
-    'pay.launch':'Launch offer until {date}, then {next}.',
+    'pay.launch':'Launch price until {date}, then {next}.','pay.instead':'instead of ',
     'pay.consent':'I ask for immediate access to the digital service and acknowledge that I lose my right of withdrawal once access is provided. I have read the <a href="/cgv" target="_blank" rel="noopener">terms of sale</a>.',
     'pay.go':'Pay {price}','pay.later':'Later',
     'pay.secure':'Secure payment by Stripe. None of your card\u2019s content is sent.',
@@ -1241,6 +1241,12 @@ function paywallLocked(){ return paywall.enabled && !readPass(); }
 function fmtMoney(n){ try{ return new Intl.NumberFormat(lang==='fr'?'fr-FR':'en-GB',{style:'currency',currency:'EUR',minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2}).format(n); }catch(e){ return n+' €'; } }
 function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return iso; } }
 function fmtTime(ms){ try{ return new Date(ms).toLocaleTimeString(lang==='fr'?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+function isLaunch(){ return paywall.tier==='launch' && !!paywall.launchEnd && paywall.nextAmount>paywall.amount; }
+function priceHtml(){
+  var now=fmtMoney(paywall.amount);
+  if(!isLaunch()) return now;
+  return '<s><span class="sr">'+t('pay.instead')+'</span>'+fmtMoney(paywall.nextAmount)+'</s> '+now;
+}
 function fill(s,v){ return String(s).replace(/\{(\w+)\}/g,function(m,k){ return (k in v)?v[k]:m; }); }
 
 function syncPaybar(){
@@ -1250,9 +1256,9 @@ function syncPaybar(){
   var p=readPass(), txt=$('#paybar-text'), btn=$('#paybar-btn');
   if(p){ txt.textContent=fill(t('pay.bar.unlocked'),{time:fmtTime(p.exp)}); btn.hidden=true; bar.classList.add('ok'); }
   else {
-    var s=fill(t('pay.bar.locked'),{price:fmtMoney(paywall.amount)});
-    if(paywall.tier==='launch' && paywall.launchEnd) s+=' · '+fill(t('pay.bar.launch'),{date:fmtDate(paywall.launchEnd), next:fmtMoney(paywall.nextAmount)});
-    txt.textContent=s; btn.hidden=false; bar.classList.remove('ok');
+    var s=fill(t('pay.bar.locked'),{price:priceHtml()});
+    if(isLaunch()) s+=' · '+fill(t('pay.bar.launch'),{date:fmtDate(paywall.launchEnd), next:fmtMoney(paywall.nextAmount)});
+    txt.innerHTML=s; btn.hidden=false; bar.classList.remove('ok');
   }
 }
 function loadPricing(){
@@ -1290,8 +1296,8 @@ function syncGate(){
   var g=$('#gate'); if(!g) return;
   var price=fmtMoney(paywall.amount);
   $('#gate-title').textContent=t('pay.title');
-  $('#gate-body').textContent=fill(t('pay.body'),{price:price});
-  var l=$('#gate-launch'); l.hidden = !(paywall.tier==='launch' && paywall.launchEnd);
+  $('#gate-body').innerHTML=fill(t('pay.body'),{price:priceHtml()});
+  var l=$('#gate-launch'); l.hidden = !isLaunch();
   if(!l.hidden) l.textContent=fill(t('pay.launch'),{date:fmtDate(paywall.launchEnd), next:fmtMoney(paywall.nextAmount)});
   $('#gate-consent-text').innerHTML=t('pay.consent');
   $('#gate-go').textContent=fill(t('pay.go'),{price:price});

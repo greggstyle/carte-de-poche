@@ -37,7 +37,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/landing.css?v=3">
+<link rel="stylesheet" href="/landing.css?v=4">
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -191,10 +191,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     fetch('/api/pricing',{headers:{Accept:'application/json'}}).then(function(r){ return r.ok?r.json():null; }).then(function(d){
       if(!d || !d.enabled) return;
       var big=document.getElementById('price-big'), sub=document.getElementById('price-sub'), faq=document.getElementById('faq-price'), la=document.getElementById('launch');
-      if(d.tier==='launch' && d.launchEnd){
-        big.textContent=money(d.amount)+' pour 24 h'; sub.textContent='offre de lancement jusqu\'au '+day(d.launchEnd)+', puis '+money(d.nextAmount);
-        faq.textContent=money(d.amount)+' pendant l\'offre de lancement (jusqu\'au '+day(d.launchEnd)+'), puis '+money(d.nextAmount);
-        la.textContent='offre de lancement : '+money(d.amount)+' jusqu\'au '+day(d.launchEnd)+', puis '+money(d.nextAmount); la.hidden=false;
+      if(d.tier==='launch' && d.launchEnd && d.nextAmount>d.amount){
+        big.innerHTML='<s><span class="sr">au lieu de </span>'+money(d.nextAmount)+'</s> '+money(d.amount)+' <span class="per">pour 24 h</span>';
+        sub.textContent='prix de lancement jusqu\'au '+day(d.launchEnd)+', puis '+money(d.nextAmount);
+        faq.textContent=money(d.amount)+' au lieu de '+money(d.nextAmount)+' pendant le prix de lancement (jusqu\'au '+day(d.launchEnd)+'), puis '+money(d.nextAmount);
+        la.innerHTML='prix de lancement : '+money(d.amount)+' <s><span class="sr">au lieu de </span>'+money(d.nextAmount)+'</s> jusqu\'au '+day(d.launchEnd); la.hidden=false;
       } else {
         big.textContent=money(d.amount)+' pour 24 h'; sub.textContent='tout compris, sans abonnement'; faq.textContent=money(d.amount);
       }
