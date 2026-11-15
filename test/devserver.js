@@ -17,7 +17,7 @@ Object.assign(process.env, {
   UNLOCK_SECRET: 'dev-unlock-secret-dev-unlock-secret',
   LAUNCH_END: process.env.LAUNCH_END || new Date(Date.now() + 30 * 86400e3).toISOString(),
   STRIPE_WEBHOOK_SECRET: WHSEC, RESEND_API_KEY: 're_mock', MAIL_FROM: 'Carte de poche <bonjour@cartedepoche.fr>',
-  MAIL_REPLY_TO: 'bonjour@cartedepoche.fr', ALLOW_LOCAL: '1',
+  MAIL_REPLY_TO: 'bonjour@cartedepoche.fr', VAT_RATE: '8.5', TAX_RATE: 'txr_mock', ALLOW_LOCAL: '1',
   STRIPE_API_BASE: BASE + '/__stripe/v1', RESEND_API_BASE: BASE + '/__resend'
 });
 if (process.env.DEV_PAYWALL === '0') process.env.PAYWALL = '0';

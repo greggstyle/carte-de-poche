@@ -9,7 +9,7 @@ const session = (over) => Object.assign({
   customer_details: { email: 'client@example.com' },
   metadata: { product: 'carte-de-poche', tier: 'launch', lang: 'fr', cgv_version: '2026-11-15' }
 }, over);
-const ENV = { MAIL_FROM: 'Carte de poche <bonjour@cartedepoche.fr>', MAIL_REPLY_TO: 'bonjour@cartedepoche.fr', RESEND_API_KEY: 're_x' };
+const ENV = { VAT_RATE: '8.5', MAIL_FROM: 'Carte de poche <bonjour@cartedepoche.fr>', MAIL_REPLY_TO: 'bonjour@cartedepoche.fr', RESEND_API_KEY: 're_x' };
 
 test('email FR : contenu légal complet', () => {
   const m = buildEmail(session(), ENV);
@@ -65,4 +65,13 @@ test('sendEmail : requête Resend, clé d’idempotence, erreur remontée', asyn
   assert.equal(body.reply_to, ENV.MAIL_REPLY_TO);
   assert.ok(body.html && body.text);
   await assert.rejects(sendEmail(ENV, async () => ({ ok: false, status: 422 }), m, 'k'), /resend_error_422/);
+});
+
+test('TVA : 1,99 € et 4,99 € à 8,5 % incluse, FR et EN, absente sans VAT_RATE', () => {
+  const fr = buildEmail(session(), ENV).text.replace(/[\u00a0\u202f]/g, ' ');
+  assert.ok(fr.includes('dont TVA 8,5 % : 0,16 €') && fr.includes('prix HT : 1,83 €'), fr);
+  const std = buildEmail(session({ amount_total: 499, metadata: { product: 'carte-de-poche', tier: 'standard', lang: 'en' } }), ENV).text.replace(/[\u00a0\u202f]/g, ' ');
+  assert.ok(std.includes('of which VAT 8.5% : €0.39') && std.includes('price excl. VAT: €4.60'), std);
+  assert.ok(!/dont TVA/.test(buildEmail(session(), Object.assign({}, ENV, { VAT_RATE: undefined })).text), 'pas de ligne sans taux');
+  assert.ok(!/dont TVA/.test(buildEmail(session({ amount_total: 0 }), ENV).text), 'pas de TVA sur 0 €');
 });

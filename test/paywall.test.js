@@ -138,3 +138,18 @@ test('/api/verify : jeton valide, expiré, falsifié, et mode gratuit', async ()
   r = mockRes(); await handlers({ env: {}, now: () => T0 }).verify({ method: 'POST', body: {} }, r);
   assert.equal(r.body.free, true);
 });
+
+test('/api/checkout : libellé de relevé forcé, taux de TVA Stripe seulement s\u2019il est défini', async () => {
+  const req = { method: 'POST', headers: { host: 'www.cartedepoche.fr' }, body: { consent: true, tier: 'launch', lang: 'fr' } };
+  let f = stripeMock({}, PRICES); let r = mockRes();
+  await handlers({ env: ENV, fetch: f, now: () => T0 }).checkout(req, r);
+  let form = new URLSearchParams(f.calls.find((c) => c.init.method === 'POST').init.body);
+  assert.equal(form.get('payment_intent_data[statement_descriptor]'), 'CARTE DE POCHE');
+  assert.equal(form.get('metadata[lang]'), 'fr');
+  assert.equal(form.has('line_items[0][tax_rates][0]'), false);
+  f = stripeMock({}, PRICES); r = mockRes();
+  await handlers({ env: Object.assign({}, ENV, { TAX_RATE: 'txr_123', STATEMENT_DESCRIPTOR: 'X'.repeat(40) }), fetch: f, now: () => T0 }).checkout(req, r);
+  form = new URLSearchParams(f.calls.find((c) => c.init.method === 'POST').init.body);
+  assert.equal(form.get('line_items[0][tax_rates][0]'), 'txr_123');
+  assert.equal(form.get('payment_intent_data[statement_descriptor]').length, 22, 'tronqué à 22 caractères');
+});
