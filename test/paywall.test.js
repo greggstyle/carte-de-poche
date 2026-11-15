@@ -97,7 +97,7 @@ test('/api/checkout : exige le consentement, bon prix, bonnes URLs, métadonnée
   assert.equal(form.get('locale'), 'en');
   assert.equal(form.get('metadata[product]'), 'carte-de-poche');
   assert.equal(form.get('metadata[cgv_consent]'), '1');
-  assert.equal(Number(form.get('expires_at')), Math.floor(T0 / 1000) + 1800);
+  assert.equal(Number(form.get('expires_at')), Math.floor(T0 / 1000) + 2100);
   assert.equal(post.init.headers.Authorization, 'Bearer rk_test_x');
   assert.ok(![...form.keys()].some((k) => /card|name|email|phone|logo/i.test(k) && !/payment_intent|metadata\[cgv/.test(k)), 'aucune donnée de carte de visite envoyée');
   r = mockRes(); await handlers({ env: {}, now: () => T0 }).checkout(req({ consent: true }), r);
@@ -163,4 +163,17 @@ test('/api/pricing : la raison de désactivation ne contient jamais de valeur se
   assert.equal(r.headers['cache-control'], 'no-store');
   const json = JSON.stringify(r.body);
   for (const v of [ENV.STRIPE_SECRET_KEY, ENV.UNLOCK_SECRET, ENV.PRICE_STANDARD]) assert.ok(!json.includes(v));
+});
+
+test('/api/checkout : expires_at laisse plus de 30 min à Stripe, et l\u2019erreur Stripe est diagnostiquable', async () => {
+  const req = { method: 'POST', headers: { host: 'www.cartedepoche.fr' }, body: { consent: true, tier: 'launch', lang: 'fr' } };
+  const f = stripeMock({}, PRICES); const r = mockRes();
+  await handlers({ env: ENV, fetch: f, now: () => T0 }).checkout(req, r);
+  const form = new URLSearchParams(f.calls.find((c) => c.init.method === 'POST').init.body);
+  assert.ok(Number(form.get('expires_at')) - Math.floor(T0 / 1000) >= 31 * 60, 'au moins 31 min');
+  const bad = async () => ({ ok: false, status: 400, json: async () => ({ error: { type: 'invalid_request_error', code: 'parameter_invalid_integer', param: 'expires_at', message: 'x' } }) });
+  const r2 = mockRes();
+  await handlers({ env: ENV, fetch: async (u, i) => (i && i.method === 'POST' ? bad() : f(u, i)), now: () => T0 }).checkout(req, r2);
+  assert.equal(r2.statusCode, 502);
+  assert.deepEqual(r2.body, { error: 'checkout_failed', status: 400, code: 'parameter_invalid_integer', param: 'expires_at' });
 });
