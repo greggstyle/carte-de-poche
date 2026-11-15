@@ -20,7 +20,10 @@ test('email FR : contenu légal complet', () => {
     'heure de La Réunion', 'droit de rétractation', 'L221-28', 'version 2026-11-15', 'https://www.cartedepoche.fr/cgv',
     'DigiDataLe', '928 068 360', 'FR27928068360', 'Saint-Pierre', 'bonjour@cartedepoche.fr', 'Stripe', 'ne la conservons pas'
   ]) assert.ok(m.text.includes(part), 'texte : manque « ' + part + ' »');
-  assert.ok(m.html.includes('<a href="https://www.cartedepoche.fr/cgv">'), 'lien CGV cliquable');
+  assert.ok(m.html.includes('<a href="https://www.cartedepoche.fr/cgv"'), 'lien CGV cliquable');
+  assert.ok(m.html.includes('href="https://www.cartedepoche.fr/app/"') && m.html.includes('Ouvrir ma carte de poche'), 'bouton vers l’app');
+  assert.ok(m.html.includes('ABCD1234') && m.html.includes('928 068 360') && m.html.includes('L221-28'), 'mentions légales dans le html');
+  assert.ok(m.html.includes('prix de lancement') && m.html.includes('dont TVA'), 'prix de lancement et TVA dans le html');
   assert.ok(m.text.includes('ABCD1234'.toUpperCase()), 'référence courte');
   assert.ok(!m.text.includes('cs_live_a1b2c3d4e5f6ABCD1234'), 'jamais l’identifiant complet de session');
 });
