@@ -147,6 +147,7 @@ test('/api/checkout : libellé de relevé forcé, taux de TVA Stripe seulement s
   let form = new URLSearchParams(f.calls.find((c) => c.init.method === 'POST').init.body);
   assert.equal(form.get('payment_intent_data[statement_descriptor]'), 'CARTE DE POCHE');
   assert.equal(form.get('metadata[lang]'), 'fr');
+  assert.equal(form.get('managed_payments[enabled]'), 'false', 'Managed Payments désactivé : sinon custom_text est refusé par Stripe');
   assert.equal(form.has('line_items[0][tax_rates][0]'), false);
   f = stripeMock({}, PRICES); r = mockRes();
   await handlers({ env: Object.assign({}, ENV, { TAX_RATE: 'txr_123', STATEMENT_DESCRIPTOR: 'X'.repeat(40) }), fetch: f, now: () => T0 }).checkout(req, r);
