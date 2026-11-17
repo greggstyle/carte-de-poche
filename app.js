@@ -66,7 +66,7 @@ var I18N = {
     'qr.text':'Texte libre','qr.text.note':'Le scan affiche simplement le texte.',
     'qr.dim':'QR : ',
     'fmt.group':'Format de sortie','fmt.phone':'Téléphone','fmt.story':'Story','fmt.square':'Carré',
-    'fmt.preset':'Modèle de téléphone','fmt.screen':'Mon écran','fmt.screen.label':'Mon écran','fmt.custom':'Personnalisé',
+    'fmt.preset':'Modèle de téléphone','fmt.group.other':'Autres Android','fmt.screen':'Mon écran','fmt.screen.label':'Mon écran','fmt.custom':'Personnalisé',
     'fmt.note':'Choisis ton modèle, ou « Mon écran » pour générer la carte pile à la résolution de l\u2019appareil que tu utilises.',
     'fmt.note.screen':'Résolution détectée sur cet appareil. Sur un ordinateur, c\u2019est celle du moniteur : ouvre cette page sur ton téléphone pour avoir la sienne.',
     'preview':'Aperçu de la carte',
@@ -136,7 +136,7 @@ var I18N = {
     'qr.text':'Free text','qr.text.note':'Scanning simply shows the text.',
     'qr.dim':'QR: ',
     'fmt.group':'Output format','fmt.phone':'Phone','fmt.story':'Story','fmt.square':'Square',
-    'fmt.preset':'Phone model','fmt.screen':'My screen','fmt.screen.label':'My screen','fmt.custom':'Custom',
+    'fmt.preset':'Phone model','fmt.group.other':'Other Android','fmt.screen':'My screen','fmt.screen.label':'My screen','fmt.custom':'Custom',
     'fmt.note':'Pick your model, or \u201cMy screen\u201d to generate the card at the exact resolution of the device you are using.',
     'fmt.note.screen':'Resolution detected on this device. On a computer that is the monitor\u2019s: open this page on your phone to get its own.',
     'preview':'Card preview',
@@ -196,16 +196,49 @@ var FORMATS = {
 };
 /* Résolutions natives (pixels), fiches constructeurs : voir README. */
 var PRESETS = [
-  {id:'iphone-duo',        label:'iPhone Duo (fermé)',   w:1398, h:2034},
-  {id:'iphone-duo-open',   label:'iPhone Duo (déplié)',  w:1878, h:2670},
-  {id:'iphone-16-pro-max', label:'iPhone 16 Pro Max', w:1320, h:2868},
-  {id:'iphone-16-pro',     label:'iPhone 16 Pro',     w:1206, h:2622},
-  {id:'iphone-16',         label:'iPhone 16 / 15',    w:1179, h:2556},
-  {id:'iphone-se',         label:'iPhone SE',         w:750,  h:1334},
-  {id:'pixel-9',           label:'Pixel 9',           w:1080, h:2424},
-  {id:'galaxy-s24',        label:'Galaxy S24',        w:1080, h:2340},
-  {id:'android',           label:'Android',           w:1080, h:2400}
+  /* Apple */
+  {id:'iphone-duo',        g:'apple',   label:'iPhone Duo (fermé)',                         w:1398, h:2034},
+  {id:'iphone-duo-open',   g:'apple',   label:'iPhone Duo (déplié)',                        w:1878, h:2670},
+  {id:'iphone-17-pro-max', g:'apple',   label:'iPhone 17 Pro Max',                          w:1320, h:2868},
+  {id:'iphone-17-pro',     g:'apple',   label:'iPhone 17 Pro',                              w:1206, h:2622},
+  {id:'iphone-17',         g:'apple',   label:'iPhone 17',                                  w:1206, h:2622},
+  {id:'iphone-air',        g:'apple',   label:'iPhone Air',                                 w:1260, h:2736},
+  {id:'iphone-16-pro-max', g:'apple',   label:'iPhone 16 Pro Max',                          w:1320, h:2868},
+  {id:'iphone-16-pro',     g:'apple',   label:'iPhone 16 Pro',                              w:1206, h:2622},
+  {id:'iphone-16-plus',    g:'apple',   label:'iPhone 16 Plus / 15 Plus / 15 Pro Max / 14 Pro Max', w:1290, h:2796},
+  {id:'iphone-16',         g:'apple',   label:'iPhone 16 / 15 / 15 Pro / 14 Pro',           w:1179, h:2556},
+  {id:'iphone-16e',        g:'apple',   label:'iPhone 16e / 14 / 13 / 13 Pro / 12 / 12 Pro', w:1170, h:2532},
+  {id:'iphone-14-plus',    g:'apple',   label:'iPhone 14 Plus / 13 Pro Max / 12 Pro Max',   w:1284, h:2778},
+  {id:'iphone-13-mini',    g:'apple',   label:'iPhone 13 mini / 12 mini',                   w:1080, h:2340},
+  {id:'iphone-11-pro-max', g:'apple',   label:'iPhone 11 Pro Max / XS Max',                 w:1242, h:2688},
+  {id:'iphone-11-pro',     g:'apple',   label:'iPhone 11 Pro / XS / X',                     w:1125, h:2436},
+  {id:'iphone-11',         g:'apple',   label:'iPhone 11 / XR',                             w:828,  h:1792},
+  {id:'iphone-se',         g:'apple',   label:'iPhone SE / 8 / 7',                          w:750,  h:1334},
+  /* Google */
+  {id:'pixel-10-pro-xl',   g:'google',  label:'Pixel 10 Pro XL / 9 Pro XL / 8 Pro',         w:1344, h:2992},
+  {id:'pixel-10-pro',      g:'google',  label:'Pixel 10 Pro / 9 Pro',                       w:1280, h:2856},
+  {id:'pixel-9',           g:'google',  label:'Pixel 10 / 9 / 9a',                          w:1080, h:2424},
+  {id:'pixel-8',           g:'google',  label:'Pixel 8 / 8a / 7 / 7a',                      w:1080, h:2400},
+  {id:'pixel-7-pro',       g:'google',  label:'Pixel 7 Pro',                                w:1440, h:3120},
+  /* Samsung */
+  {id:'galaxy-s25-ultra',  g:'samsung', label:'Galaxy S25 Ultra / S25+ / S24 Ultra / S24+', w:1440, h:3120},
+  {id:'galaxy-s24',        g:'samsung', label:'Galaxy S25 / S24 / S23',                     w:1080, h:2340},
+  {id:'galaxy-s23-ultra',  g:'samsung', label:'Galaxy S23 Ultra',                           w:1440, h:3088},
+  {id:'galaxy-a',          g:'samsung', label:'Galaxy A56 / A55 / A36 / A35 / A16 / A15',   w:1080, h:2340},
+  {id:'galaxy-z-flip7',    g:'samsung', label:'Galaxy Z Flip7',                             w:1080, h:2520},
+  {id:'galaxy-z-flip6',    g:'samsung', label:'Galaxy Z Flip6 / Flip5',                     w:1080, h:2640},
+  {id:'galaxy-z-fold7',    g:'samsung', label:'Galaxy Z Fold7 (fermé)',                     w:1080, h:2520},
+  {id:'galaxy-z-fold7-open', g:'samsung', label:'Galaxy Z Fold7 (déplié)',                  w:1968, h:2184},
+  {id:'galaxy-z-fold6',    g:'samsung', label:'Galaxy Z Fold6 (fermé)',                     w:968,  h:2376},
+  {id:'galaxy-z-fold6-open', g:'samsung', label:'Galaxy Z Fold6 (déplié)',                  w:1856, h:2160},
+  /* Autres */
+  {id:'oneplus-13',        g:'other',   label:'OnePlus 13 / 12',                            w:1440, h:3168},
+  {id:'xiaomi-15',         g:'other',   label:'Xiaomi 15 / 14',                             w:1200, h:2670},
+  {id:'nothing-phone-2',   g:'other',   label:'Nothing Phone (2)',                          w:1080, h:2412},
+  {id:'fairphone-5',       g:'other',   label:'Fairphone 5',                                w:1224, h:2700},
+  {id:'android',           g:'other',   label:'Android',                                    w:1080, h:2400}
 ];
+var PRESET_GROUPS = [['apple','Apple'],['google','Google Pixel'],['samsung','Samsung Galaxy'],['other','fmt.group.other']];
 var QRMODES = ['vcard','tel','email','web','text'];
 var SWATCHES = [
   ['#101215','Encre'],['#1b3a5c','Bleu nuit'],['#24443a','Vert bouteille'],['#6e2233','Bordeaux'],
@@ -855,8 +888,13 @@ $('#f-verso-text').addEventListener('input', function(){ state.verso.text=this.v
 /* presets */
 function syncPresetSelect(){
   var sel=$('#f-preset'), p=state.phone; sel.innerHTML='';
-  PRESETS.forEach(function(q){
-    var o=document.createElement('option'); o.value=q.id; o.textContent=q.label+' \u00b7 '+q.w+' \u00d7 '+q.h; sel.appendChild(o);
+  PRESET_GROUPS.forEach(function(gr){
+    var og=document.createElement('optgroup'); og.label = gr[1].indexOf('fmt.')===0 ? t(gr[1]) : gr[1];
+    PRESETS.forEach(function(q){
+      if(q.g!==gr[0]) return;
+      var o=document.createElement('option'); o.value=q.id; o.textContent=q.label+' \u00b7 '+q.w+' \u00d7 '+q.h; og.appendChild(o);
+    });
+    sel.appendChild(og);
   });
   var os=document.createElement('option'); os.value='screen';
   os.textContent = t('fmt.screen.label') + (p.preset==='screen' ? ' \u00b7 '+p.w+' \u00d7 '+p.h : '');
