@@ -1,0 +1,16 @@
+# Greg valide tout ce qui touche l'app, le paiement, les emails et les pages juridiques.
+# Pour que ce soit obligatoire : réglages de la branche main > "Require review from Code Owners".
+/app/                  @greggstyle
+/app.js                @greggstyle
+/style.css             @greggstyle
+/api/                  @greggstyle
+/lib/                  @greggstyle
+/test/                 @greggstyle
+/vendor/               @greggstyle
+/vercel.json           @greggstyle
+/.env.example          @greggstyle
+/.github/              @greggstyle
+/CONTRIBUTING.md       @greggstyle
+/cgv.html              @greggstyle
+/mentions-legales.html @greggstyle
+/charte-ia.html        @greggstyle

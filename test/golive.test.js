@@ -28,3 +28,17 @@ test('aucun lien vers la plateforme européenne ODR, fermée depuis le 20 juille
     assert.ok(!/ec\.europa\.eu\/consumers\/odr/.test(txt), f + ' renvoie vers la plateforme ODR fermée');
   }
 });
+
+test('CONTRIBUTING.md et CODEOWNERS protègent l\u2019app et le paiement', () => {
+  const root = path.join(__dirname, '..');
+  const guide = fs.readFileSync(path.join(root, 'CONTRIBUTING.md'), 'utf8');
+  const owners = fs.readFileSync(path.join(root, '.github', 'CODEOWNERS'), 'utf8');
+  for (const p of ['/app/', '/app.js', '/api/', '/lib/', '/vercel.json', '/cgv.html']) assert.ok(owners.includes(p + ' '), 'CODEOWNERS ne couvre pas ' + p);
+  // chaque id suivi par le script de l\u2019accueil est cité dans le guide, et existe bien dans la page
+  const home = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  for (const id of ['launch', 'price-big', 'price-sub', 'faq-price', 'consent', 'consent-yes', 'consent-no', 'consent-open']) {
+    assert.ok(guide.includes('`' + id + '`'), 'CONTRIBUTING.md ne cite pas l\u2019id ' + id);
+    assert.ok(home.includes('id="' + id + '"'), 'index.html n\u2019a plus l\u2019id ' + id);
+  }
+  assert.ok(!/(sk|rk|whsec)_(live|test)_[A-Za-z0-9]{8,}/.test(guide + owners), 'aucune clé dans ces fichiers');
+});

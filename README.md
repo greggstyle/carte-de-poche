@@ -129,6 +129,10 @@ cgv.html          conditions générales de vente
 vercel.json       en-têtes de sécurité et de cache
 ```
 
+## Contribuer
+
+Le site (accueil, textes, images) peut être amélioré par d'autres personnes ; l'app et le paiement sont réservés au propriétaire du dépôt. Règles, zones et marche à suivre : [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Crédits et licence
 
 - [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) par Kazuhiko Arase, MIT. « QR Code » est une marque déposée de DENSO WAVE.
