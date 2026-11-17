@@ -53,17 +53,42 @@ Le logo ne passe jamais par l'URL : il est chargé à la main par chaque personn
 
 | preset | appareil | pixels |
 |---|---|---|
-| `iphone-duo` | iPhone Duo, écran extérieur (fermé) | 1398 × 2034 |
-| `iphone-duo-open` | iPhone Duo, écran intérieur (déplié) | 1878 × 2670 |
+| `iphone-duo` | iPhone Duo (écran extérieur, fermé) | 1398 × 2034 |
+| `iphone-duo-open` | iPhone Duo (écran intérieur, déplié) | 1878 × 2670 |
+| `iphone-17-pro-max` | iPhone 17 Pro Max | 1320 × 2868 |
+| `iphone-17-pro` | iPhone 17 Pro | 1206 × 2622 |
+| `iphone-17` | iPhone 17 | 1206 × 2622 |
+| `iphone-air` | iPhone Air | 1260 × 2736 |
 | `iphone-16-pro-max` | iPhone 16 Pro Max | 1320 × 2868 |
 | `iphone-16-pro` | iPhone 16 Pro (défaut) | 1206 × 2622 |
-| `iphone-16` | iPhone 16 / 15 | 1179 × 2556 |
-| `iphone-se` | iPhone SE | 750 × 1334 |
-| `pixel-9` | Pixel 9 | 1080 × 2424 |
-| `galaxy-s24` | Galaxy S24 | 1080 × 2340 |
+| `iphone-16-plus` | iPhone 16 Plus / 15 Plus / 15 Pro Max / 14 Pro Max | 1290 × 2796 |
+| `iphone-16` | iPhone 16 / 15 / 15 Pro / 14 Pro | 1179 × 2556 |
+| `iphone-16e` | iPhone 16e / 14 / 13 / 13 Pro / 12 / 12 Pro | 1170 × 2532 |
+| `iphone-14-plus` | iPhone 14 Plus / 13 Pro Max / 12 Pro Max | 1284 × 2778 |
+| `iphone-13-mini` | iPhone 13 mini / 12 mini | 1080 × 2340 |
+| `iphone-11-pro-max` | iPhone 11 Pro Max / XS Max | 1242 × 2688 |
+| `iphone-11-pro` | iPhone 11 Pro / XS / X | 1125 × 2436 |
+| `pixel-10-pro-xl` | Pixel 10 Pro XL / 9 Pro XL / 8 Pro | 1344 × 2992 |
+| `pixel-10-pro` | Pixel 10 Pro / 9 Pro | 1280 × 2856 |
+| `pixel-9` | Pixel 10 / 9 / 9a | 1080 × 2424 |
+| `pixel-8` | Pixel 8 / 8a / 7 / 7a | 1080 × 2400 |
+| `pixel-7-pro` | Pixel 7 Pro | 1440 × 3120 |
+| `galaxy-s25-ultra` | Galaxy S25 Ultra / S25+ / S24 Ultra / S24+ | 1440 × 3120 |
+| `galaxy-s24` | Galaxy S25 / S24 / S23 | 1080 × 2340 |
+| `galaxy-s23-ultra` | Galaxy S23 Ultra | 1440 × 3088 |
+| `galaxy-a` | Galaxy A56 / A55 / A36 / A35 / A16 / A15 | 1080 × 2340 |
+| `galaxy-z-flip7` | Galaxy Z Flip7 | 1080 × 2520 |
+| `galaxy-z-flip6` | Galaxy Z Flip6 / Flip5 | 1080 × 2640 |
+| `galaxy-z-fold7` | Galaxy Z Fold7 (écran extérieur, fermé) | 1080 × 2520 |
+| `galaxy-z-fold7-open` | Galaxy Z Fold7 (écran intérieur, déplié) | 1968 × 2184 |
+| `galaxy-z-fold6-open` | Galaxy Z Fold6 (écran intérieur, déplié) | 1856 × 2160 |
+| `oneplus-13` | OnePlus 13 / 12 | 1440 × 3168 |
+| `xiaomi-15` | Xiaomi 15 / 14 | 1200 × 2670 |
+| `nothing-phone-2` | Nothing Phone (2) | 1080 × 2412 |
+| `fairphone-5` | Fairphone 5 | 1224 × 2700 |
 | `android` | Android générique | 1080 × 2400 |
 
-Sources : fiches techniques Apple (support.apple.com/fr-fr/specs, apple.com/iphone-duo/specs), Google (store.google.com, Pixel 9 tech specs), Samsung (samsung.com, Galaxy S24 specs). Consultées le 2 octobre 2026. Si ton modèle n'y est pas, « Mon écran » fait le travail.
+Sources : fiches techniques Apple (support.apple.com/fr-fr/specs, apple.com/iphone-duo/specs), Google (store.google.com, Pixel tech specs), Samsung (samsung.com, Galaxy specs), OnePlus, Xiaomi, Nothing et Fairphone. Modèles de 2025 et avant ajoutés le 17 novembre 2026, à recouper avec les fiches constructeurs. Les identifiants existants (`iphone-16`, `pixel-9`, `galaxy-s24`…) gardent les mêmes dimensions, les anciens liens marchent toujours. Si ton modèle n'y est pas, « Mon écran » fait le travail.
 
 ## Tarif et paiement
 
