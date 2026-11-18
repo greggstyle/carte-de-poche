@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/style.css?v=9">
+<link rel="stylesheet" href="/style.css?v=10">
 <script src="/vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -232,6 +232,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </aside>
 </div>
 
+<!-- aperçu flottant (mobile) : vignette en bas à droite, s'ouvre en grand -->
+<button class="mini" id="mini" type="button" data-i18n-aria="mini.open" aria-label="Agrandir l'aperçu" aria-haspopup="dialog" hidden><canvas id="mini-cv" width="152" height="330"></canvas></button>
+<div class="mini-full" id="mini-full" role="dialog" aria-modal="true" data-i18n-aria="preview" aria-label="Aperçu de la carte" hidden>
+  <canvas id="mini-big"></canvas>
+  <button class="btn btn-ghost mini-close" id="mini-close" type="button" data-i18n="mini.close">Fermer</button>
+</div>
+
 <script>window.va = window.va || function(){ (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
 <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title" hidden>
@@ -257,6 +264,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="/app.js?v=11"></script>
+<script src="/app.js?v=12"></script>
 </body>
 </html>

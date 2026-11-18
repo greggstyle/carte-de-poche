@@ -69,7 +69,7 @@ var I18N = {
     'fmt.preset':'Modèle de téléphone','fmt.group.other':'Autres Android','fmt.screen':'Mon écran','fmt.screen.label':'Mon écran','fmt.custom':'Personnalisé',
     'fmt.note':'Choisis ton modèle, ou « Mon écran » pour générer la carte pile à la résolution de l\u2019appareil que tu utilises.',
     'fmt.note.screen':'Résolution détectée sur cet appareil. Sur un ordinateur, c\u2019est celle du moniteur : ouvre cette page sur ton téléphone pour avoir la sienne.',
-    'preview':'Aperçu de la carte',
+    'preview':'Aperçu de la carte','mini.open':'Agrandir l\u2019aperçu','mini.close':'Fermer',
     'dl':'Télécharger le PNG','share.btn':'Partager','peek.show':'Voir la vCard','peek.hide':'Masquer le contenu',
     'st.prep':'Préparation du PNG…','st.saved':'PNG enregistré : ','st.err':'Impossible de générer l\u2019image.',
     'st.shared':'Carte partagée.','st.share.cancel':'Partage annulé.',
@@ -139,7 +139,7 @@ var I18N = {
     'fmt.preset':'Phone model','fmt.group.other':'Other Android','fmt.screen':'My screen','fmt.screen.label':'My screen','fmt.custom':'Custom',
     'fmt.note':'Pick your model, or \u201cMy screen\u201d to generate the card at the exact resolution of the device you are using.',
     'fmt.note.screen':'Resolution detected on this device. On a computer that is the monitor\u2019s: open this page on your phone to get its own.',
-    'preview':'Card preview',
+    'preview':'Card preview','mini.open':'Enlarge preview','mini.close':'Close',
     'dl':'Download PNG','share.btn':'Share','peek.show':'Show vCard','peek.hide':'Hide content',
     'st.prep':'Preparing the PNG…','st.saved':'PNG saved: ','st.err':'Could not generate the image.',
     'st.shared':'Card shared.','st.share.cancel':'Share cancelled.',
@@ -845,7 +845,50 @@ function renderSquare(W,H,p,f,im,qr){
 
 /* ---------- UI ---------- */
 var raf=null;
-function schedule(){ if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(function(){ raf=null; render(); syncPeek(); syncShareUrl(); }); }
+function schedule(){ if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(function(){ raf=null; render(); syncMini(); syncPeek(); syncShareUrl(); }); }
+
+/* ---------- aperçu flottant (mobile) ----------
+   Une vignette de la carte reste en bas à droite quand l'aperçu principal sort de l'écran.
+   Elle passe en haut pendant la saisie (le clavier occupe le bas), et s'ouvre en grand au toucher
+   sans faire défiler la page : on revient exactement où on était. */
+var mini=$('#mini'), miniCv=$('#mini-cv'), miniFull=$('#mini-full'), miniBig=$('#mini-big');
+var mq=window.matchMedia('(max-width:980px)'), stageOut=false, typing=false;
+function syncMini(){
+  if(!mq.matches) return;
+  var W=cv.width, H=cv.height, maxW=78, maxH=150, k=Math.min(maxW/W, maxH/H);
+  var w=Math.round(W*k), h=Math.round(H*k), dpr=Math.min(window.devicePixelRatio||1, 3);
+  if(miniCv.width!==Math.round(w*dpr) || miniCv.height!==Math.round(h*dpr)){
+    miniCv.width=Math.round(w*dpr); miniCv.height=Math.round(h*dpr);
+    miniCv.style.width=w+'px'; miniCv.style.height=h+'px';
+  }
+  var c=miniCv.getContext('2d'); c.imageSmoothingQuality='high';
+  c.clearRect(0,0,miniCv.width,miniCv.height); c.drawImage(cv,0,0,miniCv.width,miniCv.height);
+}
+function showMini(){
+  var on = mq.matches && stageOut && miniFull.hidden;
+  if(on && mini.hidden){ mini.hidden=false; syncMini(); void mini.offsetWidth; }
+  mini.classList.toggle('on', on);
+  mini.classList.toggle('top', typing);
+  mini.tabIndex = on ? 0 : -1;
+}
+function openMini(){
+  miniBig.width=cv.width; miniBig.height=cv.height; miniBig.getContext('2d').drawImage(cv,0,0);
+  miniFull.hidden=false; document.body.style.overflow='hidden'; showMini();
+  $('#mini-close').focus(); track('mini_preview', {});
+}
+function closeMini(){
+  miniFull.hidden=true; document.body.style.overflow=''; showMini(); mini.focus({preventScroll:true});
+}
+if('IntersectionObserver' in window){
+  new IntersectionObserver(function(es){ stageOut = !es[0].isIntersecting; showMini(); }, {threshold:0.15}).observe($('.stage'));
+}
+mini.addEventListener('click', openMini);
+$('#mini-close').addEventListener('click', closeMini);
+miniFull.addEventListener('click', function(e){ if(e.target===miniFull) closeMini(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !miniFull.hidden) closeMini(); });
+document.addEventListener('focusin', function(e){ var el=e.target; typing = !!el && (el.tagName==='TEXTAREA' || (el.tagName==='INPUT' && /^(text|email|tel|url|search|number)$/.test(el.type))); showMini(); });
+document.addEventListener('focusout', function(){ setTimeout(function(){ var el=document.activeElement; typing = !!el && (el.tagName==='TEXTAREA' || (el.tagName==='INPUT' && /^(text|email|tel|url|search|number)$/.test(el.type))); showMini(); }, 0); });
+if(mq.addEventListener) mq.addEventListener('change', function(){ syncMini(); showMini(); });
 
 function buildSeg(host, keys, labelOf, current, onPick){
   host.innerHTML='';
