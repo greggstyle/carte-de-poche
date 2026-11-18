@@ -86,7 +86,7 @@ var I18N = {
     'consent.yes':'Accepter','consent.no':'Refuser','consent.manage':'Cookies',
     'sec.typo':'Typographie','typo.font':'Police','typo.size':'Taille du texte',
     'typo.note':'La disposition ne change pas : seules la police et sa taille.',
-    'size.0':'Plus petit','size.1':'Petit','size.2':'Normal','size.3':'Grand','size.4':'Plus grand',
+    'size.0':'Plus petit','size.1':'Petit','size.2':'Normal','size.3':'Grand','size.4':'Plus grand','size.5':'Très grand','size.6':'Énorme',
     'print.title':'Impression','print.paper':'Papier','print.a4':'Centrer sur une page A4',
     'print.btn':'Télécharger le PDF','print.share':'Partager le PDF',
     'print.note':'PDF imprimeur : 300 dpi, 3 mm de fond perdu, traits de coupe. Couleurs RVB, ton imprimeur convertit en CMJN.',
@@ -157,7 +157,7 @@ var I18N = {
     'consent.yes':'Accept','consent.no':'Decline','consent.manage':'Cookies',
     'sec.typo':'Typography','typo.font':'Font','typo.size':'Text size',
     'typo.note':'The layout does not change: only the font and its size.',
-    'size.0':'Smallest','size.1':'Small','size.2':'Normal','size.3':'Large','size.4':'Largest',
+    'size.0':'Smallest','size.1':'Small','size.2':'Normal','size.3':'Large','size.4':'Larger','size.5':'Very large','size.6':'Huge',
     'print.title':'Print','print.paper':'Paper','print.a4':'Centre on an A4 page',
     'print.btn':'Download PDF','print.share':'Share PDF',
     'print.note':'Print-ready PDF: 300 dpi, 3 mm bleed, crop marks. RGB colours, your printer converts to CMYK.',
@@ -275,7 +275,7 @@ var FONTS = {
   mono:      {label:'Technique', title:'IBM Plex Mono',      body:'IBM Plex Sans',  gt:'sans-serif', gb:'sans-serif',
               g:'family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600'}
 };
-var SIZES = [0.85, 0.92, 1, 1.1, 1.22];
+var SIZES = [0.85, 0.92, 1, 1.1, 1.22, 1.38, 1.55];
 
 /* Impression : 300 dpi, fond perdu 3 mm, traits de coupe. */
 var DPI=300, PX_PER_MM=DPI/25.4, PT_PER_MM=72/25.4, BLEED_MM=3, MARGIN_MM=8, MARK_GAP_MM=4, MARK_LEN_MM=4;
@@ -494,6 +494,17 @@ function fitFont(c,text,maxW,start,min,fam,weight,italic){
   c.font=(italic?'italic ':'')+weight+' '+s+'px '+fam;
   return s;
 }
+/* Taille qui fait tenir `text` dans maxW (jamais plus grande que `size`, jamais sous 35 %).
+   fontOf(s) donne la police CSS, track = espacement des lettres en fraction de la taille. */
+function fitSize(c,text,maxW,size,fontOf,track){
+  var s=size, min=size*0.35;
+  for(;;){
+    c.font=fontOf(s); c.letterSpacing=track ? (s*track)+'px' : '0px';
+    var w=c.measureText(text).width; c.letterSpacing='0px';
+    if(w<=maxW || s<=min) return s;
+    s=Math.max(min, s*0.95);
+  }
+}
 function wrap(c,text,maxW){
   var words=String(text).split(/\s+/), lines=[], cur='';
   for(var i=0;i<words.length;i++){
@@ -662,8 +673,19 @@ function render(){
   renderInto(cv, D.w, D.h, 0, state.format==='square', state.face);
 }
 
+/* Carte verticale. Toutes les tailles partent d'une largeur de référence U (= W en temps normal).
+   Sur un écran large ou presque carré (ordinateur, pliable déplié), le contenu dépasserait en hauteur :
+   on réduit alors U pour que tout tienne, et le bloc reste centré. */
 function renderTall(W,H,p,f,im,qr){
-  var maxW = W*0.80, cx = W/2;
+  var U=W, b=tallBlocks(U,W,H,p,f,im,qr), m=tallHeight(b,U), room=H*0.92;
+  if(m>room){ U=W*room/m; b=tallBlocks(U,W,H,p,f,im,qr); }
+  layout(b, H, U, 0.82);
+}
+function tallHeight(blocks,U){
+  var t=0; for(var i=0;i<blocks.length;i++){ t+=blocks[i].h; if(i<blocks.length-1) t+=blocks[i].gap*U*0.022; } return t;
+}
+function tallBlocks(W,Wfull,H,p,f,im,qr){
+  var maxW = W*0.80, cx = Wfull/2;
   var blocks=[];
 
   if(im.logo){
@@ -690,7 +712,7 @@ function renderTall(W,H,p,f,im,qr){
     }});
   }
   if(f.role){
-    var rs=fs(W,0.036);
+    var rs=fitSize(ctx, f.role, maxW, fs(W,0.036), function(s){ return '400 '+s+'px '+BF(); });
     blocks.push({h:rs*1.25, gap:0.16, draw:function(y){
       ctx.font='400 '+rs+'px '+BF();
       ctx.fillStyle=p.mid; ctx.textAlign='center';
@@ -698,7 +720,7 @@ function renderTall(W,H,p,f,im,qr){
     }});
   }
   if(f.company){
-    var cs=fs(W,0.026);
+    var cs=fitSize(ctx, String(f.company).toUpperCase(), maxW, fs(W,0.026), function(s){ return '500 '+s+'px "IBM Plex Mono",monospace'; }, 0.14);
     blocks.push({h:cs*1.4, gap:0.85, draw:function(y){
       ctx.font='500 '+cs+'px "IBM Plex Mono",monospace';
       ctx.fillStyle=p.dim; ctx.textAlign='center';
@@ -723,7 +745,18 @@ function renderTall(W,H,p,f,im,qr){
 
   var rows=contactRows();
   if(rows.length){
-    var vs=fs(W,0.028), ls=fs(W,0.020), lineH=vs*1.85;
+    var vs=fs(W,0.028), ls=fs(W,0.020);
+    (function(){
+      var widest=0, k;
+      for(k=0;k<rows.length;k++){
+        ctx.font='500 '+ls+'px "IBM Plex Mono",monospace'; ctx.letterSpacing=(ls*0.12)+'px';
+        var lw0=Math.max(ctx.measureText(rows[k][0]).width, ls*0.62*rows[k][0].length); ctx.letterSpacing='0px';
+        ctx.font='400 '+vs+'px '+BF();
+        widest=Math.max(widest, lw0+W*0.024+ctx.measureText(rows[k][1]).width);
+      }
+      var room=W*0.88; if(widest>room){ var r=Math.max(0.35, room/widest); vs*=r; ls*=r; }
+    })();
+    var lineH=vs*1.85;
     blocks.push({h:rows.length*lineH, gap:0, draw:function(y){
       for(var i=0;i<rows.length;i++){
         var lab=rows[i][0], val=rows[i][1];
@@ -746,7 +779,7 @@ function renderTall(W,H,p,f,im,qr){
     }});
   }
 
-  layout(blocks, H, W, 0.82);
+  return blocks;
 }
 
 function stack(blocks,H,unit){
@@ -796,21 +829,21 @@ function renderSquare(W,H,p,f,im,qr){
   }
   if(f.name){
     ctx.textAlign='left';
-    var ns=fitFont(ctx,f.name,lw,fs(W,0.062),fs(W,0.030),TF(),600,false);
+    var ns=fitFont(ctx,f.name,lw,fs(W,0.062),Math.round(W*0.022),TF(),600,false);
     left.push({h:ns*1.02, gap:0.30, draw:function(y){
       ctx.font='600 '+ns+'px '+TF(); ctx.textAlign='left';
       ctx.fillStyle=p.fg; ctx.fillText(f.name, lx, y+ns*0.80);
     }});
   }
   if(f.role){
-    var rs=fs(W,0.028);
+    var rs=fitSize(ctx, f.role, lw, fs(W,0.028), function(s){ return '400 '+s+'px '+BF(); });
     left.push({h:rs*1.25, gap:0.16, draw:function(y){
       ctx.font='400 '+rs+'px '+BF(); ctx.textAlign='left';
       ctx.fillStyle=p.mid; ctx.fillText(f.role, lx, y+rs*0.95);
     }});
   }
   if(f.company){
-    var cs=fs(W,0.020);
+    var cs=fitSize(ctx, String(f.company).toUpperCase(), lw, fs(W,0.020), function(s){ return '500 '+s+'px "IBM Plex Mono",monospace'; }, 0.14);
     left.push({h:cs*1.4, gap:0.75, draw:function(y){
       ctx.font='500 '+cs+'px "IBM Plex Mono",monospace'; ctx.textAlign='left';
       ctx.letterSpacing=(cs*0.14)+'px'; ctx.fillStyle=p.dim;
@@ -834,6 +867,14 @@ function renderSquare(W,H,p,f,im,qr){
   var rows=contactRows();
   if(rows.length){
     var vs=fs(W,0.022), ls=fs(W,0.016);
+    (function(){
+      var r=1, k;
+      for(k=0;k<rows.length;k++){
+        var words=String(rows[k][1]).split(/\s+/);
+        for(var j=0;j<words.length;j++){ var s1=fitSize(ctx, words[j], rw, vs, function(s){ return '400 '+s+'px '+BF(); }); r=Math.min(r, s1/vs); }
+      }
+      vs*=r; ls*=r;
+    })();
     var pre=[];
     ctx.font='400 '+vs+'px '+BF();
     for(var i=0;i<rows.length;i++) pre.push(wrap(ctx,rows[i][1],rw));
