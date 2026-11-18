@@ -646,8 +646,19 @@ function render(){
   renderInto(cv, D.w, D.h, 0, state.format==='square', state.face);
 }
 
+/* Carte verticale. Toutes les tailles partent d'une largeur de référence U (= W en temps normal).
+   Sur un écran large ou presque carré (ordinateur, pliable déplié), le contenu dépasserait en hauteur :
+   on réduit alors U pour que tout tienne, et le bloc reste centré. */
 function renderTall(W,H,p,f,im,qr){
-  var maxW = W*0.80, cx = W/2;
+  var U=W, b=tallBlocks(U,W,H,p,f,im,qr), m=tallHeight(b,U), room=H*0.92;
+  if(m>room){ U=W*room/m; b=tallBlocks(U,W,H,p,f,im,qr); }
+  layout(b, H, U, 0.82);
+}
+function tallHeight(blocks,U){
+  var t=0; for(var i=0;i<blocks.length;i++){ t+=blocks[i].h; if(i<blocks.length-1) t+=blocks[i].gap*U*0.022; } return t;
+}
+function tallBlocks(W,Wfull,H,p,f,im,qr){
+  var maxW = W*0.80, cx = Wfull/2;
   var blocks=[];
 
   if(im.logo){
@@ -730,7 +741,7 @@ function renderTall(W,H,p,f,im,qr){
     }});
   }
 
-  layout(blocks, H, W, 0.82);
+  return blocks;
 }
 
 function stack(blocks,H,unit){
