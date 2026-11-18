@@ -56,6 +56,14 @@ img{max-width:100%}
 
 .masthead{display:flex;align-items:baseline;gap:.9rem 1.2rem;flex-wrap:wrap;padding-bottom:1.6rem}
 .masthead h1{font-family:var(--serif);font-weight:600;font-size:2.1rem;letter-spacing:-.015em;margin:0;text-wrap:balance}
+.home-link{color:inherit;text-decoration:none}
+.home-link:hover{color:var(--accent)}
+/* lien retour vers la page d'accueil, au-dessus du titre */
+.back-home{display:inline-flex;align-items:center;gap:.4rem;margin:0 0 1.1rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-decoration:none;padding:.35rem 0}
+.back-home span[aria-hidden]{font-family:var(--sans);font-size:1rem;letter-spacing:0;transition:transform .15s}
+.back-home:hover{color:var(--accent)}
+.back-home:hover span[aria-hidden]{transform:translateX(-3px)}
+.back-home-m{display:none}
 .masthead p{margin:0;color:var(--ink-2);font-size:.86rem;max-width:34ch}
 .lang{margin-left:auto;display:inline-flex;border:1px solid var(--rule)}
 .lang button{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);background:transparent;border:0;border-right:1px solid var(--rule);padding:.35rem .6rem;cursor:pointer}
@@ -216,6 +224,8 @@ img{max-width:100%}
 @media (min-width:981px){.mini{display:none}}
 
 @media (max-width:980px){
+  .back-home-m{display:inline-flex;align-self:flex-start;margin:0}
+  .col-form > .back-home{display:none}
   .wrap{grid-template-columns:minmax(0,1fr)}
   .col-view{position:static;order:-1;border-left:0;border-bottom:1px solid var(--rule);min-height:0;padding:1.6rem 1rem 2rem}
   .col-form{padding:1.6rem 1rem 4rem}

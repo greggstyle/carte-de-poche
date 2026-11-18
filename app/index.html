@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/style.css?v=16">
+<link rel="stylesheet" href="/style.css?v=17">
 <script src="/vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -49,8 +49,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div class="wrap">
   <main class="col-form">
+    <a class="back-home" href="/"><span aria-hidden="true">&larr;</span> <span data-i18n="nav.home">Retour à l'accueil</span></a>
     <div class="masthead">
-      <h1 data-i18n="title">Carte de poche</h1>
+      <h1><a class="home-link" href="/" data-i18n="title">Carte de poche</a></h1>
       <p data-i18n="tagline">Une carte de contact à montrer sur écran ou à imprimer, avec un QR qui ajoute vraiment la fiche au répertoire.</p>
       <div class="lang" id="lang" role="group" aria-label="Langue / Language">
         <button type="button" data-lang="fr" aria-pressed="true">FR</button>
@@ -208,6 +209,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </main>
 
   <aside class="col-view">
+    <a class="back-home back-home-m" href="/"><span aria-hidden="true">&larr;</span> <span data-i18n="nav.home">Retour à l'accueil</span></a>
     <div class="viewbar">
       <span class="dim" id="dim"></span>
       <div class="seg seg-face" id="face" role="group" aria-label="Recto / Verso" hidden></div>
@@ -272,6 +274,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="/app.js?v=19"></script>
+<script src="/app.js?v=20"></script>
 </body>
 </html>
