@@ -95,6 +95,7 @@ var I18N = {
     'sec.theme':'Thème','theme.note':'Un raccourci couleur + police par métier. Tu peux tout ajuster ensuite.',
     'theme.craft':'Artisanat','theme.health':'Santé','theme.law':'Droit & finance','theme.tech':'Tech','theme.food':'Restauration',
     'theme.estate':'Immobilier','theme.creative':'Création','theme.tourism':'Tourisme','theme.nature':'Nature','theme.beauty':'Beauté',
+    'theme.building':'Bâtiment','theme.education':'Éducation','theme.sport':'Sport & coaching','theme.events':'Événementiel','theme.culture':'Culture & spectacle','theme.pets':'Animaux',
     'sec.verso':'Verso','verso.none':'Aucun','verso.logo':'Logo seul','verso.slogan':'Slogan','verso.text':'Texte du verso',
     'verso.note':'Deuxième face pour l\u2019impression recto-verso : même fond, logo seul ou une phrase. Le PDF passe à 2 pages.',
     'verso.nologo':'Pas de logo chargé : le verso affiche la société.',
@@ -165,6 +166,7 @@ var I18N = {
     'sec.theme':'Theme','theme.note':'A colour + font shortcut per trade. You can adjust everything afterwards.',
     'theme.craft':'Crafts','theme.health':'Health','theme.law':'Law & finance','theme.tech':'Tech','theme.food':'Food & hospitality',
     'theme.estate':'Real estate','theme.creative':'Creative','theme.tourism':'Tourism','theme.nature':'Nature','theme.beauty':'Beauty',
+    'theme.building':'Building trades','theme.education':'Education','theme.sport':'Sport & coaching','theme.events':'Events & weddings','theme.culture':'Culture & performing arts','theme.pets':'Pets & animal care',
     'sec.verso':'Back side','verso.none':'None','verso.logo':'Logo only','verso.slogan':'Tagline','verso.text':'Back side text',
     'verso.note':'Second side for double-sided printing: same background, logo only or a line of text. The PDF becomes 2 pages.',
     'verso.nologo':'No logo loaded: the back shows the company name.',
@@ -290,7 +292,13 @@ var THEMES = [
   {id:'creative', bg:'#f2f2ef', font:'editorial'},
   {id:'tourism',  bg:'#0b6e8f', font:'friendly'},
   {id:'nature',   bg:'#4a6b2a', font:'friendly'},
-  {id:'beauty',   bg:'#d9c7c0', font:'elegant'}
+  {id:'beauty',   bg:'#d9c7c0', font:'elegant'},
+  {id:'building', bg:'#2e3238', font:'geometric'},
+  {id:'education',bg:'#3d4f7c', font:'literary'},
+  {id:'sport',    bg:'#c2410c', font:'geometric'},
+  {id:'events',   bg:'#efe6d6', font:'script'},
+  {id:'culture',  bg:'#0b0b0d', font:'mono'},
+  {id:'pets',     bg:'#56705a', font:'friendly'}
 ];
 var VERSO_MODES=['none','logo','slogan'];
 

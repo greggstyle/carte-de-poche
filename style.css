@@ -157,7 +157,12 @@ img{max-width:100%}
 .gate-actions{display:flex;gap:.7rem;flex-wrap:wrap}
 
 /* thèmes et verso */
-.seg-themes button{display:inline-flex;align-items:center;gap:.45rem}
+/* thèmes : même grille régulière que les polices. 16 thèmes = 2 colonnes, ou 4 quand il y a la place. */
+.f-row:has(> .seg-themes), .sec-b:has(> .seg-themes){container-type:inline-size}
+.seg-themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;width:100%;background:var(--rule)}
+.seg-themes button{display:flex;align-items:center;gap:.55rem;border-right:0;background:var(--bg);white-space:normal;text-align:left;line-height:1.25;padding:.6rem .8rem;min-height:2.9rem}
+.seg-themes button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+@container (min-width:42rem){.seg-themes{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .seg-themes .dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.18);flex:none}
 .seg-face button{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .6rem}
 
