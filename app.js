@@ -93,8 +93,9 @@ var I18N = {
     'paper.card55':'Carte de visite 55 × 85 mm','paper.a6':'A6 105 × 148 mm','paper.screen':'Format écran à 300 dpi',
     'st.pdfprep':'Préparation du PDF…','st.pdfsaved':'PDF enregistré : ','st.pdferr':'Impossible de générer le PDF.',
     'sec.theme':'Thème','theme.note':'Un raccourci couleur + police par métier. Tu peux tout ajuster ensuite.',
-    'theme.craft':'Artisanat','theme.health':'Santé','theme.law':'Droit & finance','theme.tech':'Tech','theme.food':'Restauration',
-    'theme.estate':'Immobilier','theme.creative':'Création','theme.tourism':'Tourisme','theme.nature':'Nature','theme.beauty':'Beauté',
+    'theme.craft':'Artisanat & bâtiment','theme.health':'Santé & soins','theme.beauty':'Beauté & bien-être','theme.law':'Droit, finance & conseil','theme.tech':'Tech & numérique','theme.shop':'Commerce & boutiques',
+    'theme.food':'Restauration & hôtellerie','theme.estate':'Immobilier','theme.creative':'Création & communication','theme.tourism':'Tourisme & loisirs','theme.sport':'Sport & coaching',
+    'theme.education':'Éducation & formation','theme.events':'Événementiel & culture','theme.nature':'Nature, agriculture & animaux','theme.transport':'Transport & automobile','theme.services':'Services à la personne & associations',
     'sec.verso':'Verso','verso.none':'Aucun','verso.logo':'Logo seul','verso.slogan':'Slogan','verso.text':'Texte du verso',
     'verso.note':'Deuxième face pour l\u2019impression recto-verso : même fond, logo seul ou une phrase. Le PDF passe à 2 pages.',
     'verso.nologo':'Pas de logo chargé : le verso affiche la société.',
@@ -163,8 +164,9 @@ var I18N = {
     'paper.card55':'Business card 55 × 85 mm','paper.a6':'A6 105 × 148 mm','paper.screen':'Screen format at 300 dpi',
     'st.pdfprep':'Preparing the PDF…','st.pdfsaved':'PDF saved: ','st.pdferr':'Could not generate the PDF.',
     'sec.theme':'Theme','theme.note':'A colour + font shortcut per trade. You can adjust everything afterwards.',
-    'theme.craft':'Crafts','theme.health':'Health','theme.law':'Law & finance','theme.tech':'Tech','theme.food':'Food & hospitality',
-    'theme.estate':'Real estate','theme.creative':'Creative','theme.tourism':'Tourism','theme.nature':'Nature','theme.beauty':'Beauty',
+    'theme.craft':'Crafts & building','theme.health':'Health & care','theme.beauty':'Beauty & wellness','theme.law':'Law, finance & consulting','theme.tech':'Tech & digital','theme.shop':'Retail & shops',
+    'theme.food':'Food & hospitality','theme.estate':'Real estate','theme.creative':'Creative & communication','theme.tourism':'Tourism & leisure','theme.sport':'Sport & coaching',
+    'theme.education':'Education & training','theme.events':'Events & culture','theme.nature':'Nature, farming & animals','theme.transport':'Transport & automotive','theme.services':'Personal services & non-profits',
     'sec.verso':'Back side','verso.none':'None','verso.logo':'Logo only','verso.slogan':'Tagline','verso.text':'Back side text',
     'verso.note':'Second side for double-sided printing: same background, logo only or a line of text. The PDF becomes 2 pages.',
     'verso.nologo':'No logo loaded: the back shows the company name.',
@@ -281,16 +283,22 @@ var PAPERS = { card55:{w:55,h:85}, a6:{w:105,h:148}, screen:null };
 
 /* Thèmes par métier : un raccourci couleur + police, tout reste modifiable après. */
 var THEMES = [
-  {id:'craft',    bg:'#3b2f2a', font:'bold'},
-  {id:'health',   bg:'#2f6f6a', font:'friendly'},
-  {id:'law',      bg:'#1b3a5c', font:'classic'},
-  {id:'tech',     bg:'#0f172a', font:'modern'},
-  {id:'food',     bg:'#6e2233', font:'elegant'},
-  {id:'estate',   bg:'#24443a', font:'editorial'},
-  {id:'creative', bg:'#f2f2ef', font:'editorial'},
-  {id:'tourism',  bg:'#0b6e8f', font:'friendly'},
-  {id:'nature',   bg:'#4a6b2a', font:'friendly'},
-  {id:'beauty',   bg:'#d9c7c0', font:'elegant'}
+  {id:'craft',     bg:'#3b2f2a', font:'bold'},
+  {id:'health',    bg:'#2f6f6a', font:'friendly'},
+  {id:'beauty',    bg:'#d9c7c0', font:'elegant'},
+  {id:'law',       bg:'#1b3a5c', font:'classic'},
+  {id:'tech',      bg:'#0f172a', font:'modern'},
+  {id:'shop',      bg:'#a16207', font:'geometric'},
+  {id:'food',      bg:'#6e2233', font:'elegant'},
+  {id:'estate',    bg:'#24443a', font:'editorial'},
+  {id:'creative',  bg:'#f2f2ef', font:'editorial'},
+  {id:'tourism',   bg:'#0b6e8f', font:'friendly'},
+  {id:'sport',     bg:'#c2410c', font:'geometric'},
+  {id:'education', bg:'#3d4f7c', font:'literary'},
+  {id:'events',    bg:'#efe6d6', font:'script'},
+  {id:'nature',    bg:'#4a6b2a', font:'friendly'},
+  {id:'transport', bg:'#374151', font:'mono'},
+  {id:'services',  bg:'#7c4a6e', font:'friendly'}
 ];
 var VERSO_MODES=['none','logo','slogan'];
 
