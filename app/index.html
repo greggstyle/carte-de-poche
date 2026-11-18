@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/style.css?v=15">
+<link rel="stylesheet" href="/style.css?v=16">
 <script src="/vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -79,6 +79,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="f"><label for="f-web" data-i18n="f.web">Site web</label><input id="f-web" data-field="web" type="text" autocomplete="off"></div>
           <div class="f"><label for="f-address" data-i18n="f.address">Adresse</label><input id="f-address" data-field="address" type="text" autocomplete="off"></div>
         </div>
+        <div class="extra-rows" id="extra-rows"></div>
+        <button class="add-row" id="add-row" type="button"><span aria-hidden="true">+</span> <span data-i18n="extra.add">Ajouter une ligne</span></button>
+        <p class="note" id="extra-note" data-i18n="extra.note">Facultatif : Instagram, LinkedIn, horaires, 2e numéro… Jusqu'à 3 lignes.</p>
       </div>
     </section>
 
@@ -269,6 +272,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="/app.js?v=18"></script>
+<script src="/app.js?v=19"></script>
 </body>
 </html>

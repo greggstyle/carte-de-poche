@@ -81,6 +81,7 @@ var I18N = {
     'foot.privacy':'Le contenu de ta carte reste dans ton navigateur : rien n\u2019est envoyé à un serveur. Mesure d\u2019audience (Vercel Analytics, Google Tag Manager / Analytics).',
     'peek.empty':'(rien à encoder)',
     'row.tel':'TÉL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADR',
+    'extra.add':'Ajouter une ligne','extra.note':'Facultatif : Instagram, LinkedIn, horaires, 2e numéro… Jusqu\u2019à 3 lignes.','extra.label':'Intitulé','extra.value':'Texte','extra.label.ph':'Insta','extra.value.ph':'@atelier.vacoa','extra.del':'Retirer cette ligne','extra.full':'3 lignes maximum, pour que la carte reste lisible.',
     'consent.title':'Un cookie pour mesurer l\u2019audience ?',
     'consent.body':'Google Analytics nous aide à savoir combien de personnes utilisent la carte. Rien n\u2019est déposé si tu refuses, et l\u2019app marche pareil.',
     'consent.yes':'Accepter','consent.no':'Refuser','consent.manage':'Cookies',
@@ -156,6 +157,7 @@ var I18N = {
     'foot.privacy':'Your card\u2019s content stays in your browser: nothing is sent to a server. Audience measurement (Vercel Analytics, Google Tag Manager / Analytics).',
     'peek.empty':'(nothing to encode)',
     'row.tel':'TEL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADDR',
+    'extra.add':'Add a line','extra.note':'Optional: Instagram, LinkedIn, opening hours, 2nd number… Up to 3 lines.','extra.label':'Label','extra.value':'Text','extra.label.ph':'Insta','extra.value.ph':'@atelier.vacoa','extra.del':'Remove this line','extra.full':'3 lines maximum, so the card stays readable.',
     'consent.title':'A cookie to measure audience?',
     'consent.body':'Google Analytics helps us know how many people use the card. Nothing is stored if you decline, and the app works the same.',
     'consent.yes':'Accept','consent.no':'Decline','consent.manage':'Cookies',
@@ -310,6 +312,7 @@ var THEMES = [
 ];
 var VERSO_MODES=['none','logo','slogan'];
 
+var EXTRA_MAX = 3;
 var DEFAULTS = {
   name:'Camille Ravine',
   role:'Directrice de création',
@@ -333,6 +336,7 @@ var state = {
   paper: 'card55',
   a4: false,
   verso: {mode:'none', text:''},
+  extra: [],          /* lignes de contact en plus : [{label, value}], 3 max */
   face: 'recto',
   images: {photo:null, logo:null, partner:null, bg:null},     /* objets Image */
   imageData: {photo:null, logo:null, partner:null, bg:null}   /* dataURL persistés */
@@ -395,6 +399,7 @@ function applySaved(d){
   if(d.paper in PAPERS) state.paper=d.paper;
   if(typeof d.a4==='boolean') state.a4=d.a4;
   if(d.verso && VERSO_MODES.indexOf(d.verso.mode)>=0) state.verso={mode:d.verso.mode, text:String(d.verso.text||'')};
+  if(Array.isArray(d.extra)) state.extra=d.extra.slice(0,EXTRA_MAX).filter(function(x){ return x && typeof x==='object'; }).map(function(x){ return {label:String(x.label||'').slice(0,12), value:String(x.value||'')}; });
   if(d.images) IMG_KEYS.forEach(function(k){ if(typeof d.images[k]==='string' && d.images[k].indexOf('data:image/')===0) state.imageData[k]=d.images[k]; });
 }
 function load(){
@@ -403,7 +408,7 @@ function load(){
   applySaved(d);
 }
 function save(){
-  var base={v:2, fields:state.fields, format:state.format, phone:state.phone, qrMode:state.qrMode, bgColor:state.bgColor, lang:lang, font:state.font, textScale:state.textScale, paper:state.paper, a4:state.a4, verso:state.verso};
+  var base={v:2, fields:state.fields, format:state.format, phone:state.phone, qrMode:state.qrMode, bgColor:state.bgColor, lang:lang, font:state.font, textScale:state.textScale, paper:state.paper, a4:state.a4, verso:state.verso, extra:state.extra};
   var full=Object.assign({images:state.imageData}, base);
   try{ localStorage.setItem(KEY, JSON.stringify(full)); quotaHit=false; }
   catch(e){
@@ -543,7 +548,13 @@ function vcard(){
   if(f.email) L.push('EMAIL;TYPE=INTERNET,PREF:'+esc(f.email));
   if(f.web) L.push('URL:'+esc(normUrl(f.web)));
   if(f.address) L.push('ADR;TYPE=WORK:;;'+esc(f.address)+';;;;');
-  if(f.phrase) L.push('NOTE:'+esc(f.phrase));
+  var notes=[]; if(f.phrase) notes.push(f.phrase);
+  state.extra.forEach(function(x){
+    var v=String(x.value||'').trim(), lab=String(x.label||'').trim(); if(!v) return;
+    if(/^(https?:\/\/|www\.)/i.test(v) || /^[^\s@]+\.[a-z]{2,}(\/\S*)?$/i.test(v)) L.push('URL'+(lab?';TYPE='+esc(lab.replace(/[^\w-]/g,'')||'other'):'')+':'+esc(normUrl(v)));
+    else notes.push(lab ? lab+' : '+v : v);
+  });
+  if(notes.length) L.push('NOTE:'+esc(notes.join('\n')));
   L.push('END:VCARD');
   return L.join('\r\n');
 }
@@ -605,6 +616,7 @@ function contactRows(){
   if(f.email)   rows.push([t('row.mail'), f.email]);
   if(f.web)     rows.push([t('row.web'), f.web]);
   if(f.address) rows.push([t('row.adr'), f.address]);
+  state.extra.forEach(function(x){ if(String(x.value).trim()) rows.push([String(x.label||'').trim().toUpperCase() || '\u00b7', String(x.value).trim()]); });
   return rows;
 }
 
@@ -1047,6 +1059,34 @@ $$('[data-field]').forEach(function(el){
   var k=el.dataset.field;
   el.addEventListener('input', function(){ state.fields[k]=el.value; save(); schedule(); });
 });
+/* ---------- lignes en plus (bouton +) ---------- */
+function buildExtra(){
+  var host=$('#extra-rows'); if(!host) return; host.textContent='';
+  state.extra.forEach(function(x,i){
+    var row=document.createElement('div'); row.className='extra-row';
+    function field(key,val,ph,max,onIn){
+      var w=document.createElement('div'); w.className='f';
+      var id='f-extra-'+key+'-'+i, lb=document.createElement('label'); lb.htmlFor=id; lb.textContent=t('extra.'+key);
+      var inp=document.createElement('input'); inp.id=id; inp.type='text'; inp.autocomplete='off'; inp.value=val; inp.placeholder=t(ph); if(max) inp.maxLength=max;
+      inp.addEventListener('input', function(){ onIn(inp.value); save(); schedule(); });
+      w.appendChild(lb); w.appendChild(inp); return w;
+    }
+    row.appendChild(field('label', x.label, 'extra.label.ph', 12, function(v){ x.label=v; }));
+    row.appendChild(field('value', x.value, 'extra.value.ph', 0, function(v){ x.value=v; }));
+    var del=document.createElement('button'); del.type='button'; del.className='extra-del'; del.innerHTML='&times;'; del.setAttribute('aria-label', t('extra.del')); del.title=t('extra.del');
+    del.addEventListener('click', function(){ state.extra.splice(i,1); save(); buildExtra(); schedule(); var b=$('#add-row'); if(b) b.focus(); });
+    row.appendChild(del); host.appendChild(row);
+  });
+  var full=state.extra.length>=EXTRA_MAX;
+  $('#add-row').hidden=full;
+  $('#extra-note').textContent = full ? t('extra.full') : t('extra.note');
+}
+$('#add-row').addEventListener('click', function(){
+  if(state.extra.length>=EXTRA_MAX) return;
+  state.extra.push({label:'', value:''}); save(); buildExtra();
+  var inp=$('#f-extra-label-'+(state.extra.length-1)); if(inp) inp.focus();
+  track('extra_line', {n:state.extra.length});
+});
 function syncFields(){ $$('[data-field]').forEach(function(el){ el.value = state.fields[el.dataset.field]||''; }); var vt=$('#f-verso-text'); if(vt) vt.value=state.verso.text||''; }
 
 /* pastilles de fond */
@@ -1375,6 +1415,7 @@ function applyI18n(){
   $$('[data-i18n]').forEach(function(el){ el.textContent = t(el.dataset.i18n); });
   $$('[data-i18n-aria]').forEach(function(el){ el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
   buildThemeDiy();
+  buildExtra();
   $$('#lang button').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.lang===lang)); });
   buildSeg($('#formats'), Object.keys(FORMATS), function(k){ return t('fmt.'+k); }, function(){return state.format;}, function(k){ state.format=k; save(); updateDim(); schedule(); track('format', {format:k}); });
   buildSeg($('#qrmode'), QRMODES, function(k){ return t('qr.'+k); }, function(){return state.qrMode;}, function(k){ state.qrMode=k; save(); updateQrNote(); schedule(); track('qr_mode', {mode:k}); });

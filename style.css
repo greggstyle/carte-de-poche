@@ -68,6 +68,16 @@ img{max-width:100%}
 .sec-b{display:flex;flex-direction:column;gap:1.05rem;min-width:0}
 
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.05rem 1.4rem}
+/* lignes de contact en plus (facultatives) */
+.extra-rows{display:flex;flex-direction:column;gap:1.05rem;margin-top:1.05rem}
+.extra-rows:empty{display:none}
+.extra-row{display:grid;grid-template-columns:minmax(0,7.5rem) minmax(0,1fr) auto;gap:1rem;align-items:end}
+.extra-del{width:30px;height:30px;border:1px solid var(--rule);background:var(--panel);color:var(--ink-2);border-radius:50%;font-size:16px;line-height:1;cursor:pointer;padding:0;margin-bottom:.2rem}
+.extra-del:hover{color:var(--ink);border-color:var(--ink-2)}
+.add-row{align-self:flex-start;margin-top:1rem;display:inline-flex;align-items:center;gap:.45rem;background:transparent;border:1px dashed var(--rule);color:var(--ink-2);font:inherit;font-size:.85rem;padding:.45rem .85rem;cursor:pointer}
+.add-row span[aria-hidden]{font-size:1.1rem;line-height:1}
+.add-row:hover{border-color:var(--accent);color:var(--accent)}
+.add-row[hidden]{display:none}
 .f{display:flex;flex-direction:column;gap:.28rem;min-width:0}
 .f > label{font-family:var(--mono);font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
 .f > input,.f > textarea,.f > select{font-family:var(--sans);font-size:.95rem;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--rule);padding:.3rem 0;width:100%;border-radius:0}
