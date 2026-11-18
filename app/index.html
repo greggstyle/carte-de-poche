@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/style.css?v=14">
+<link rel="stylesheet" href="/style.css?v=15">
 <script src="/vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -144,11 +144,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </section>
 
     <section class="sec">
-      <h2 class="sec-h" data-i18n="sec.verso">Verso</h2>
+      <h2 class="sec-h" data-i18n="sec.verso">Dos de la carte</h2>
       <div class="sec-b">
+        <p class="note theme-intro" data-i18n="verso.intro">Seulement pour imprimer en recto-verso. Choisis ce qui s'affiche au dos de ta carte.</p>
         <div class="seg" id="verso-mode" role="group" data-i18n-aria="sec.verso" aria-label="Verso"></div>
         <div class="f" id="verso-text-wrap" hidden><label for="f-verso-text" data-i18n="verso.text">Texte du verso</label><textarea id="f-verso-text" placeholder="Par défaut : la phrase de la carte"></textarea></div>
         <p class="note" id="verso-note"></p>
+        <p class="note"><a href="#" class="see-back" id="verso-see" hidden></a></p>
       </div>
     </section>
 
@@ -267,6 +269,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="/app.js?v=17"></script>
+<script src="/app.js?v=18"></script>
 </body>
 </html>

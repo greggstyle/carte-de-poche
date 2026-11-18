@@ -96,10 +96,14 @@ var I18N = {
     'theme.craft':'Artisanat & bâtiment','theme.health':'Santé & soins','theme.beauty':'Beauté & bien-être','theme.law':'Droit, finance & conseil','theme.tech':'Tech & numérique','theme.shop':'Commerce & boutiques',
     'theme.food':'Restauration & hôtellerie','theme.estate':'Immobilier','theme.creative':'Création & communication','theme.tourism':'Tourisme & loisirs','theme.sport':'Sport & coaching',
     'theme.education':'Éducation & formation','theme.events':'Événementiel & culture','theme.nature':'Nature, agriculture & animaux','theme.transport':'Transport & automobile','theme.services':'Services à la personne & associations',
-    'sec.verso':'Verso','verso.none':'Aucun','verso.logo':'Logo seul','verso.slogan':'Slogan','verso.text':'Texte du verso',
-    'verso.note':'Deuxième face pour l\u2019impression recto-verso : même fond, logo seul ou une phrase. Le PDF passe à 2 pages.',
-    'verso.nologo':'Pas de logo chargé : le verso affiche la société.',
-    'face.recto':'Recto','face.verso':'Verso','foot.home':'Accueil','foot.legal':'Mentions légales','foot.ai':'Charte IA','foot.cgv':'CGV',
+    'sec.verso':'Dos de la carte','verso.none':'Rien','verso.logo':'Mon logo','verso.slogan':'Une phrase','verso.text':'Ta phrase',
+    'verso.intro':'Seulement pour imprimer en recto-verso. Choisis ce qui s\u2019affiche au dos de ta carte.',
+    'verso.note.none':'Le dos reste vide. Ton PDF fait 1 page.',
+    'verso.note.logo':'Ton logo en grand, sur la même couleur que le devant. Ton PDF fait 2 pages.',
+    'verso.note.slogan':'La phrase de ton choix, sur la même couleur que le devant. Ton PDF fait 2 pages.',
+    'verso.see':'Voir le dos','verso.seefront':'Revoir le devant',
+    'verso.nologo':'Pas encore de logo : le dos affiche le nom de ta société. Ajoute ton logo dans Images. Ton PDF fait 2 pages.',
+    'face.recto':'Devant','face.verso':'Dos','foot.home':'Accueil','foot.legal':'Mentions légales','foot.ai':'Charte IA','foot.cgv':'CGV',
     'pay.bar.locked':'Téléchargements : {price} pour 24 h','pay.bar.launch':'prix de lancement jusqu\u2019au {date}, puis {next}',
     'pay.bar.unlocked':'Téléchargements débloqués jusqu\u2019à {time}','pay.unlock':'Débloquer',
     'pay.title':'Débloquer les téléchargements',
@@ -167,9 +171,13 @@ var I18N = {
     'theme.craft':'Crafts & building','theme.health':'Health & care','theme.beauty':'Beauty & wellness','theme.law':'Law, finance & consulting','theme.tech':'Tech & digital','theme.shop':'Retail & shops',
     'theme.food':'Food & hospitality','theme.estate':'Real estate','theme.creative':'Creative & communication','theme.tourism':'Tourism & leisure','theme.sport':'Sport & coaching',
     'theme.education':'Education & training','theme.events':'Events & culture','theme.nature':'Nature, farming & animals','theme.transport':'Transport & automotive','theme.services':'Personal services & non-profits',
-    'sec.verso':'Back side','verso.none':'None','verso.logo':'Logo only','verso.slogan':'Tagline','verso.text':'Back side text',
-    'verso.note':'Second side for double-sided printing: same background, logo only or a line of text. The PDF becomes 2 pages.',
-    'verso.nologo':'No logo loaded: the back shows the company name.',
+    'sec.verso':'Back of the card','verso.none':'Nothing','verso.logo':'My logo','verso.slogan':'A line of text','verso.text':'Your text',
+    'verso.intro':'Only for double-sided printing. Choose what appears on the back of your card.',
+    'verso.note.none':'The back stays blank. Your PDF has 1 page.',
+    'verso.note.logo':'Your logo, large, on the same colour as the front. Your PDF has 2 pages.',
+    'verso.note.slogan':'The text of your choice, on the same colour as the front. Your PDF has 2 pages.',
+    'verso.see':'See the back','verso.seefront':'Back to the front',
+    'verso.nologo':'No logo yet: the back shows your company name. Add your logo in Images. Your PDF has 2 pages.',
     'face.recto':'Front','face.verso':'Back','foot.home':'Home','foot.legal':'Legal notice','foot.ai':'AI charter','foot.cgv':'Terms of sale',
     'pay.bar.locked':'Downloads: {price} for 24 h','pay.bar.launch':'launch price until {date}, then {next}',
     'pay.bar.unlocked':'Downloads unlocked until {time}','pay.unlock':'Unlock',
@@ -986,9 +994,18 @@ function syncVerso(){
   var m=state.verso.mode;
   $('#verso-text-wrap').hidden = m!=='slogan';
   $('#face').hidden = m==='none';
-  var n=$('#verso-note'); n.textContent = (m==='logo' && !state.images.logo) ? t('verso.nologo') : t('verso.note');
+  var n=$('#verso-note'); n.textContent = (m==='logo' && !state.images.logo) ? t('verso.nologo') : t('verso.note.'+m);
+  var sb=$('#verso-see'); if(sb){ sb.hidden = m==='none'; sb.textContent = state.face==='verso' ? t('verso.seefront') : t('verso.see'); }
 }
 $('#f-verso-text').addEventListener('input', function(){ state.verso.text=this.value; save(); schedule(); });
+/* « Voir le dos » : bascule l'aperçu ; sur mobile, si l'aperçu est hors écran, l'ouvre en grand */
+$('#verso-see').addEventListener('click', function(e){
+  e.preventDefault();
+  state.face = state.face==='verso' ? 'recto' : 'verso';
+  syncSeg($('#face'), state.face); updateDim(); syncVerso(); schedule();
+  if(state.face==='verso' && mq.matches && stageOut){ requestAnimationFrame(function(){ requestAnimationFrame(openMini); }); }
+  track('see_back', {face:state.face});
+});
 
 /* presets */
 function syncPresetSelect(){
@@ -1377,7 +1394,7 @@ function applyI18n(){
   buildSeg($('#verso-mode'), VERSO_MODES, function(k){ return t('verso.'+k); }, function(){ return state.verso.mode; }, function(k){
     state.verso.mode=k; save(); syncVerso(); if(k==='none' && state.face==='verso'){ state.face='recto'; syncSeg($('#face'),'recto'); } schedule(); track('verso', {mode:k});
   });
-  buildSeg($('#face'), ['recto','verso'], function(k){ return t('face.'+k); }, function(){ return state.face; }, function(k){ state.face=k; updateDim(); schedule(); });
+  buildSeg($('#face'), ['recto','verso'], function(k){ return t('face.'+k); }, function(){ return state.face; }, function(k){ state.face=k; updateDim(); syncVerso(); schedule(); });
   syncVerso();
   var pk=$('#peek'); pk.textContent = $('#peek-body').hidden ? t('peek.show') : t('peek.hide');
   updateDim(); updateQrNote(); syncSwatches(); syncQuotaNote(); syncPaperSelect(); syncPaybar(); syncGate();
