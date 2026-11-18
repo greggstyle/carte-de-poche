@@ -263,7 +263,15 @@ var FONTS = {
   bold:      {label:'Brut',      title:'Space Grotesk',      body:'Space Grotesk',  gt:'sans-serif', gb:'sans-serif',
               g:'family=Space+Grotesk:wght@400;600'},
   friendly:  {label:'Rond',      title:'Nunito',             body:'Nunito',         gt:'sans-serif', gb:'sans-serif',
-              g:'family=Nunito:ital,wght@0,400;0,700;1,400'}
+              g:'family=Nunito:ital,wght@0,400;0,700;1,400'},
+  literary:  {label:'Littéraire', title:'Lora',               body:'Lato',           gt:'serif',      gb:'sans-serif',
+              g:'family=Lora:ital,wght@0,400..700;1,400..700&family=Lato:wght@400;700'},
+  geometric: {label:'Géométrique', title:'Poppins',           body:'Poppins',        gt:'sans-serif', gb:'sans-serif',
+              g:'family=Poppins:ital,wght@0,400;0,500;0,600;1,400'},
+  script:    {label:'Manuscrit', title:'Dancing Script',     body:'Work Sans',      gt:'serif',      gb:'sans-serif',
+              g:'family=Dancing+Script:wght@400..700&family=Work+Sans:wght@400;500;600'},
+  mono:      {label:'Technique', title:'IBM Plex Mono',      body:'IBM Plex Sans',  gt:'sans-serif', gb:'sans-serif',
+              g:'family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600'}
 };
 var SIZES = [0.85, 0.92, 1, 1.1, 1.22];
 
