@@ -163,6 +163,13 @@ img{max-width:100%}
 .seg-themes button{display:flex;align-items:center;gap:.55rem;border-right:0;background:var(--bg);white-space:normal;text-align:left;line-height:1.25;padding:.6rem .8rem;min-height:2.9rem}
 .seg-themes button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 @container (min-width:42rem){.seg-themes{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.theme-intro{font-size:.88rem;color:var(--ink);margin:0 0 .2rem}
+.theme-custom{color:var(--accent);font-weight:500}
+.theme-custom::before{content:"\2713\00a0"}
+#theme-diy a{color:var(--ink);text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:1px}
+#theme-diy a:hover{color:var(--accent)}
+.flash{animation:flash 1.4s ease}
+@keyframes flash{0%,100%{box-shadow:0 0 0 0 transparent}25%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent)}}
 .seg-themes .dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.18);flex:none}
 .seg-face button{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .6rem}
 

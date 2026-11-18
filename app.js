@@ -92,7 +92,7 @@ var I18N = {
     'print.note':'PDF imprimeur : 300 dpi, 3 mm de fond perdu, traits de coupe. Couleurs RVB, ton imprimeur convertit en CMJN.',
     'paper.card55':'Carte de visite 55 × 85 mm','paper.a6':'A6 105 × 148 mm','paper.screen':'Format écran à 300 dpi',
     'st.pdfprep':'Préparation du PDF…','st.pdfsaved':'PDF enregistré : ','st.pdferr':'Impossible de générer le PDF.',
-    'sec.theme':'Thème','theme.note':'Un raccourci couleur + police par métier. Tu peux tout ajuster ensuite.',
+    'sec.theme':'Thème','theme.intro':'Pas d’idée ? Choisis ton métier : la couleur et la police se règlent d’un coup.','theme.diy':'Tu préfères ton propre style ? Choisis ta couleur dans {color} et ta police dans {font}. Tu peux aussi partir d’un thème et le modifier.','theme.diy.color':'Images','theme.diy.font':'Typographie','theme.custom':'Style personnalisé : ta couleur et ta police à toi.',
     'theme.craft':'Artisanat & bâtiment','theme.health':'Santé & soins','theme.beauty':'Beauté & bien-être','theme.law':'Droit, finance & conseil','theme.tech':'Tech & numérique','theme.shop':'Commerce & boutiques',
     'theme.food':'Restauration & hôtellerie','theme.estate':'Immobilier','theme.creative':'Création & communication','theme.tourism':'Tourisme & loisirs','theme.sport':'Sport & coaching',
     'theme.education':'Éducation & formation','theme.events':'Événementiel & culture','theme.nature':'Nature, agriculture & animaux','theme.transport':'Transport & automobile','theme.services':'Services à la personne & associations',
@@ -163,7 +163,7 @@ var I18N = {
     'print.note':'Print-ready PDF: 300 dpi, 3 mm bleed, crop marks. RGB colours, your printer converts to CMYK.',
     'paper.card55':'Business card 55 × 85 mm','paper.a6':'A6 105 × 148 mm','paper.screen':'Screen format at 300 dpi',
     'st.pdfprep':'Preparing the PDF…','st.pdfsaved':'PDF saved: ','st.pdferr':'Could not generate the PDF.',
-    'sec.theme':'Theme','theme.note':'A colour + font shortcut per trade. You can adjust everything afterwards.',
+    'sec.theme':'Theme','theme.intro':'No idea yet? Pick your trade: colour and font are set in one go.','theme.diy':'Prefer your own style? Pick your colour in {color} and your font in {font}. You can also start from a theme and tweak it.','theme.diy.color':'Images','theme.diy.font':'Typography','theme.custom':'Custom style: your own colour and font.',
     'theme.craft':'Crafts & building','theme.health':'Health & care','theme.beauty':'Beauty & wellness','theme.law':'Law, finance & consulting','theme.tech':'Tech & digital','theme.shop':'Retail & shops',
     'theme.food':'Food & hospitality','theme.estate':'Real estate','theme.creative':'Creative & communication','theme.tourism':'Tourism & leisure','theme.sport':'Sport & coaching',
     'theme.education':'Education & training','theme.events':'Events & culture','theme.nature':'Nature, farming & animals','theme.transport':'Transport & automotive','theme.services':'Personal services & non-profits',
@@ -1010,12 +1010,31 @@ function syncFields(){ $$('[data-field]').forEach(function(el){ el.value = state
   inp.addEventListener('input', function(){ state.bgColor=inp.value; save(); syncSwatches(); schedule(); });
   wrapEl.appendChild(inp); wrapEl.appendChild(lab); host.appendChild(wrapEl);
 })();
+/* phrase « ton propre style » : {color} et {font} deviennent des liens qui amènent à la bonne section */
+function buildThemeDiy(){
+  var el=$('#theme-diy'); if(!el) return; el.textContent='';
+  var targets={color:['#swatches','theme.diy.color'], font:['#sec-typo','theme.diy.font']};
+  t('theme.diy').split(/(\{color\}|\{font\})/).forEach(function(part){
+    var m=/^\{(color|font)\}$/.exec(part);
+    if(!m){ el.appendChild(document.createTextNode(part)); return; }
+    var a=document.createElement('a'), tg=targets[m[1]]; a.href=tg[0]; a.textContent=t(tg[1]);
+    a.addEventListener('click', function(e){
+      var dest=$(tg[0]); if(!dest) return; e.preventDefault();
+      var smooth=!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+      dest.scrollIntoView({behavior:smooth?'smooth':'auto', block:'center'});
+      dest.classList.toggle('flash', false); void dest.offsetWidth; dest.classList.toggle('flash', true);
+    });
+    el.appendChild(a);
+  });
+}
 function syncSwatches(){
   var th=$('#themes'); if(th && th.children.length) syncSeg(th, activeTheme());
   $$('.sw').forEach(function(b,i){
     b.setAttribute('aria-pressed', String(SWATCHES[i][0].toLowerCase()===state.bgColor.toLowerCase()));
   });
   $('#bg-note').textContent = state.images.bg ? t('bg.image') : t('bg.color');
+  /* « Style personnalisé » : aucun thème ne correspond, et ce n'est plus le réglage de départ */
+  var tc=$('#theme-custom'); if(tc){ tc.hidden = !!activeTheme() || (state.bgColor.toLowerCase()==='#101215' && state.font==='editorial'); tc.textContent=t('theme.custom'); }
   var pk=$('#picker'); if(pk) pk.value=state.bgColor;
 }
 
@@ -1297,6 +1316,7 @@ function applyI18n(){
   document.title = t('title');
   $$('[data-i18n]').forEach(function(el){ el.textContent = t(el.dataset.i18n); });
   $$('[data-i18n-aria]').forEach(function(el){ el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+  buildThemeDiy();
   $$('#lang button').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.lang===lang)); });
   buildSeg($('#formats'), Object.keys(FORMATS), function(k){ return t('fmt.'+k); }, function(){return state.format;}, function(k){ state.format=k; save(); updateDim(); schedule(); track('format', {format:k}); });
   buildSeg($('#qrmode'), QRMODES, function(k){ return t('qr.'+k); }, function(){return state.qrMode;}, function(k){ state.qrMode=k; save(); updateQrNote(); schedule(); track('qr_mode', {mode:k}); });
