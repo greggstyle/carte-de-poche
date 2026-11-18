@@ -129,7 +129,15 @@ img{max-width:100%}
 /* typographie */
 .f-row{display:flex;flex-direction:column;gap:.35rem}
 .f-lab{font-family:var(--mono);font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
-.seg-fonts button{font-size:.95rem;padding:.4rem .9rem}
+/* polices : grille régulière, 2 colonnes (5 lignes) dans une colonne étroite, 5 colonnes (2 lignes) dès qu'il y a la place.
+   Les traits entre cases viennent du fond de la grille (gap 1px), pour des lignes nettes et continues. */
+.f-row:has(> .seg-fonts){container-type:inline-size}
+.seg-fonts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;width:100%;background:var(--rule)}
+.seg-fonts button{border-right:0;background:var(--bg);font-size:1rem;line-height:1.2;padding:.65rem .5rem;min-height:2.9rem;text-align:center;overflow:hidden;text-overflow:ellipsis}
+.seg-fonts button[data-k="elegant"]{font-size:1.15rem}
+.seg-fonts button[data-k="script"]{font-size:1.2rem}
+.seg-fonts button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+@container (min-width:42rem){.seg-fonts{grid-template-columns:repeat(5,minmax(0,1fr))}}
 .seg-sizes button{line-height:1;padding:.4rem .8rem;display:inline-flex;align-items:flex-end;min-height:2.3rem;font-family:var(--serif);font-weight:600}
 
 /* paiement */
