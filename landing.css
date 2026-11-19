@@ -123,7 +123,6 @@ h1 em{font-style:italic;color:var(--accent)}
 
 @media (max-width:900px){
   .hero{grid-template-columns:minmax(0,1fr);gap:2.2rem;padding-top:1.5rem}
-  .hero-media{order:-1}
   .phone{width:min(220px,60vw);transform:none}
   .steps-grid,.feat-grid{grid-template-columns:minmax(0,1fr)}
   .who-grid{grid-template-columns:minmax(0,1fr)}
@@ -133,6 +132,11 @@ h1 em{font-style:italic;color:var(--accent)}
 }
 @media (max-width:520px){
   body{font-size:16px}
+  /* accueil : titre et bouton dans le premier écran, la vidéo vient juste après */
+  .hero{padding-top:.75rem;gap:1.8rem}
+  .kicker{margin-bottom:.7rem}
+  h1{font-size:2.05rem;margin-bottom:.8rem}
+  .lead{font-size:1.02rem;margin-bottom:1.2rem}
   .btn-xl{display:flex;width:100%;align-items:flex-start;padding:1.1rem 1.2rem}
   .cta2 .btn-xl{align-items:center}
 }
