@@ -158,8 +158,10 @@ h1 em{font-style:italic;color:var(--accent)}
 .price-card{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:2rem;align-items:center;background:var(--panel);border:1px solid var(--rule);border-radius:16px;padding:1.8rem 2rem}
 .price-big{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,4.4vw,3rem);line-height:1.05;color:var(--accent)}
 .price-sub{color:var(--ink-2);margin-top:.4rem}
-.price-card ul{margin:0;padding-left:1.1rem;color:var(--ink-2);font-size:.97rem}
-.price-card li{margin-bottom:.35rem}
+.price-card ul{list-style:none;margin:0;padding:0;color:var(--ink-2);font-size:.97rem}
+.price-card li{margin-bottom:.4rem;padding-left:1.6rem;text-indent:-1.6rem}
+/* mêmes coches que sous le bouton principal */
+.price-card li::before{content:"✓";display:inline-block;width:1.6rem;text-indent:0;color:var(--accent);font-weight:700}
 @media (max-width:900px){.price-card{grid-template-columns:minmax(0,1fr);padding:1.4rem 1.25rem}}
 
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
