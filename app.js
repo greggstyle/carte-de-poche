@@ -105,10 +105,11 @@ var I18N = {
     'verso.see':'Voir le dos','verso.seefront':'Revoir le devant',
     'verso.nologo':'Pas encore de logo : le dos affiche le nom de ta société. Ajoute ton logo dans Images. Ton PDF fait 2 pages.',
     'face.recto':'Devant','face.verso':'Dos','foot.home':'Accueil','foot.legal':'Mentions légales','foot.ai':'Charte IA','foot.cgv':'CGV',
-    'pay.bar.locked':'Téléchargements : {price} pour 24 h','pay.bar.launch':'prix de lancement jusqu\u2019au {date}, puis {next}',
-    'pay.bar.unlocked':'Téléchargements débloqués jusqu\u2019à {time}','pay.unlock':'Débloquer',
-    'pay.title':'Débloquer les téléchargements',
-    'pay.body':'{price} TTC pour 24 h : PNG, PDF imprimeur et partage, autant de fois que tu veux. Pas de compte.',
+    'pay.bar.ready':'Ta carte est prête.','pay.bar.locked':'Pour la télécharger : {price} pour 24 h.','pay.bar.launch':'Prix de lancement jusqu\u2019au {date}, puis {next}.',
+    'pay.bar.24h':'Pendant 24 h après le paiement, tu télécharges ta carte autant de fois que tu veux, sur cet appareil : image PNG, PDF pour l\u2019imprimeur et partage. Les fichiers téléchargés restent à toi.',
+    'pay.bar.unlocked':'C\u2019est payé : tu peux télécharger ta carte autant de fois que tu veux jusqu\u2019à {time}.','pay.unlock':'Télécharger ma carte · {price}','pay.tomorrow':'demain, {time}',
+    'pay.title':'Télécharger ma carte',
+    'pay.body':'{price} TTC, payé une seule fois. Pendant 24 h à partir du paiement, tu télécharges ta carte autant de fois que tu veux sur cet appareil : image PNG, PDF pour l\u2019imprimeur et partage. Les fichiers téléchargés restent à toi. Pas de compte, pas d\u2019abonnement, rien à résilier.',
     'pay.launch':'Prix de lancement jusqu\u2019au {date}, ensuite {next}.','pay.instead':'au lieu de ',
     'pay.consent':'Je demande l\u2019accès immédiat au service numérique et je reconnais perdre mon droit de rétractation dès que l\u2019accès est fourni. J\u2019ai lu les <a href="/cgv" target="_blank" rel="noopener">conditions générales de vente</a>.',
     'pay.go':'Payer {price}','pay.later':'Plus tard',
@@ -116,7 +117,7 @@ var I18N = {
     'pay.err':'Le paiement n\u2019a pas pu démarrer, réessaie dans un instant.',
     'pay.changed':'Le prix vient de changer, vérifie le nouveau montant.',
     'pay.canceled':'Paiement annulé, rien n\u2019a été débité.',
-    'pay.ok':'Paiement reçu, téléchargements débloqués jusqu\u2019à {time}.',
+    'pay.ok':'Paiement reçu : tu peux télécharger ta carte autant de fois que tu veux jusqu\u2019à {time}.',
     'pay.unlockerr':'Impossible de confirmer le paiement. Si tu as été débité, écris-nous avec l\u2019heure du paiement.',
     'pay.preview':'cartedepoche.fr · aperçu'
   },
@@ -181,10 +182,11 @@ var I18N = {
     'verso.see':'See the back','verso.seefront':'Back to the front',
     'verso.nologo':'No logo yet: the back shows your company name. Add your logo in Images. Your PDF has 2 pages.',
     'face.recto':'Front','face.verso':'Back','foot.home':'Home','foot.legal':'Legal notice','foot.ai':'AI charter','foot.cgv':'Terms of sale',
-    'pay.bar.locked':'Downloads: {price} for 24 h','pay.bar.launch':'launch price until {date}, then {next}',
-    'pay.bar.unlocked':'Downloads unlocked until {time}','pay.unlock':'Unlock',
-    'pay.title':'Unlock downloads',
-    'pay.body':'{price} incl. tax for 24 h: PNG, print PDF and sharing, as often as you like. No account.',
+    'pay.bar.ready':'Your card is ready.','pay.bar.locked':'To download it: {price} for 24 h.','pay.bar.launch':'Launch price until {date}, then {next}.',
+    'pay.bar.24h':'For 24 h after payment, download your card as many times as you like on this device: PNG image, print PDF and sharing. The files you download are yours to keep.',
+    'pay.bar.unlocked':'Paid: download your card as many times as you like until {time}.','pay.unlock':'Download my card · {price}','pay.tomorrow':'tomorrow, {time}',
+    'pay.title':'Download my card',
+    'pay.body':'{price} incl. tax, paid once. For 24 h from payment, download your card as many times as you like on this device: PNG image, print PDF and sharing. The files you download are yours to keep. No account, no subscription, nothing to cancel.',
     'pay.launch':'Launch price until {date}, then {next}.','pay.instead':'instead of ',
     'pay.consent':'I ask for immediate access to the digital service and acknowledge that I lose my right of withdrawal once access is provided. I have read the <a href="/cgv" target="_blank" rel="noopener">terms of sale</a>.',
     'pay.go':'Pay {price}','pay.later':'Later',
@@ -192,7 +194,7 @@ var I18N = {
     'pay.err':'The payment could not start, please try again in a moment.',
     'pay.changed':'The price just changed, please check the new amount.',
     'pay.canceled':'Payment cancelled, nothing was charged.',
-    'pay.ok':'Payment received, downloads unlocked until {time}.',
+    'pay.ok':'Payment received: download your card as many times as you like until {time}.',
     'pay.unlockerr':'Could not confirm the payment. If you were charged, write to us with the time of payment.',
     'pay.preview':'cartedepoche.fr · preview'
   }
@@ -1461,6 +1463,7 @@ function armPassTimer(){
 function paywallLocked(){ return paywall.enabled && !readPass(); }
 function fmtMoney(n){ try{ return new Intl.NumberFormat(lang==='fr'?'fr-FR':'en-GB',{style:'currency',currency:'EUR',minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2}).format(n); }catch(e){ return n+' €'; } }
 function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return iso; } }
+function fmtUntil(ms){ var d=new Date(ms), n=new Date(); return d.toDateString()===n.toDateString() ? fmtTime(ms) : fill(t('pay.tomorrow'),{time:fmtTime(ms)}); }
 function fmtTime(ms){ try{ return new Date(ms).toLocaleTimeString(lang==='fr'?'fr-FR':'en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
 function isLaunch(){ return paywall.tier==='launch' && !!paywall.launchEnd && paywall.nextAmount>paywall.amount; }
 function priceHtml(){
@@ -1475,11 +1478,12 @@ function syncPaybar(){
   if(!paywall.enabled){ bar.hidden=true; return; }
   bar.hidden=false;
   var p=readPass(), txt=$('#paybar-text'), btn=$('#paybar-btn');
-  if(p){ txt.textContent=fill(t('pay.bar.unlocked'),{time:fmtTime(p.exp)}); btn.hidden=true; bar.classList.add('ok'); }
+  if(p){ txt.textContent='\u2713 '+fill(t('pay.bar.unlocked'),{time:fmtUntil(p.exp)}); btn.hidden=true; bar.classList.add('ok'); }
   else {
-    var s=fill(t('pay.bar.locked'),{price:priceHtml()});
-    if(isLaunch()) s+=' · '+fill(t('pay.bar.launch'),{date:fmtDate(paywall.launchEnd), next:fmtMoney(paywall.nextAmount)});
-    txt.innerHTML=s; btn.hidden=false; bar.classList.remove('ok');
+    var s='<span class="pay-lead"><strong>'+t('pay.bar.ready')+'</strong> '+fill(t('pay.bar.locked'),{price:priceHtml()})+'</span>';
+    if(isLaunch()) s+='<span class="pay-launch">'+fill(t('pay.bar.launch'),{date:fmtDate(paywall.launchEnd), next:fmtMoney(paywall.nextAmount)})+'</span>';
+    s+='<span class="pay-help">'+t('pay.bar.24h')+'</span>';
+    txt.innerHTML=s; btn.textContent=fill(t('pay.unlock'),{price:fmtMoney(paywall.amount)}); btn.hidden=false; bar.classList.remove('ok');
   }
 }
 function loadPricing(){
@@ -1569,7 +1573,7 @@ function handlePaymentReturn(){
     .then(function(r){
       if(!r.ok || !r.body.token) throw new Error('unlock');
       writePass({token:r.body.token, exp:r.body.exp});
-      st.textContent=fill(t('pay.ok'),{time:fmtTime(r.body.exp)});
+      st.textContent=fill(t('pay.ok'),{time:fmtUntil(r.body.exp)});
       track('checkout_success',{tier:r.body.tier||'standard'});
       syncPaybar(); schedule();
     })

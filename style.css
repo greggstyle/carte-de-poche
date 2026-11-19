@@ -135,6 +135,8 @@ img{max-width:100%}
   repeating-conic-gradient(from 0deg, color-mix(in srgb,var(--ink) 4%,transparent) 0% 25%, transparent 0% 50%) 0 0/18px 18px;
   padding:0;display:flex;justify-content:center;align-items:flex-start;overflow:hidden}
 #cv{display:block;width:100%;height:auto;max-height:calc(100vh - 15rem);object-fit:contain}
+/* tant que l'encadré de paiement (plus haut) est affiché, l'aperçu laisse la place aux boutons de téléchargement */
+.col-view:has(#paybar:not([hidden]):not(.ok)) #cv{max-height:calc(100vh - 21.5rem)}
 .viewbar{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
 .viewbar .dim{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
 .actions{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap}
@@ -170,6 +172,10 @@ img{max-width:100%}
 .paybar strong{color:var(--ink)}
 .paybar{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;border:1px solid var(--rule);background:color-mix(in srgb,var(--accent) 8%,transparent);padding:.6rem .8rem;font-size:.82rem;color:var(--ink-2)}
 .paybar.ok{background:color-mix(in srgb,#2f9e5a 12%,transparent);color:var(--ink)}
+#paybar-text{flex:1 1 18rem;line-height:1.45}
+.pay-lead{display:block;font-size:.92rem;color:var(--ink)}
+.pay-launch{display:block;margin-top:.15rem;color:var(--ink-2)}
+.pay-help{display:block;margin-top:.35rem;color:var(--ink-2)}
 .gate{position:fixed;inset:0;z-index:60;background:rgba(10,12,14,.55);display:flex;align-items:center;justify-content:center;padding:1rem}
 .gate-card{background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-radius:10px;max-width:30rem;width:100%;padding:1.4rem 1.4rem 1.2rem;display:flex;flex-direction:column;gap:.8rem;box-shadow:0 20px 50px rgba(0,0,0,.3)}
 .gate-card h2{font-family:var(--serif);font-size:1.4rem;margin:0}
