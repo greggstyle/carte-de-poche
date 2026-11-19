@@ -70,7 +70,7 @@ var I18N = {
     'fmt.note':'Choisis ton modèle, ou « Mon écran » pour générer la carte pile à la résolution de l\u2019appareil que tu utilises.',
     'fmt.note.screen':'Résolution détectée sur cet appareil. Sur un ordinateur, c\u2019est celle du moniteur : ouvre cette page sur ton téléphone pour avoir la sienne.',
     'preview':'Aperçu de la carte','mini.open':'Agrandir l\u2019aperçu','mini.close':'Fermer',
-    'dl':'Télécharger le PNG','share.btn':'Partager','peek.show':'Voir la vCard','peek.hide':'Masquer le contenu',
+    'dl':'Télécharger le PNG','share.btn':'Partager',
     'st.prep':'Préparation du PNG…','st.saved':'PNG enregistré : ','st.err':'Impossible de générer l\u2019image.',
     'st.shared':'Carte partagée.','st.share.cancel':'Partage annulé.',
     'st.fallback':'Téléchargement bloqué ici : clic droit (ou appui long) sur l\u2019aperçu → « Enregistrer l\u2019image ».',
@@ -79,7 +79,6 @@ var I18N = {
     'share.copied':'Lien copié.','share.copyfail':'Copie impossible ici : sélectionne le lien et copie-le à la main.',
     'reset':'Tout effacer','nav.home':'Retour à l\u2019accueil','reset.confirm':'Effacer les textes, les images et les réglages mémorisés sur cet appareil ?',
     'foot.privacy':'Le contenu de ta carte reste dans ton navigateur : rien n\u2019est envoyé à un serveur. Mesure d\u2019audience (Vercel Analytics, Google Tag Manager / Analytics).',
-    'peek.empty':'(rien à encoder)',
     'row.tel':'TÉL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADR',
     'extra.add':'Ajouter une ligne','extra.note':'Facultatif : Instagram, LinkedIn, horaires, 2e numéro… Jusqu\u2019à 3 lignes.','extra.label':'Intitulé','extra.value':'Texte','extra.label.ph':'Insta','extra.value.ph':'@atelier.vacoa','extra.del':'Retirer cette ligne','extra.full':'3 lignes maximum, pour que la carte reste lisible.',
     'consent.title':'Un cookie pour mesurer l\u2019audience ?',
@@ -147,7 +146,7 @@ var I18N = {
     'fmt.note':'Pick your model, or \u201cMy screen\u201d to generate the card at the exact resolution of the device you are using.',
     'fmt.note.screen':'Resolution detected on this device. On a computer that is the monitor\u2019s: open this page on your phone to get its own.',
     'preview':'Card preview','mini.open':'Enlarge preview','mini.close':'Close',
-    'dl':'Download PNG','share.btn':'Share','peek.show':'Show vCard','peek.hide':'Hide content',
+    'dl':'Download PNG','share.btn':'Share',
     'st.prep':'Preparing the PNG…','st.saved':'PNG saved: ','st.err':'Could not generate the image.',
     'st.shared':'Card shared.','st.share.cancel':'Share cancelled.',
     'st.fallback':'Download blocked here: right-click (or long-press) the preview → \u201cSave image\u201d.',
@@ -156,7 +155,6 @@ var I18N = {
     'share.copied':'Link copied.','share.copyfail':'Cannot copy here: select the link and copy it by hand.',
     'reset':'Clear everything','nav.home':'Back to home','reset.confirm':'Clear the texts, images and settings stored on this device?',
     'foot.privacy':'Your card\u2019s content stays in your browser: nothing is sent to a server. Audience measurement (Vercel Analytics, Google Tag Manager / Analytics).',
-    'peek.empty':'(nothing to encode)',
     'row.tel':'TEL','row.mail':'MAIL','row.web':'WEB','row.adr':'ADDR',
     'extra.add':'Add a line','extra.note':'Optional: Instagram, LinkedIn, opening hours, 2nd number… Up to 3 lines.','extra.label':'Label','extra.value':'Text','extra.label.ph':'Insta','extra.value.ph':'@atelier.vacoa','extra.del':'Remove this line','extra.full':'3 lines maximum, so the card stays readable.',
     'consent.title':'A cookie to measure audience?',
@@ -924,7 +922,7 @@ function renderSquare(W,H,p,f,im,qr){
 
 /* ---------- UI ---------- */
 var raf=null;
-function schedule(){ if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(function(){ raf=null; render(); syncMini(); syncPeek(); syncShareUrl(); }); }
+function schedule(){ if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(function(){ raf=null; render(); syncMini(); syncShareUrl(); }); }
 
 /* ---------- aperçu flottant (mobile) ----------
    Une vignette de la carte reste en bas à droite quand l'aperçu principal sort de l'écran.
@@ -1332,19 +1330,6 @@ function syncPaperSelect(){
   }
 })();
 
-/* vCard peek */
-function syncPeek(){
-  var body=$('#peek-body');
-  if(!body.hidden) body.textContent = payload() || t('peek.empty');
-}
-$('#peek').addEventListener('click', function(){
-  var body=$('#peek-body'), open=body.hidden;
-  body.hidden=!open;
-  this.setAttribute('aria-expanded', String(open));
-  this.textContent = open ? t('peek.hide') : t('peek.show');
-  syncPeek();
-});
-
 /* téléchargement & partage */
 function filename(){
   var base=(state.fields.name||'carte').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')||'carte';
@@ -1439,7 +1424,6 @@ function applyI18n(){
   });
   buildSeg($('#face'), ['recto','verso'], function(k){ return t('face.'+k); }, function(){ return state.face; }, function(k){ state.face=k; updateDim(); syncVerso(); schedule(); });
   syncVerso();
-  var pk=$('#peek'); pk.textContent = $('#peek-body').hidden ? t('peek.show') : t('peek.hide');
   updateDim(); updateQrNote(); syncSwatches(); syncQuotaNote(); syncPaperSelect(); syncPaybar(); syncGate();
   $('#status').textContent=''; $('#share-status').textContent='';
 }
