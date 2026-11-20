@@ -368,17 +368,23 @@ function fs(W,r){ return Math.round(W*r*state.textScale); }
 var fontLinks={};
 function ensureFont(id, cb){
   var f=FONTS[id]; if(!f) return;
+  /* La feuille Google Fonts doit être chargée AVANT document.fonts.load : sinon les @font-face
+     n'existent pas encore, load() se résout tout de suite sans rien charger, et la carte est
+     dessinée avec la police de secours (cas d'un lien ?theme= ou ?font= ouvert directement). */
   if(!fontLinks[id]){
     var l=document.createElement('link'); l.rel='stylesheet';
     l.href='https://fonts.googleapis.com/css2?'+f.g+'&display=swap';
-    document.head.appendChild(l); fontLinks[id]=l;
+    fontLinks[id]=new Promise(function(ok){ l.onload=ok; l.onerror=ok; });
+    document.head.appendChild(l);
   }
   if(document.fonts && document.fonts.load){
-    Promise.all([
-      document.fonts.load('600 100px "'+f.title+'"'),
-      document.fonts.load('italic 400 100px "'+f.title+'"'),
-      document.fonts.load('400 100px "'+f.body+'"')
-    ]).then(function(){ if(cb) cb(); }).catch(function(){});
+    fontLinks[id].then(function(){
+      return Promise.all([
+        document.fonts.load('600 100px "'+f.title+'"'),
+        document.fonts.load('italic 400 100px "'+f.title+'"'),
+        document.fonts.load('400 100px "'+f.body+'"')
+      ]);
+    }).then(function(){ if(cb) cb(); }).catch(function(){});
   }
 }
 
