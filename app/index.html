@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/style.css?v=18">
+<link rel="stylesheet" href="/style.css?v=19">
 <script src="/vendor/qrcode.js?v=1.4.4"></script>
 </head>
 <body>
@@ -179,6 +179,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <button class="btn btn-ghost btn-sm" id="myscreen" type="button" data-i18n="fmt.screen">Mon écran</button>
         </div>
         <p class="note" id="fmt-note"></p>
+        <div class="wall" id="wall-row">
+          <label class="chk"><input type="checkbox" id="f-wall"> <span data-i18n="wall.label">Mode fond d'écran</span></label>
+          <p class="note" data-i18n="wall.note">Laisse de la place en haut pour l'heure et en bas pour les boutons de l'écran verrouillé. L'heure affichée dans l'aperçu sert juste à te repérer : elle n'apparaît pas sur l'image téléchargée.</p>
+        </div>
       </div>
     </section>
 
@@ -272,6 +276,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button type="button" class="btn btn-ghost btn-sm" id="consent-no" data-i18n="consent.no">Refuser</button>
   </div>
 </div>
-<script src="/app.js?v=22"></script>
+<script src="/app.js?v=23"></script>
 </body>
 </html>
