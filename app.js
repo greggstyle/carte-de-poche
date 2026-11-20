@@ -66,7 +66,7 @@ var I18N = {
     'qr.text':'Texte libre','qr.text.note':'Le scan affiche simplement le texte.',
     'qr.dim':'QR : ',
     'fmt.group':'Format de sortie','fmt.phone':'Téléphone','fmt.story':'Story','fmt.square':'Carré',
-    'fmt.preset':'Modèle de téléphone','fmt.group.other':'Autres Android','fmt.screen':'Mon écran','fmt.screen.label':'Mon écran','fmt.custom':'Personnalisé',
+    'wall.label':'Mode fond d\u2019écran','wall.note':'Laisse de la place en haut pour l\u2019heure et en bas pour les boutons de l\u2019écran verrouillé. L\u2019heure affichée dans l\u2019aperçu sert juste à te repérer : elle n\u2019apparaît pas sur l\u2019image téléchargée.','fmt.preset':'Modèle de téléphone','fmt.group.other':'Autres Android','fmt.screen':'Mon écran','fmt.screen.label':'Mon écran','fmt.custom':'Personnalisé',
     'fmt.note':'Choisis ton modèle, ou « Mon écran » pour générer la carte pile à la résolution de l\u2019appareil que tu utilises.',
     'fmt.note.screen':'Résolution détectée sur cet appareil. Sur un ordinateur, c\u2019est celle du moniteur : ouvre cette page sur ton téléphone pour avoir la sienne.',
     'preview':'Aperçu de la carte','mini.open':'Agrandir l\u2019aperçu','mini.close':'Fermer',
@@ -142,7 +142,7 @@ var I18N = {
     'qr.text':'Free text','qr.text.note':'Scanning simply shows the text.',
     'qr.dim':'QR: ',
     'fmt.group':'Output format','fmt.phone':'Phone','fmt.story':'Story','fmt.square':'Square',
-    'fmt.preset':'Phone model','fmt.group.other':'Other Android','fmt.screen':'My screen','fmt.screen.label':'My screen','fmt.custom':'Custom',
+    'wall.label':'Wallpaper mode','wall.note':'Leaves room at the top for the clock and at the bottom for the lock-screen buttons. The time shown in the preview is only a guide: it is not on the downloaded image.','fmt.preset':'Phone model','fmt.group.other':'Other Android','fmt.screen':'My screen','fmt.screen.label':'My screen','fmt.custom':'Custom',
     'fmt.note':'Pick your model, or \u201cMy screen\u201d to generate the card at the exact resolution of the device you are using.',
     'fmt.note.screen':'Resolution detected on this device. On a computer that is the monitor\u2019s: open this page on your phone to get its own.',
     'preview':'Card preview','mini.open':'Enlarge preview','mini.close':'Close',
@@ -337,6 +337,7 @@ var state = {
   a4: false,
   verso: {mode:'none', text:''},
   extra: [],          /* lignes de contact en plus : [{label, value}], 3 max */
+  wallpaper: false,   /* mode fond d'écran : place réservée pour l'heure et les boutons de l'écran verrouillé */
   face: 'recto',
   images: {photo:null, logo:null, partner:null, bg:null},     /* objets Image */
   imageData: {photo:null, logo:null, partner:null, bg:null}   /* dataURL persistés */
@@ -405,6 +406,7 @@ function applySaved(d){
   if(d.paper in PAPERS) state.paper=d.paper;
   if(typeof d.a4==='boolean') state.a4=d.a4;
   if(d.verso && VERSO_MODES.indexOf(d.verso.mode)>=0) state.verso={mode:d.verso.mode, text:String(d.verso.text||'')};
+  if(typeof d.wallpaper==='boolean') state.wallpaper=d.wallpaper;
   if(Array.isArray(d.extra)) state.extra=d.extra.slice(0,EXTRA_MAX).filter(function(x){ return x && typeof x==='object'; }).map(function(x){ return {label:String(x.label||'').slice(0,12), value:String(x.value||'')}; });
   if(d.images) IMG_KEYS.forEach(function(k){ if(typeof d.images[k]==='string' && d.images[k].indexOf('data:image/')===0) state.imageData[k]=d.images[k]; });
 }
@@ -414,7 +416,7 @@ function load(){
   applySaved(d);
 }
 function save(){
-  var base={v:2, fields:state.fields, format:state.format, phone:state.phone, qrMode:state.qrMode, bgColor:state.bgColor, lang:lang, font:state.font, textScale:state.textScale, paper:state.paper, a4:state.a4, verso:state.verso, extra:state.extra};
+  var base={v:2, fields:state.fields, format:state.format, phone:state.phone, qrMode:state.qrMode, bgColor:state.bgColor, lang:lang, font:state.font, textScale:state.textScale, paper:state.paper, a4:state.a4, verso:state.verso, extra:state.extra, wallpaper:state.wallpaper};
   var full=Object.assign({images:state.imageData}, base);
   try{ localStorage.setItem(KEY, JSON.stringify(full)); quotaHit=false; }
   catch(e){
@@ -697,15 +699,40 @@ function renderVerso(W,H,p,f,im){
 function render(){
   var D=dims();
   renderInto(cv, D.w, D.h, 0, state.format==='square', state.face);
+  if(state.face!=='verso' && wallOn(D.w, D.h)) drawLockOverlay(D.w, D.h, palette());
 }
 
 /* Carte verticale. Toutes les tailles partent d'une largeur de référence U (= W en temps normal).
    Sur un écran large ou presque carré (ordinateur, pliable déplié), le contenu dépasserait en hauteur :
    on réduit alors U pour que tout tienne, et le bloc reste centré. */
+/* Mode fond d'écran : sur l'écran verrouillé, la date et l'heure occupent le haut (≈ 27 % de la hauteur)
+   et les boutons lampe / appareil photo le bas (≈ 13 %). La carte se range entre les deux. */
+var WALL_TOP=0.27, WALL_BOTTOM=0.13;
+function wallOn(W,H){ return state.wallpaper && state.format==='phone' && W===state.phone.w && H===state.phone.h; }
 function renderTall(W,H,p,f,im,qr){
-  var U=W, b=tallBlocks(U,W,H,p,f,im,qr), m=tallHeight(b,U), room=H*0.92;
-  if(m>room){ U=W*room/m; b=tallBlocks(U,W,H,p,f,im,qr); }
-  layout(b, H, U, 0.82);
+  var top=0, Hc=H;
+  if(wallOn(W,H)){ top=Math.round(H*WALL_TOP); Hc=H-top-Math.round(H*WALL_BOTTOM); }
+  var U=W, b=tallBlocks(U,W,Hc,p,f,im,qr), m=tallHeight(b,U), room=Hc*0.92;
+  if(m>room){ U=W*room/m; b=tallBlocks(U,W,Hc,p,f,im,qr); }
+  if(top){ ctx.save(); ctx.translate(0,top); }
+  layout(b, Hc, U, top ? 0.9 : 0.82);
+  if(top) ctx.restore();
+}
+/* aperçu seulement : date, heure et boutons de l'écran verrouillé, pour se repérer (jamais exporté) */
+function drawLockOverlay(W,H,p){
+  var c=cv.getContext('2d'), now=new Date();
+  var sys='-apple-system,"SF Pro Display","Helvetica Neue",Inter,Arial,sans-serif';
+  c.save(); c.globalAlpha=0.9; c.fillStyle=p.fg; c.textAlign='center'; c.textBaseline='alphabetic';
+  var ds=Math.round(W*0.042), ts=Math.round(W*0.215);
+  var date; try{ date=now.toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{weekday:'long',day:'numeric',month:'long'}); }catch(e){ date=''; }
+  c.font='600 '+ds+'px '+sys; c.fillText(date.charAt(0).toUpperCase()+date.slice(1), W/2, H*0.085);
+  c.font='600 '+ts+'px '+sys; c.fillText('9:41', W/2, H*0.085+ts*0.98);
+  var r=W*0.058, y=H*0.915;
+  c.globalAlpha=0.35; c.fillStyle=p.fg;
+  [W*0.17, W*0.83].forEach(function(x){ c.beginPath(); c.arc(x,y,r,0,Math.PI*2); c.fill(); });
+  c.globalAlpha=0.7; var bw=W*0.36, bh=Math.max(4,W*0.012);
+  c.beginPath(); if(c.roundRect) c.roundRect(W/2-bw/2, H*0.978-bh/2, bw, bh, bh/2); else c.rect(W/2-bw/2, H*0.978-bh/2, bw, bh); c.fill();
+  c.restore();
 }
 function tallHeight(blocks,U){
   var t=0; for(var i=0;i<blocks.length;i++){ t+=blocks[i].h; if(i<blocks.length-1) t+=blocks[i].gap*U*0.022; } return t;
@@ -994,9 +1021,12 @@ function updateDim(){
   var D=dims(), label = state.format==='phone' ? t('fmt.phone')+' · '+phoneLabel() : t('fmt.'+state.format);
   $('#dim').textContent = label+' · '+D.w+' × '+D.h+(state.face==='verso'?' · '+t('face.verso'):'');
   $('#phone-row').hidden = state.format!=='phone';
+  $('#wall-row').hidden = state.format!=='phone';
+  $('#f-wall').checked = !!state.wallpaper;
   $('#fmt-note').textContent = (state.format==='phone' && state.phone.preset==='screen') ? t('fmt.note.screen') : t('fmt.note');
   syncPresetSelect(); syncPaperSelect();
 }
+$('#f-wall').addEventListener('change', function(){ state.wallpaper=this.checked; save(); schedule(); track('wallpaper', {on:state.wallpaper}); });
 function updateQrNote(){
   $('#qr-note').textContent = t('qr.'+state.qrMode+'.note');
   $('#freetext-wrap').hidden = state.qrMode!=='text';
@@ -1342,8 +1372,14 @@ function filename(){
   var D=dims();
   return base+'-'+state.format+'-'+D.w+'x'+D.h+(state.face==='verso'?'-verso':'')+'.png';
 }
+/* L'image exportée est redessinée à part : l'aperçu peut porter des repères (heure de l'écran
+   verrouillé, mention « aperçu ») qui ne doivent jamais se retrouver dans le fichier. */
 function toBlob(cb){
-  try{ cv.toBlob(function(b){ cb(b||null); }, 'image/png'); }catch(e){ cb(null); }
+  try{
+    var D=dims(), off=document.createElement('canvas');
+    renderInto(off, D.w, D.h, 0, state.format==='square', state.face);
+    off.toBlob(function(b){ cb(b||null); }, 'image/png');
+  }catch(e){ cb(null); }
 }
 $('#dl').addEventListener('click', function(){
   var btn=this, st=$('#status'), name=filename();
