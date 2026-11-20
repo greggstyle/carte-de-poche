@@ -72,6 +72,47 @@ h1 em{font-style:italic;color:var(--accent)}
 .phone{width:min(300px,78vw);aspect-ratio:338/600;border-radius:34px;padding:10px;background:#0f1114;box-shadow:0 30px 60px -20px rgba(0,0,0,.45),inset 0 0 0 2px #2a2d32;transform:rotate(2deg)}
 .phone video{display:block;width:100%;height:100%;object-fit:cover;border-radius:26px;background:#101215}
 
+/* exemples : la carte sur un téléphone, le scan, le contact ajouté, puis des styles */
+.demo{padding-top:3.5rem;padding-bottom:1rem}
+.demo-steps{list-style:none;margin:2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem}
+.demo-steps li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:1.1rem}
+.demo-steps p{color:var(--ink-2);font-size:.95rem;max-width:26ch;margin:0}
+.demo-steps strong{display:block;color:var(--ink);font-family:var(--serif);font-size:1.1rem;margin-bottom:.2rem}
+.mini-phone{position:relative;display:block;width:190px;aspect-ratio:9/19.5;border-radius:26px;padding:7px;background:#0f1114;box-shadow:0 22px 40px -18px rgba(0,0,0,.45),inset 0 0 0 2px #2a2d32;overflow:hidden}
+.mini-phone img{display:block;width:100%;height:100%;object-fit:cover;border-radius:20px}
+/* vue « appareil photo » : le téléphone de l'autre, visé, avec le cadre jaune sur le QR */
+.mini-cam{background:#0f1114}
+.mini-cam::before{content:"";position:absolute;inset:7px;border-radius:20px;background:radial-gradient(120% 80% at 50% 40%,#4a4d52,#1c1e21)}
+.cam-target{position:absolute;left:19%;width:62%;top:17%;aspect-ratio:420/913;border-radius:12px;box-shadow:0 0 0 4px #0f1114,0 10px 24px rgba(0,0,0,.5);overflow:hidden;transform:rotate(-3deg)}
+.cam-target img{border-radius:0;filter:brightness(.95)}
+.cam-frame{position:absolute;left:31%;width:38%;top:43%;height:17%;border-radius:10px;box-shadow:0 0 0 2px #ffd34d}
+.cam-pill{position:absolute;left:10px;right:10px;top:14px;background:rgba(255,255,255,.94);color:#15171b;font-size:.68rem;font-weight:600;line-height:1.25;padding:.45rem .6rem;border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.mini-contact{background:#f7f7f5;display:flex;flex-direction:column;align-items:center;padding:28px 14px 14px;gap:.25rem;color:#15171b;box-shadow:0 22px 40px -18px rgba(0,0,0,.45),inset 0 0 0 7px #0f1114,inset 0 0 0 9px #2a2d32}
+.ct-avatar{width:58px;height:58px;border-radius:50%;background:#3b2f2a;color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:600;font-size:1.3rem;margin-bottom:.35rem}
+.ct-name{font-family:var(--serif);font-weight:600;font-size:1.05rem}
+.ct-role{font-size:.66rem;color:#5f646c;text-align:center;margin-bottom:.6rem}
+.ct-row{width:100%;font-size:.62rem;text-align:left;border-top:1px solid #e3e3de;padding:.4rem .2rem;word-break:break-all}
+.ct-row b{display:block;font-weight:500;color:#1a5c7a;font-size:.58rem}
+.ct-add{margin-top:auto;width:100%;text-align:center;background:#1a5c7a;color:#fff;font-size:.7rem;font-weight:600;padding:.55rem;border-radius:10px}
+.demo-h{font-size:1.35rem;margin:3.5rem 0 1.4rem}
+.demo-styles{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.5rem}
+.demo-styles a{display:flex;flex-direction:column;align-items:center;gap:.6rem;text-decoration:none;color:var(--ink)}
+.demo-styles .mini-phone{width:min(170px,100%);transition:transform .2s}
+.demo-styles a:hover .mini-phone{transform:translateY(-4px) rotate(-1deg)}
+.ds-name{font-family:var(--serif);font-weight:600;font-size:.98rem;text-align:center}
+.ds-try{font-size:.82rem;color:var(--accent)}
+.demo-note{font-size:.8rem;color:var(--ink-3);margin:1.4rem 0 0}
+.demo-swipe{display:none;font-size:.8rem;color:var(--ink-3);margin:.6rem 0 0}
+@media (prefers-reduced-motion:reduce){.demo-styles .mini-phone{transition:none}.demo-styles a:hover .mini-phone{transform:none}}
+@media (max-width:900px){
+  /* mobile : étapes et styles en rangées qu'on fait défiler du doigt */
+  .demo-steps,.demo-styles{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:1.1rem;margin-left:-1.25rem;margin-right:-1.25rem;padding:0 1.25rem .8rem;scroll-padding:0 1.25rem}
+  .demo-steps li{flex:0 0 64%;scroll-snap-align:start}
+  .demo-steps .mini-phone{width:170px}
+  .demo-styles li{flex:0 0 44%;scroll-snap-align:start}
+  .demo-swipe{display:block}
+}
+
 /* étapes */
 .steps{padding-top:3.5rem;padding-bottom:1rem;border-top:1px solid var(--rule)}
 .steps-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
